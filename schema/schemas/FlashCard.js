@@ -20,7 +20,7 @@ module.exports = new Schema({
     },
     is_active: {
         type: Boolean,
-        default: false
+        default: true
     },
     updated_at: {
         type: Date
