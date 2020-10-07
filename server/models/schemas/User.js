@@ -7,10 +7,13 @@ module.exports = new Schema({
     password: {
         type: String
     },
-    facebook_token: {
+    facebook_id: {
         type: String
     },
-    google_token: {
+    google_id: {
+        type: String
+    },
+    email: {
         type: String
     },
     image_link: {

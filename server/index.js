@@ -12,6 +12,7 @@ const getEnv = require('./env/getEnv')
  */
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
+
 app.use(logger('dev', {
     skip: function (req, res) {
         return req.originalUrl.includes('/heartbeat/')
@@ -27,6 +28,8 @@ setTimeout(async () => {
      * Config routes.
      */
     app.use(require('./routers'))
+    app.use(require('./googleAuth'))
+    app.use(require('./facebookAuth'))
 
     const server = require('http').createServer(app)
     const port = getEnv('/port')
