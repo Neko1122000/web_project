@@ -30,7 +30,7 @@ const _createByFacebook = async (profile) => {
 
 const _create = async (profile) => {
     const {name, email, password} = profile;
-    const hashPassword = await bcrypt.hash(password, 10);
+    const hashPassword = bcrypt.hashSync(password, 10);
 
     const User = getModel('User')
     return User.create({username: name, email,  password: hashPassword})
@@ -72,7 +72,7 @@ exports.login = async (data) => {
         const user = await User.findOne({email}).lean();
         if (!user) throw new Error ('Email / password not correct');
 
-        const verify = await bcrypt.compare(password, user.password);
+        const verify = await bcrypt.compareSync(password, user.password);
         if (!verify) throw new Error ('Email / password not correct');
 
         return generateToken(user._id)

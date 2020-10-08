@@ -16,14 +16,14 @@ passport.use(
             profileFields: ['id', 'displayName', 'photos', 'email']
         },
         async (accessToken, refeshToken, profile, done) => {
-            const user = await UserAction.create(profile, 'facebook')
+            const user = await UserAction.createUser(profile, 'facebook')
             return done(null, user._id)
         }
     )
 );
 
 const user = require('./controllers/user')
-routers.get('/auth/facebook', passport.authenticate("facebook", {session: false}))
+routers.get('/auth/facebook', passport.authenticate('facebook', {session: false}))
 routers.get('/auth/facebook/callback', passport.authenticate('facebook', {session: false}), user.generateToken)
 
 module.exports = routers

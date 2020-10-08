@@ -15,7 +15,7 @@ passport.use(
             callbackURL: '/auth/google/callback',
         },
         async (accessToken, refeshToken, profile, done) => {
-            const user = await UserAction.createUser(profile)
+            const user = await UserAction.createUser(profile, 'google')
             return done(null, user._id)
         }
     )
