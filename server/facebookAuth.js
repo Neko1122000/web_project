@@ -5,6 +5,9 @@ const getEnv = require('./env/getEnv')
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy
 
+const {LocalStorage} = require('node-localstorage')
+const localStorage = new LocalStorage('./scratch')
+
 const UserAction = require('./actions/UserAction')
 
 passport.use(
@@ -22,8 +25,11 @@ passport.use(
     )
 );
 
-const user = require('./controllers/user')
 routers.get('/auth/facebook', passport.authenticate('facebook', {session: false}))
-routers.get('/auth/facebook/callback', passport.authenticate('facebook', {session: false}), user.generateToken)
+routers.get('/auth/facebook/callback', passport.authenticate('facebook', {session: false}), async (req, res) => {
+    const token = await UserAction.generateToken(req.user)
+    localStorage.setItem('token', token)
+    res.redirect(`/`)
+})
 
 module.exports = routers
