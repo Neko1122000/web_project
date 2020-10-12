@@ -4,6 +4,7 @@ const app = express()
 const errorHandler = require('errorhandler')
 const bodyParser = require('body-parser')
 const logger = require('morgan')
+const cors = require('cors')
 
 const getEnv = require('./env/getEnv')
 
@@ -12,6 +13,8 @@ const getEnv = require('./env/getEnv')
  */
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
+
+app.use(cors())
 
 app.use(logger('dev', {
     skip: function (req, res) {
