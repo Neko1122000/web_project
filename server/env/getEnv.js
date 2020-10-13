@@ -37,10 +37,16 @@ const config = {
         production: '37f16767b38f4660ce31f66590dcf39a'
     },
 
-    secret_hash_key: {
+    token: {
         $filter: "env",
-        $default: 'thisisaverysecretstring',
-        production: 'thisisaverysecretstring'
+        $default: 'v8HHACULJcHrdeI',
+        production: 'v8HHACULJcHrdeI'
+    },
+
+    token_refresh: {
+        $filter: "env",
+        $default: 'aDp6BynKHwN9R5n',
+        production: 'aDp6BynKHwN9R5n'
     }
 }
 

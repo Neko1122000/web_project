@@ -3,15 +3,21 @@ const getEnv = require('../env/getEnv')
 const {getModel} = require('../connection/mongodb')
 
 exports.authenticate = async (req, res, next) => {
-    try {
-        const auth = req.get('Authorization');
-        if (auth == null) return res.status(401).send("Not authorized");
-        const token = auth.split(" ");
-        if (token[0] !== 'Bearer') return res.status(401).send("Not authorized");
+    let token
+    const headerAuthor = (req.headers['authorization'] || '').trim()
+    const fromXHeader = (req.headers['x-access-token'] || '').trim()
+    const fromHeader = fromXHeader || headerAuthor
+    if (fromHeader) {
+        token = fromHeader.replace('Bearer ', '').trim()
+    }
+    if (!token) token = (req.body.token || req.query.token || '') + ''
 
-        jwt.verify(token[1], getEnv('/secret_hash_key') ,async function(err, decoded) {
+    try {
+        if (!token) res.status(403).send('No token provided');
+
+        jwt.verify(token, getEnv('/token') ,async function(err, decoded) {
             if (err) {
-                return res.status(500).send(err.message);
+                return res.status(401).send(err.message);
             }
 
             const User = getModel('User')

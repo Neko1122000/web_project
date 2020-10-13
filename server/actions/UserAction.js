@@ -51,9 +51,26 @@ const generateToken = async (user_id) => {
     const user = await User.findOne({_id: user_id}).lean()
     if (!user) throw new Error('User not found')
 
-    return jwt.sign({user_id}, getEnv('/secret_hash_key'), {expiresIn: 84600})
+    const token = jwt.sign({user_id}, getEnv('/token'), {expiresIn: 3600})
+    const refresh_token = jwt.sign({user_id}, getEnv('/token_refresh'), {expiresIn: 84600 * 7})
+
+    return {token, refresh_token}
 }
 exports.generateToken = generateToken
+
+exports.refreshToken = async (refresh_token) => {
+    const decoded = jwt.verify(refresh_token, getEnv('/token_refresh'))
+    const {user_id} = decoded
+
+    const User = getModel('User')
+    const user = await User.findById(user_id);
+    if (!user) throw new Error ("User not found");
+
+    const token = jwt.sign({user_id}, getEnv('/token'), {expiresIn: 3600})
+    const refresh = jwt.sign({user_id}, getEnv('/token_refresh'), {expiresIn: 84600 * 7})
+
+    return {token, refresh_token: refresh}
+}
 
 exports.login = async (data) => {
     const {type} = data

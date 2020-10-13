@@ -27,8 +27,9 @@ routers.get('/auth/google', passport.authenticate("google", {scope: ["profile", 
 routers.get('/auth/google/callback', passport.authenticate('google', {session: false, failureRedirect: "/ping"}),
     async (req, res) => {
         const user = req.user
-        const token = await UserAction.generateToken(user)
+        const {token, refresh_token} = await UserAction.generateToken(user)
         res.cookie('access_token', token)
+        res.cookie('refresh_token', refresh_token)
         res.redirect('http://localhost:3000')
 });
 
