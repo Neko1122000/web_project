@@ -58,7 +58,7 @@ const mapStateToProps = ({ auth }) => {
 }
 
 const googleOauth = () => {
-    window.open('http://localhost:8080/auth/google', '_self')
+    window.open('/auth/google', '_self')
 }
 
 export default connect(mapStateToProps)(Header)
