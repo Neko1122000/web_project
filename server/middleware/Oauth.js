@@ -21,9 +21,10 @@ exports.authenticate = async (req, res, next) => {
             }
 
             const User = getModel('User')
-            const user = await User.findById(decoded.id);
+            const user = await User.findById(decoded.user_id);
             if (!user) return res.status(403).send("User not found");
-            req.userId = decoded.id;
+
+            req.userID = decoded.user_id
 
             next();
         });

@@ -21,3 +21,18 @@ exports.login = (req, res) => {
         .then(sendSuccess(req, res))
         .catch(sendError(req, res))
 }
+
+exports.getUserSetting = (req, res) => {
+    const {userID} = req
+    UserAction.getUserSetting(userID)
+        .then(sendSuccess(req, res))
+        .catch(sendError(req, res))
+}
+
+exports.updateUserSetting = (req, res) => {
+    const {userID} = req
+    const args = req.body
+    UserAction.updateUserSetting(userID, args)
+        .then(sendSuccess(req, res))
+        .catch(sendError(req, res))
+}

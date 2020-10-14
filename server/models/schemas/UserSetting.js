@@ -12,6 +12,6 @@ module.exports = new Schema({
         type: String
     },
     updated: {
-        type: Date()
+        type: Date
     }
 })
