@@ -60,7 +60,6 @@ const _createUserSetting = async (user_id, password) => {
     const defaultSetting = [
         {key: 'night_mode', value: 'disable'},
         {key: 'language', value: 'Vietnamese'},
-        {key: 'night_mode', value: 'disable'},
         {key: 'password', value: password? 'enable': 'disable'},
         {key: 'change_name', value: 'enable'},
         {key: 'reminder', value: 'disable'},
@@ -168,5 +167,40 @@ exports.getUserSetting = async (id) => {
 }
 
 exports.updateUserSetting = async (id, args) => {
+    //TODO: update facebook, google account
+    const allow_change = ['night_mode','language', 'night_mode', 'password', 'reminder', 'update_mail',
+        'voucher_mail', 'record_mail', 'send_time', 'timezone', 'show_when_active', 'real_name','search_profile_by_google']
+    const {change_name, classes} = args
+
+    const UserSetting = getModel('UserSetting')
+
+    if (change_name) {
+        const setting = await UserSetting.findOne({user: id, key: 'change_name'}).lean()
+        if (setting.value !== 'enable') throw new Error('Only allow to change name 1 times')
+
+        const User = getModel('User')
+        await Promise.all([
+            User.updateOne({_id: id}, {$set: {username: change_name}}),
+            UserSetting.updateOne({user: id, key: 'change_name'}, {$set: {value: 'disable'}})
+        ])
+    }
+
+    if (classes && Array.isArray(classes) && classes.length) {
+        await Promise.map(classes, async (_class) => {
+            const {class_id, value} = _class
+            const Class = getModel('Class')
+
+            const user_class = await Class.findById(class_id).lean()
+            if (!user_class) throw new Error('User not in classes')
+
+            UserSetting.updateOne({_id: id, key: `class_${class_id}_notification`}, {$set: {value}})
+        }, {concurrency: 5})
+    }
+
+    const settings = args.filter(element => allow_change.includes(element.key))
+    await Promise.map(settings, (setting) => {
+        const {key, value} = setting
+        UserSetting.updateOne({user: id, key}, {$set: value})
+    }, {concurrency: 5})
     return true
 }

@@ -31,7 +31,7 @@ exports.getUserSetting = (req, res) => {
 
 exports.updateUserSetting = (req, res) => {
     const {userID} = req
-    const args = req.body
+    const {args} = req.body
     UserAction.updateUserSetting(userID, args)
         .then(sendSuccess(req, res))
         .catch(sendError(req, res))
