@@ -30,7 +30,7 @@ setTimeout(async () => {
     /**
      * Config routes.
      */
-    app.use(require('./routers'))
+    app.use('/api', require('./routers'))
     app.use(require('./googleAuth'))
     app.use(require('./facebookAuth'))
 
