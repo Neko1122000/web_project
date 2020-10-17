@@ -31,7 +31,7 @@ class Header extends React.Component {
       <div>
         <Pane
           display="flex"
-          elevation={3}
+          elevation={0}
           background="#4257b2"
           className="header"
         >
