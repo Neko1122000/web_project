@@ -29,7 +29,7 @@ routers.get('/auth/facebook/callback', passport.authenticate('facebook', {sessio
         const {token, refresh_token} = await UserAction.generateToken(user)
         res.cookie('access_token', token)
         res.cookie('refresh_token', refresh_token)
-        res.redirect('http://localhost:3000')
+        res.redirect('/')
 })
 
 module.exports = routers

@@ -11,12 +11,20 @@ module.exports = new Schema({
     img: {
         type: String
     },
-    has_password_to_update: {
-        type: Boolean,
-        default: false
+    updated_by: {
+        type: String,
+        enum: ['only_me', 'classes', 'password'],
+        default: 'only_me'
     },
-    update_password: {
+    updated_password: {
         type: String
+    },
+    class_updated: {
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Class'
+        }],
+        default: []
     },
     creator: {
         type: Schema.Types.ObjectId,

@@ -13,4 +13,6 @@ routers.get('/token/refresh', user.refreshToken)
 routers.get('/user/setting', Oauth.authenticate, user.getUserSetting)
 routers.post('/user/setting', Oauth.authenticate, user.updateUserSetting)
 
+const sets = require('./controllers/sets')
+routers.post('/sets', Oauth.authenticate, sets.create)
 module.exports = routers
