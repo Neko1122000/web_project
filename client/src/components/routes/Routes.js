@@ -41,7 +41,9 @@ const Routes = () => {
 		const [selectedTab, changeTab] = useState('Sets')
 		return (
 		<Pane display="flex" height={1000}>
-			<SideBar selectedTab={selectedTab}/>
+			<Route path={routes.map(route => route.path)}>
+				<SideBar selectedTab={selectedTab}/>
+			</Route>
 			<Switch>
 				{routes.map(( {path, tab, page}, index )  => (
 					<Route key={index} path={path} exact >
