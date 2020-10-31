@@ -1,5 +1,5 @@
 const {sendSuccess, sendError} = require('../helper/sendResponse')
-const SetActions = require('../actions/SetAction')
+const SetActions = require('../actions/SetActions')
 
 exports.create = (req, res) => {
     const {userId} = req

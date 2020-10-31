@@ -13,7 +13,7 @@ exports.authenticate = async (req, res, next) => {
     if (!token) token = (req.body.token || req.query.token || '') + ''
 
     try {
-        if (!token) res.status(403).send('No token provided');
+        if (!token) res.status(401).send('No token provided');
 
         jwt.verify(token, getEnv('/token') ,async function(err, decoded) {
             if (err) {
