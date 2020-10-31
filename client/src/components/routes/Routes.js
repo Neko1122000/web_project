@@ -1,71 +1,70 @@
-import React, {useState} from 'react'
-import {Route, Switch} from 'react-router-dom'
-import {Pane} from 'evergreen-ui'
-import {Landing, Test} from '../pages'
+import React, { useState } from 'react'
+import { Route, Switch } from 'react-router-dom'
+import { Pane } from 'evergreen-ui'
+import { Landing, Test, Sets } from '../pages'
 import SideBar from '../SideBar'
 
 const routes = [
-	{
-		path: '/latest',
-		tab: 'Home',
-		page: <Landing/>,
-	},
-	{
-		path: '/progress',
-		tab: 'Progress',
-		page: <Landing/>,
-	},
-	{
-		path: '/settings',
-		tab: 'Settings',
-		page: <Landing/>,
-	},
-	{
-		path: '/sets',
-		tab: 'Sets',
-		page: <Landing/>,
-	},
-	{
-		path: '/folders',
-		tab: 'Folders',
-		page: <Test/>
-	},
-	{
-		path: '/classes',
-		tab: 'Classes',
-		page: <Test/>
-	}
+  {
+    path: '/latest',
+    tab: 'Home',
+    page: <Landing />,
+  },
+  {
+    path: '/progress',
+    tab: 'Progress',
+    page: <Landing />,
+  },
+  {
+    path: '/settings',
+    tab: 'Settings',
+    page: <Landing />,
+  },
+  {
+    path: '/sets',
+    tab: 'Sets',
+    page: <Sets />,
+  },
+  {
+    path: '/folders',
+    tab: 'Folders',
+    page: <Test />,
+  },
+  {
+    path: '/classes',
+    tab: 'Classes',
+    page: <Test />,
+  },
 ]
 
 const Routes = () => {
-		const [selectedTab, changeTab] = useState('Sets')
-		return (
-		<Pane display="flex" height={1000}>
-			<Route path={routes.map(route => route.path)}>
-				<SideBar selectedTab={selectedTab}/>
-			</Route>
-			<Switch>
-				{routes.map(( {path, tab, page}, index )  => (
-					<Route key={index} path={path} exact >
-							<Pane paddingLeft={160} paddingTop={32} background="tint1" flex="1">
-								<DummyPage onPageLoad={() => changeTab(tab)}>
-									{page}
-								</DummyPage>
-							</Pane>
-					</Route>
-				))}
-			</Switch>
-		</Pane>)
+  const [selectedTab, changeTab] = useState('Sets')
+  return (
+    <Pane display="flex" height={1000}>
+      <Route path={routes.map((route) => route.path)}>
+        <SideBar selectedTab={selectedTab} />
+      </Route>
+      <Switch>
+        {routes.map(({ path, tab, page }, index) => (
+          <Route key={index} path={path} exact>
+            <Pane background="tint1" flex="1">
+              <DummyPage onPageLoad={() => changeTab(tab)}>{page}</DummyPage>
+            </Pane>
+          </Route>
+        ))}
+      </Switch>
+    </Pane>
+  )
 }
 
 class DummyPage extends React.Component {
-	componentDidMount = () => {
-		console.log(this.props.children)
-		this.props.onPageLoad()
-	}
-	render() {
-		return <div>{this.props.children}</div>
-	}
+  componentDidMount = () => {
+    console.log(this.props.children)
+    this.props.onPageLoad()
+  }
+  render() {
+    return <div>{this.props.children}</div>
+  }
 }
 
-export default Routes;
+export default Routes

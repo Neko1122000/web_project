@@ -11,9 +11,7 @@ class Header extends React.Component {
       case false:
         return (
           <li>
-            <Button onClick={googleOauth}>
-              Login with Google
-            </Button>
+            <Button onClick={googleOauth}>Login with Google</Button>
           </li>
         )
       default:
@@ -58,7 +56,7 @@ const mapStateToProps = ({ auth }) => {
 }
 
 const googleOauth = () => {
-    window.open('/auth/google', '_self')
+  window.open('/auth/google', '_self')
 }
 
 export default connect(mapStateToProps)(Header)
