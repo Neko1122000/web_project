@@ -32,7 +32,7 @@ export const fetchUser = () => async (dispatch) => {
       })
       .catch(async (error) => {
         const res = await axios.get('/api/token/refresh', {
-          query: { refresh_token: getToken().refreshToken },
+          params: { refresh_token: getToken().refreshToken },
         })
         console.log(res.data)
       })
