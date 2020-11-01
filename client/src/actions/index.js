@@ -8,19 +8,34 @@ import { FETCH_USER } from './types'
 const getToken = () => {
   return {
     accessToken: document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('access_token'))
-      .split('=')[1],
+      ? document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('access_token'))
+          .split('=')[1]
+      : null,
     refreshToken: document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('refresh_token'))
-      .split('=')[1],
+      ? document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('refresh_token'))
+          .split('=')[1]
+      : null,
   }
 }
 
 export const fetchUser = () => async (dispatch) => {
-  console.log(getToken().accessToken)
-  const res = await axios.get('http://localhost:8080/api/user/setting')
-  console.log(res.data)
-  return { type: FETCH_USER, payload: false }
+  if (getToken().accessToken) {
+    const res = await axios
+      .get('http://localhost:8080/api/user/setting', {
+        headers: {
+          Authorization: 'Bearer ' + getToken().accessToken,
+        },
+      })
+      .catch(async (error) => {
+        const res = await axios.get('/api/token/refresh', {
+          query: { refresh_token: getToken().refreshToken },
+        })
+        console.log(res.data)
+      })
+    if (res) dispatch({ type: FETCH_USER, payload: res.data })
+  } else dispatch({ type: FETCH_USER, payload: false })
 }

@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import { Pane } from 'evergreen-ui'
+import { connect } from 'react-redux'
+
 import { Landing, Test, Sets } from '../pages'
 import SideBar from '../SideBar'
 
@@ -37,10 +39,13 @@ const routes = [
   },
 ]
 
-const Routes = () => {
+const Routes = (props) => {
   const [selectedTab, changeTab] = useState('Sets')
   return (
     <Pane display="flex" height={1000}>
+      <Route exact path="/">
+        {props.auth ? <Redirect to="/latest" /> : <Landing />}
+      </Route>
       <Route path={routes.map((route) => route.path)}>
         <SideBar selectedTab={selectedTab} />
       </Route>
@@ -67,4 +72,8 @@ class DummyPage extends React.Component {
   }
 }
 
-export default Routes
+const mapStateToProps = ({ auth }) => {
+  return { auth }
+}
+
+export default connect(mapStateToProps)(Routes)

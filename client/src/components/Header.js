@@ -26,28 +26,21 @@ class Header extends React.Component {
   }
   render() {
     return (
-      <div>
-        <Pane
-          display="flex"
-          elevation={0}
-          background="#4257b2"
-          className="header"
-        >
-          <Pane flex={1} alignItems="center" display="flex">
-            <Link
-              to={this.props.auth ? '/test' : '/'}
-              style={{ textDecoration: 'none' }}
-            >
-              <Heading size={800} color="#F9F9FB">
-                <strong>Quizlet</strong>
-              </Heading>
-            </Link>
-          </Pane>
-          <Pane alignItems="center" display="flex">
-            {this.renderContent()}
-          </Pane>
+      <Pane display="flex" background="#4257b2" className="header">
+        <Pane flex={1} alignItems="center" display="flex">
+          <Link
+            to={this.props.auth ? '/test' : '/'}
+            style={{ textDecoration: 'none' }}
+          >
+            <Heading size={800} color="#F9F9FB">
+              <strong>Quizlet</strong>
+            </Heading>
+          </Link>
         </Pane>
-      </div>
+        <Pane alignItems="center" display="flex">
+          {this.renderContent()}
+        </Pane>
+      </Pane>
     )
   }
 }
