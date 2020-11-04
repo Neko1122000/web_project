@@ -3,7 +3,7 @@ import { Route, Switch, Redirect } from 'react-router-dom'
 import { Pane } from 'evergreen-ui'
 import { connect } from 'react-redux'
 
-import { Landing, Test, Sets } from '../pages'
+import { Landing, Sets, Folders, Classes, CreateSet } from '../pages'
 import SideBar from '../SideBar'
 
 const routes = [
@@ -30,12 +30,12 @@ const routes = [
   {
     path: '/folders',
     tab: 'Folders',
-    page: <Test />,
+    page: <Folders />,
   },
   {
     path: '/classes',
     tab: 'Classes',
-    page: <Test />,
+    page: <Classes />,
   },
 ]
 
@@ -49,6 +49,7 @@ const Routes = (props) => {
       <Route path={routes.map((route) => route.path)}>
         <SideBar selectedTab={selectedTab} />
       </Route>
+      <Route path="/create-set" component={CreateSet} />
       <Switch>
         {routes.map(({ path, tab, page }, index) => (
           <Route key={index} path={path} exact>
@@ -64,7 +65,6 @@ const Routes = (props) => {
 
 class DummyPage extends React.Component {
   componentDidMount = () => {
-    console.log(this.props.children)
     this.props.onPageLoad()
   }
   render() {

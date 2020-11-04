@@ -4,7 +4,7 @@ import UserHeader from '../UserHeader'
 
 export default () => (
   <Pane>
-    <UserHeader path="/sets" />
-    <p>Sets</p>
+    <UserHeader path="/folders" />
+    <p>Folders</p>
   </Pane>
 )
