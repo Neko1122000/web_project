@@ -5,6 +5,6 @@ import UserHeader from '../UserHeader'
 export default () => (
   <Pane>
     <UserHeader path="/folders" />
-    <p>Folders</p>
+    
   </Pane>
 )
