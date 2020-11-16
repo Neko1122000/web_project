@@ -46,11 +46,19 @@ class sets extends React.Component {
     return (
       <Pane>
        <UserHeader path="/latest" />
-        <Menu height={400}>
+        <Menu>
           {listGroups.map(group =>(
             <Menu.Group key = {group.id} title = {group.date}>
                 {group.items.map(item =>(
-                     <Pane background="yellowTint" >
+                     <Pane 
+                        background="#E4E7EB"
+                        height={50}
+                        marginLeft ={50}
+                        marginRight ={100}
+                        marginTop ={20}
+                        borderRadius ={10}
+                        paddingTop ={20}
+                     >
                          <Menu.Item key = {item.id}>
                             <Link href={item.path}
                               textDecoration="none"
