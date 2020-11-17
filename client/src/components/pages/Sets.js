@@ -1,7 +1,9 @@
 import React from 'react'
 
 import UserHeader from '../UserHeader'
-import { Menu,Heading,Pane,Link } from 'evergreen-ui'
+import { withRouter } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { Menu,Heading,Pane } from 'evergreen-ui'
 class sets extends React.Component {
   render() {
     var listGroups =[
@@ -60,9 +62,10 @@ class sets extends React.Component {
                         paddingTop ={20}
                      >
                          <Menu.Item key = {item.id}>
-                            <Link href={item.path}
-                              textDecoration="none"
-                              height={80}>
+                            <Link 
+                               to={item.path}
+                               style={{ textDecoration: 'none' }}
+                            >
                               <Heading size={600}>
                                   {
                                      item.amount + " thuật ngữ    " + item.title

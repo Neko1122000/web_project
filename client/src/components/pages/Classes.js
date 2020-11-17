@@ -1,6 +1,7 @@
 import React from 'react'
-import { Pane, Menu, Heading, DragHandleVerticalIcon, Link, PeopleIcon } from 'evergreen-ui'
+import { Pane, Menu, Heading, DragHandleVerticalIcon, PeopleIcon } from 'evergreen-ui'
 import UserHeader from '../UserHeader'
+import {Link} from 'react-router-dom'
 
 class classes extends React.Component {
   render() {
@@ -55,10 +56,8 @@ class classes extends React.Component {
                   </Pane>
                   <Menu.Item>
                     <Link 
-                          href={classes.path}
-                          textDecoration = "none"
-                          display = "flex"
-                          paddingTop = {10}
+                          to={classes.path}
+                          style={{ textDecoration: 'none', display : 'flex' }}
                         > 
                             <PeopleIcon color="#FEF8E7" size={20}/>
                             <Heading 

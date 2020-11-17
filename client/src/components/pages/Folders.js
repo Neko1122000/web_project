@@ -1,5 +1,6 @@
 import React from 'react'
-import { Pane, Menu, FolderCloseIcon, Heading, Link } from 'evergreen-ui'
+import { Pane, Menu, FolderCloseIcon, Heading } from 'evergreen-ui'
+import {Link} from 'react-router-dom'
 import UserHeader from '../UserHeader'
 
 class folders extends React.Component {
@@ -37,15 +38,14 @@ class folders extends React.Component {
                   >
                     <Menu.Item>
                         <Link 
-                          href={folder.path}
-                          textDecoration = "none"
-                          display = "flex"
+                          to={folder.path}
+                          style={{ textDecoration: 'none', display :'flex' }}
                         > 
-                            <FolderCloseIcon/>
+                            <FolderCloseIcon color ='#303545'/>
                             <Heading 
                               size={600}
                               paddingLeft={10}
-                            > 
+                           > 
                               {folder.nameFolder} 
                             </Heading>
                         </Link>
