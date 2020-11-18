@@ -1,5 +1,5 @@
 import React from 'react'
 
-const CreateSet = () => {}
+const CreateSet = () => <p>Create Set</p>
 
 export default CreateSet
