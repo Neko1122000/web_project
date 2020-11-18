@@ -13,21 +13,22 @@ exports.authenticate = async (req, res, next) => {
     if (!token) token = (req.body.token || req.query.token || '') + ''
 
     try {
-        if (!token) res.status(401).send('No token provided');
+        if (!token) res.status(401).send('No token provided')
+        else {
+            jwt.verify(token, getEnv('/token') ,async function(err, decoded) {
+                if (err) {
+                    return res.status(401).send(err.message);
+                }
 
-        jwt.verify(token, getEnv('/token') ,async function(err, decoded) {
-            if (err) {
-                return res.status(401).send(err.message);
-            }
+                const User = getModel('User')
+                const user = await User.findById(decoded.user_id);
+                if (!user) return res.status(403).send("User not found");
 
-            const User = getModel('User')
-            const user = await User.findById(decoded.user_id);
-            if (!user) return res.status(403).send("User not found");
+                req.userID = decoded.user_id
 
-            req.userID = decoded.user_id
-
-            next();
-        });
+                next();
+            })
+        }
     } catch (e) {
         const message = e.message;
         res.status(500).send(message);

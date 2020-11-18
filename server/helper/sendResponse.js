@@ -6,6 +6,7 @@ exports.sendSuccess = (req, res) => result => {
 }
 
 exports.sendError = (req, res) => error => {
+    console.log(error)
     const message = typeof error === 'string' ? error : error.message || ''
     const code = error.code || false
 
