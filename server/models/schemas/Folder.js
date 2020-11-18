@@ -17,12 +17,17 @@ module.exports = new Schema({
     },
     is_active: {
         type: Boolean,
-        default: String
+        default: true
+    },
+    creator: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     updated_at: {
         type: Date
     },
     created_at: {
-        type: Date
+        type: Date,
+        default: Date.now()
     }
 })

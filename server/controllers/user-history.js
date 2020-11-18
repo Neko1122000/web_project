@@ -1,5 +1,5 @@
 const {sendError, sendSuccess} = require('../helper/sendResponse')
-const UserHistoryAction = require('../actions/UserHistory')
+const UserHistoryAction = require('../actions/UserHistoryAction')
 
 exports.create = (req, res) => {
     UserHistoryAction.create()

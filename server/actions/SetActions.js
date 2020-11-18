@@ -83,16 +83,13 @@ exports.getSet = async(setId, userId = '', args = {}) => {
     return null
 }
 
-exports.updateSet = async (setId, userId, args) => {
-    const {flashcards, creator, ...data} = await _validate(args)
-
+const _allowUpdate = async (setId, userId = '', password = '') => {
     const {updated_by, updated_password, updated_classes, creator: cr} = await _getSet(setId)
 
     if (updated_by === 'only_me')
         if ((cr + '') !== userId) throw new Error ('You are not allowed to change this resource.')
     if (updated_by === 'password') {
-        const {password: _pass} = args
-        if (!_compare(updated_password, _pass)) throw new Error ('Password is not match.')
+        if (!_compare(updated_password, password)) throw new Error ('Password is not match.')
     }
     if (updated_by === 'classes') {
         const Class = getModel('Class')
@@ -103,13 +100,26 @@ exports.updateSet = async (setId, userId, args) => {
             if (updated_classes.includes(cl)) flag = true
         }
 
-        if (!flag) throw new Error ('You are not allowed to see this set.')
+        if (!flag) throw new Error ('You are not allowed to change this set.')
     }
+    return true
+}
+
+exports.updateSet = async (setId, userId, args, oldPassword) => {
+    const {flashcards, creator, ...data} = await _validate(args)
+
+    await _allowUpdate(setId, userId, oldPassword)
 
     const Set = getModel('Set')
-    await Set.updateOne({_id: setId}, {$set: data})
+    await Set.updateOne({_id: setId}, {$set: {...data, updated_at: Date.now()}})
     await FlashCardAction.update(flashcards)
     return true
+}
+
+exports.deleteSet = async (setId, userId, oldPassword) => {
+    await _allowUpdate(setId, userId, oldPassword)
+    const Set = getModel('Set')
+    return Set.updateOne({_id: setId}, {$set: {is_active: false, updated_at: Date.now()}})
 }
 
 
