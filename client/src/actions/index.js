@@ -21,6 +21,15 @@ const getToken = () => {
       : null,
   }
 }
+const refreshToken = async (callback) => {
+  const res = await axios.get('/api/token/refresh', {
+    params: { refresh_token: getToken().refreshToken },
+  })
+  document.cookie = 'access_token=' + res.data.data.token
+  document.cookie = 'refresh_token=' + res.data.data.refresh_token
+  callback()
+  window.location.reload()
+}
 
 export const fetchUser = () => async (dispatch) => {
   if (getToken().accessToken) {
@@ -31,10 +40,7 @@ export const fetchUser = () => async (dispatch) => {
         },
       })
       .catch(async (error) => {
-        const res = await axios.get('/api/token/refresh', {
-          params: { refresh_token: getToken().refreshToken },
-        })
-        console.log(res.data)
+        await refreshToken(fetchUser)
       })
     if (res) dispatch({ type: FETCH_USER, payload: res.data })
   } else dispatch({ type: FETCH_USER, payload: false })

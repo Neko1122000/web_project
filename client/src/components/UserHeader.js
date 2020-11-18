@@ -1,8 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Pane, Heading, Avatar } from 'evergreen-ui'
+import ProfileHeader from './ProfileHeader'
 
-const UserHeader = ({ user }) => {
+const UserHeader = ({ user, path }) => {
   return (
     <Pane
       height={200}
@@ -13,10 +14,11 @@ const UserHeader = ({ user }) => {
       borderLeft
     >
       <Avatar src={user.image_link} name={user.username} size={120} />
-      <Pane paddingLeft={40} display="flex" height={100}>
+      <Pane paddingLeft={40} display="flex" height={100} flexDirection="column">
         <Heading size={900} fontWeight={700} marginRight={40}>
           {user.username}
         </Heading>
+        <ProfileHeader path={path} />
       </Pane>
     </Pane>
   )
