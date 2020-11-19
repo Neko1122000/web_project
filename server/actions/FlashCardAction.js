@@ -8,7 +8,7 @@ exports.create = async (flashCards, setId) =>{
     }, {concurrency: 10})
 }
 
-exports.update  = async (flashCards) =>{
+exports.update  = async (flashCards) => {
     const FlashCard = getModel('FlashCard')
     return Promise.map(flashCards, async(flashCard) => {
         const {_id, ...info} = flashCard

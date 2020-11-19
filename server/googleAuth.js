@@ -28,6 +28,7 @@ routers.get('/auth/google/callback', passport.authenticate('google', {session: f
     async (req, res) => {
         const user = req.user
         const {token, refresh_token} = await UserAction.generateToken(user)
+        console.log(token)
         res.cookie('access_token', token)
         res.cookie('refresh_token', refresh_token)
         res.redirect('/')

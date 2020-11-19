@@ -10,6 +10,15 @@ exports.create = (req, res) => {
         .catch(sendError(req, res))
 }
 
+exports.getFolderDetail = (req, res) => {
+    const {userID} = req
+    const {id: folder_id} = req.params
+
+    folder.getDetail(folder_id, userID)
+        .then(sendSuccess(req, res))
+        .catch(sendError(req, res))
+}
+
 exports.updateFolder = (req, res) => {
     const {userID} = req
     const {id: folderId} = req.params

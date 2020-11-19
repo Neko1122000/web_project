@@ -20,12 +20,20 @@ exports.update = (req, res) => {
         .catch(sendError(req, res))
 }
 
+exports.search = (req, res) => {
+    const {userID} = req
+
+    SetActions.search(userID)
+        .then(sendSuccess(req, res))
+        .catch(sendError(req, res))
+}
+
 exports.delete = (req, res) => {
     const {userID} = req
     const {id: setId} = req.params
     const {old_password} = req.body
 
-    SetActions.delete(setId, userID, old_password)
+    SetActions.deleteSet(setId, userID, old_password)
         .then(sendSuccess(req, res))
         .catch(sendError(req, res))
 }
