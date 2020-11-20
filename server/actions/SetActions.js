@@ -29,7 +29,7 @@ const _validate = async (args, creator = '') => {
 
 const _getSet = async (setId, select = '') => {
     const Set = getModel('Set')
-    const set = await Set.findById(setId).select(select).lean()
+    const set = await Set.findOne({_id: setId, is_active: true}).select(select).lean()
     if (!set) throw new Error('Set not found')
 
     const FlashCard = getModel('FlashCard')
@@ -111,7 +111,9 @@ exports.updateSet = async (setId, userId, args, oldPassword) => {
     await _allowUpdate(setId, userId, oldPassword)
 
     const Set = getModel('Set')
-    await Set.updateOne({_id: setId}, {$set: {...data, updated_at: Date.now()}})
+    const res = await  Set.updateOne({_id: setId, is_active: true}, {$set: {...data, updated_at: Date.now()}})
+    if (!res.n || !res.nModified) throw new Error ('Set not found')
+
     await FlashCardAction.update(flashcards)
     return true
 }
@@ -119,7 +121,14 @@ exports.updateSet = async (setId, userId, args, oldPassword) => {
 exports.deleteSet = async (setId, userId, oldPassword) => {
     await _allowUpdate(setId, userId, oldPassword)
     const Set = getModel('Set')
-    return Set.updateOne({_id: setId}, {$set: {is_active: false, updated_at: Date.now()}})
+    const res = await Set.updateOne({_id: setId}, {$set: {is_active: false, updated_at: Date.now()}})
+    if (!res.n || !res.nModified) throw new Error ('Set not found')
+
+    const Folder = getModel('Folder')
+    await Folder.updateOne({sets: setId}, {$pull: {'sets': setId}})
+
+    const Class = getModel('Class')
+    await Class.updateOne({sets: setId}, {$pull: {'sets': setId}})
 }
 
 
@@ -129,4 +138,9 @@ exports.create = async(args, creator) => {
     const set = await Set.create(data)
     await FlashCardAction.create(flashcards, set._id)
     return _getSet(set._id, '_id img description name created_at updated_at')
+}
+
+exports.search = async (userId) => {
+    const Sets = getModel('Sets')
+    return Sets.find({creator: userId, is_active: true}).select('_id img description name created_at updated_at').lean()
 }
