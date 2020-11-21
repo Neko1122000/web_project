@@ -1,6 +1,6 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Pane, Text, Button, TextInput, Switch, DragHandleHorizontalIcon} from 'evergreen-ui'
-
+import "../../styles/components/create.scss"
 const language = {
     title : {
         en : "Enter a title",
@@ -14,11 +14,6 @@ const language = {
 
 const CreateSet = () => (
     <Pane marginLeft="auto" marginRight="auto" marginTop={75} width={1200} >
-        <Switch
-            checked="true"
-            height={25}
-            onChange={e =>({checked:e.target.checked})}
-        />
         <Text fontSize={16} fontWeight={700} >
             Create a new study set
         </Text>
@@ -35,6 +30,8 @@ const CreateSet = () => (
             placeholder={language.title.en}
             label="PLEASE ENTER A TITLE TO CREATE YOUR SET"
             required
+            border="none"
+            outline="none"
         >
         </TextInput>
         <TextInput
@@ -48,16 +45,23 @@ const CreateSet = () => (
 
         <Pane
             width="100%"
-            height={150}
+            height={50}
+            borderTop
+            borderTopLeftRadius={10}
+            borderTopRightRadius={10}
+            marginBottom={5}
+            border
+        >
+        </Pane>
+        <Pane
+            width="100%"
+            height={120}
             borderBottom
             marginBottom={10}
-            elevation={2}
-            borderRadius={10}
-            border="dashed"
+            border
+            borderBottomRightRadius={10}
+            borderBottomLeftRadius={10}
         >
-            <Pane>
-
-            </Pane>
         </Pane>
 
         <Pane
