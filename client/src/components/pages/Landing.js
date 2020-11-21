@@ -2,7 +2,7 @@ import React from 'react'
 import {Pane} from 'evergreen-ui'
 
 const Landing = () => (<Pane>
-    Landing
+    Landingg
 </Pane>)
 
 export default Landing
