@@ -9,16 +9,16 @@ class Folders extends React.Component {
       {
         id: 1,
         nameFolder: 'Tien',
-        path: '/folders/tien',
+        path: '/latest',
       },
       {
         id: 2,
-        nameFolder: 'Tien2',
+        nameFolder: 'Tien',
         path: '/latest',
       },
       {
         id: 3,
-        nameFolder: 'Tien3',
+        nameFolder: 'Tien',
         path: '/latest',
       },
     ]
@@ -38,7 +38,7 @@ class Folders extends React.Component {
             >
               <Menu.Item>
                 <Link
-                  to={`/folders/${folder.id}`}
+                  to={folder.path}
                   style={{ textDecoration: 'none', display: 'flex' }}
                 >
                   <FolderCloseIcon color="#303545" />

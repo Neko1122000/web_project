@@ -49,7 +49,7 @@ const tabs2 = [
 ]
 
 const SideBar = (props) => (
-  <Pane paddingTop={24} marginBottom={16} flexBasis={264} className="sidebar" elevation={2}>
+  <Pane paddingTop={24} marginBottom={16} flexBasis={264} className="sidebar">
     <Tablist>
       {tabs1.map(({ path, tab, icon }) => (
         <Link to={path} key={tab} id={tab}>
