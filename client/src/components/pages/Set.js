@@ -17,14 +17,15 @@ class Set extends React.Component{
   constructor(props){
     super(props);
     this.state ={ 
-      slideIndex:0,
+      slideIndex:1,
+      status:false,
       data:[
           {
             _id: "1",
             is_active: true,
             created_at: "2020-11-18T10:58:18.956Z",
-            title: 3,
-            description: 3,
+            title: 1,
+            description: "số 1",
             language: 'VN',
             __v: 0
           },
@@ -32,18 +33,42 @@ class Set extends React.Component{
             _id: "2",
             is_active: true,
             created_at: "2020-11-18T10:58:18.956Z",
-            title: 1,
-            description: 1,
+            title: 2,
+            description: "số 2",
+            language: 'VN',
+            __v: 0
+          },
+          {
+            _id: "3",
+            is_active: true,
+            created_at: "2020-11-18T10:58:18.956Z",
+            title: 3,
+            description: "số 3",
+            language: 'VN',
+            __v: 0
+          },
+          {
+            _id: "4",
+            is_active: true,
+            created_at: "2020-11-18T10:58:18.956Z",
+            title: 4,
+            description: "số 4",
             language: 'VN',
             __v: 0
           }
+
         ]
     };
   }
   backward() {
-    
+    var length = this.state.data.length;
+    this.setState({slideIndex:--this.state.slideIndex>0?this.state.slideIndex:length,status:true})
   }
-  
+
+  next() {
+    var length = this.state.data.length;
+    this.setState({slideIndex:++this.state.slideIndex<=length?this.state.slideIndex:1,status:true})
+  }
   render() {
   var flash_cards = this.state.data
   var tabs1 = [
@@ -76,6 +101,7 @@ class Set extends React.Component{
   return (
 
     <Pane>
+      <Pane>
       <Heading
         size={900}
         padding={50}
@@ -112,17 +138,19 @@ class Set extends React.Component{
              background="blueTint"
              textAlign="center"
              paddingTop={140}
-           >
-             <Heading size={600}>{flash_cards[this.state.slideIndex].title}</Heading>
+             elevation={4}
+             onClick={() =>{this.setState({status:!this.state.status})}}
+           > 
+             <Heading size={600}>{this.state.status?flash_cards[this.state.slideIndex-1].title:flash_cards[this.state.slideIndex-1].description}</Heading>
            </Pane>
           <Pane
-            marginLeft={200}
+            marginLeft={160}
             paddingTop={20}
             display='flex'
           >
-            <Button> <ArrowLeftIcon/></Button>
-            <Heading size={400} textAlign="center" marginLeft={150} marginRight={130}>1/2</Heading>
-            <Button onClick={() =>{this.backward()}}> <ArrowRightIcon/></Button>
+            <Button onClick={() =>{this.backward()}}> <ArrowLeftIcon/></Button>
+          <Heading size={400} textAlign="center" marginLeft={150} marginRight={130}>{this.state.slideIndex+"/"+this.state.data.length}</Heading>
+            <Button onClick={() =>{this.next()}}> <ArrowRightIcon/></Button>
             </Pane>   
         </Pane>
       </Pane>
@@ -135,14 +163,16 @@ class Set extends React.Component{
           alignItems="center"
           paddingLeft={32}
           paddingTop={32}
+          justifyContent="space-between"
         >
+          <Pane display="flex">
           <Avatar src={this.props.user.image_link} name={this.props.user.username} size={75} />
           <Pane paddingLeft={15} paddingTop={30} display="flex" height={100} flexDirection="column">
             <Heading size={600} fontWeight={700} marginRight={40}>
               {this.props.user.username}
             </Heading>
           </Pane>
-
+          </Pane>
           <Popover
             position={Position.BOTTOM_LEFT}
             content={
@@ -163,14 +193,16 @@ class Set extends React.Component{
 
         </Pane>
       </Pane>
-      <Pane height={500} width={1260} marginTop={50} paddingLeft={32} background="purpleTint">
-        <Table paddingTop={50}>
+    </Pane>
+    <Pane>
+      <Pane width={1260} marginTop={50} paddingLeft={32} paddingBottom={32} background="purpleTint">
+        <Table paddingTop={50} height="100%" >
           <Table.Head>
             <Table.TextHeaderCell>
               <Heading size={700} fontWeight={700} paddingBottom={30}>Thuật ngữ học trong phần này</Heading>
             </Table.TextHeaderCell>
           </Table.Head>
-          <Table.Body height={240}>
+          <Table.Body>
             {flash_cards.map(card=>(
               <Pane
                 background="#FFFFFF"
@@ -189,6 +221,7 @@ class Set extends React.Component{
           </Table.Body>
         </Table>
       </Pane>
+    </Pane>
     </Pane>
   )
             }
