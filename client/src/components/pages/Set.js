@@ -13,34 +13,39 @@ import {
   ArrowLeftIcon
 } from 'evergreen-ui'
 class Set extends React.Component{
+
   constructor(props){
     super(props);
-    this.state ={ slideIndex:0};
+    this.state ={ 
+      slideIndex:0,
+      data:[
+          {
+            _id: "1",
+            is_active: true,
+            created_at: "2020-11-18T10:58:18.956Z",
+            title: 3,
+            description: 3,
+            language: 'VN',
+            __v: 0
+          },
+          {
+            _id: "2",
+            is_active: true,
+            created_at: "2020-11-18T10:58:18.956Z",
+            title: 1,
+            description: 1,
+            language: 'VN',
+            __v: 0
+          }
+        ]
+    };
   }
   backward() {
-    this.setState({slideIndex:1})
+    
   }
+  
   render() {
-  var flash_cards = [
-    {
-      _id: "1",
-      is_active: true,
-      created_at: "2020-11-18T10:58:18.956Z",
-      title: 3,
-      description: 3,
-      language: 'VN',
-      __v: 0
-    },
-    {
-      _id: "2",
-      is_active: true,
-      created_at: "2020-11-18T10:58:18.956Z",
-      title: 1,
-      description: 1,
-      language: 'VN',
-      __v: 0
-    }
-  ]
+  var flash_cards = this.state.data
   var tabs1 = [
     {
       path: '/latest',
