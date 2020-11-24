@@ -12,14 +12,15 @@ import {
   ArrowRightIcon,
   ArrowLeftIcon
 } from 'evergreen-ui'
-import SlideShow from './SlideShow'
-const Set = ({ user }) => {
-  
-  const collection = [
-    { src: "https://kynguyenlamdep.com/wp-content/uploads/2020/01/hinh-anh-dep-hoa-bo-cong-anh-700x466.jpg", caption: "Caption one" },
-    { src: "https://kynguyenlamdep.com/wp-content/uploads/2020/01/hinh-anh-dep-hoa-bo-cong-anh-700x466.jpg", caption: "Caption two" },
-    { src: "https://kynguyenlamdep.com/wp-content/uploads/2020/01/hinh-anh-dep-hoa-bo-cong-anh-700x466.jpg", caption: "Caption one" },
-  ];
+class Set extends React.Component{
+  constructor(props){
+    super(props);
+    this.state ={ slideIndex:0};
+  }
+  backward() {
+    this.setState({slideIndex:1})
+  }
+  render() {
   var flash_cards = [
     {
       _id: "1",
@@ -34,8 +35,8 @@ const Set = ({ user }) => {
       _id: "2",
       is_active: true,
       created_at: "2020-11-18T10:58:18.956Z",
-      title: 3,
-      description: 3,
+      title: 1,
+      description: 1,
       language: 'VN',
       __v: 0
     }
@@ -97,11 +98,27 @@ const Set = ({ user }) => {
           ))}
         </Tablist>
         <Pane>
-                <SlideShow 
-                   input={collection}
-                   ratio={`3:2`}
-                   mode={`manual`}
-                />
+             <Pane
+             height={300}
+             width={550}
+             alignItems="center"
+             border="default"
+             marginLeft={100}
+             background="blueTint"
+             textAlign="center"
+             paddingTop={140}
+           >
+             <Heading size={600}>{flash_cards[this.state.slideIndex].title}</Heading>
+           </Pane>
+          <Pane
+            marginLeft={200}
+            paddingTop={20}
+            display='flex'
+          >
+            <Button> <ArrowLeftIcon/></Button>
+            <Heading size={400} textAlign="center" marginLeft={150} marginRight={130}>1/2</Heading>
+            <Button onClick={() =>{this.backward()}}> <ArrowRightIcon/></Button>
+            </Pane>   
         </Pane>
       </Pane>
       <Pane marginTop={50} marginBottom={30} paddingLeft={32}>
@@ -114,10 +131,10 @@ const Set = ({ user }) => {
           paddingLeft={32}
           paddingTop={32}
         >
-          <Avatar src={user.image_link} name={user.username} size={75} />
+          <Avatar src={this.props.user.image_link} name={this.props.user.username} size={75} />
           <Pane paddingLeft={15} paddingTop={30} display="flex" height={100} flexDirection="column">
             <Heading size={600} fontWeight={700} marginRight={40}>
-              {user.username}
+              {this.props.user.username}
             </Heading>
           </Pane>
 
@@ -169,7 +186,7 @@ const Set = ({ user }) => {
       </Pane>
     </Pane>
   )
-
+            }
 }
 const mapStateToProps = ({ auth }) => {
   return { user: { ...{ ...auth }.data } }
