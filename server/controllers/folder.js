@@ -47,3 +47,11 @@ exports.updateSet = (req, res) => {
         .then(sendSuccess(req, res))
         .catch(sendError(req, res))
 }
+
+exports.search = (req, res) => {
+    const {userID} = req
+
+    folder.search(userID)
+        .then(sendSuccess(req, res))
+        .catch(sendError(req, res))
+}

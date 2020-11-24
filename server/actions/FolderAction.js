@@ -34,7 +34,7 @@ exports.updateSet = async (folderId, args, userID) => {
 
 exports.search = async (userId) => {
     const Folder = getModel('Folder')
-    return Folder.find({creator: userId, is_active: true}).select('name description').lean()
+    return Folder.find({creator: userId, is_active: true}).select('name description sets').lean()
 }
 
 exports.getDetail = async (folderId, userId) => {

@@ -131,7 +131,6 @@ exports.deleteSet = async (setId, userId, oldPassword) => {
     await Class.updateOne({sets: setId}, {$pull: {'sets': setId}})
 }
 
-
 exports.create = async(args, creator) => {
     const {flashcards, ...data} = await _validate(args, creator)
     const Set = getModel('Set')
@@ -141,6 +140,6 @@ exports.create = async(args, creator) => {
 }
 
 exports.search = async (userId) => {
-    const Sets = getModel('Sets')
+    const Sets = getModel('Set')
     return Sets.find({creator: userId, is_active: true}).select('_id img description name created_at updated_at').lean()
 }
