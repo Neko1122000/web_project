@@ -21,6 +21,7 @@ routers.get('/sets/:id', Oauth.authenticate, sets.getDetailSet)
 routers.delete('/sets/:id', Oauth.authenticate, sets.delete)
 
 const folder = require('./controllers/folder')
+routers.get('/folder', Oauth.authenticate, folder.search)
 routers.get('/folder/:id', Oauth.authenticate, folder.getFolderDetail)
 routers.post('/folder', Oauth.authenticate, folder.create)
 routers.post('/folder/:id', Oauth.authenticate, folder.updateFolder)

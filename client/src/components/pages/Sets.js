@@ -1,6 +1,6 @@
 import React from 'react'
-
 import UserHeader from '../UserHeader'
+
 import { Link } from 'react-router-dom'
 import { Menu, Heading, Pane } from 'evergreen-ui'
 
