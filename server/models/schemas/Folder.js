@@ -21,7 +21,8 @@ module.exports = new Schema({
     },
     creator: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        index: true
     },
     updated_at: {
         type: Date

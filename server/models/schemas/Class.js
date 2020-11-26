@@ -35,7 +35,7 @@ module.exports = new Schema({
             ref: 'User'
         }]
     },
-    is_member_remove: {
+    allow_member_change: {
         type: Boolean,
         default: false
     },
@@ -52,6 +52,7 @@ module.exports = new Schema({
     },
     creator: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        index: true
     }
 })
