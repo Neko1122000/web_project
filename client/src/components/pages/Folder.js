@@ -1,13 +1,27 @@
 import React from 'react';
-import { Pane, Text, Tooltip, Dialog, SelectMenu, Button, TextInput} from 'evergreen-ui'
-import { AddIcon, TrashIcon, EditIcon, FolderOpenIcon, LearningIcon } from 'evergreen-ui'
+import { connect } from 'react-redux'
+import { 
+    Pane, 
+    Text, 
+    Tooltip, 
+    Dialog, 
+    SelectMenu, 
+    Button, 
+    TextInput
+} from 'evergreen-ui'
+import { 
+    AddIcon, 
+    TrashIcon, 
+    EditIcon, 
+    FolderOpenIcon, 
+    LearningIcon 
+} from 'evergreen-ui'
 import {Link} from "react-router-dom";
 
 class Folder extends React.Component {
     state = {
         isShown: '',
         srcSet: 'yourSets',
-        owner: "QuocSinh",
         path: "/sets",
         name: "Folder",
         description: "folder description",
@@ -253,7 +267,7 @@ class Folder extends React.Component {
                                     to={this.state.path}
                                     style={{color: '#14B5D0', marginLeft: 5}}
                                 >
-                                    {this.state.owner}
+                                    {this.props.user.username}
                                 </Link>
                             </Text>
                         </Pane>
@@ -356,7 +370,7 @@ class Folder extends React.Component {
                                         to={this.state.path}
                                         style={{color: '#14B5D0'}}
                                     >
-                                        {this.state.owner}
+                                        {this.props.user.username}
                                     </Link>
                                 </Text>
                                 <Tooltip content={"Remove"}>
@@ -371,4 +385,7 @@ class Folder extends React.Component {
         )
     }
 }
-export default Folder
+const mapStateToProps = ({ auth }) => {
+    return { user: { ...{ ...auth }.data } }
+  }
+export default connect(mapStateToProps)(Folder)

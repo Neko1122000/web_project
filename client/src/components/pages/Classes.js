@@ -2,9 +2,7 @@ import React from 'react'
 import {
   Pane,
   Menu,
-  Heading,
-  DragHandleVerticalIcon,
-  PeopleIcon,
+  Text
 } from 'evergreen-ui'
 import UserHeader from '../UserHeader'
 import { Link } from 'react-router-dom'
@@ -21,7 +19,7 @@ class Classes extends React.Component {
         nameSchool: 'Tien',
       },
       {
-        id: 1,
+        id: 2,
         path: '/latest',
         nameClass: 'Tien',
         amountSet: 1,
@@ -29,7 +27,7 @@ class Classes extends React.Component {
         nameSchool: 'Tien',
       },
       {
-        id: 1,
+        id: 3,
         path: '/latest',
         nameClass: 'Tien',
         amountSet: 1,
@@ -38,47 +36,48 @@ class Classes extends React.Component {
       },
     ]
     return (
-      <Pane>
+      <Pane  background="tint2">
         <UserHeader path="/classes" />
-        <Menu>
+
+        <Pane paddingLeft="7%" marginTop={30} width={800}>
+
           {listClasses.map((classes) => (
+
             <Pane
-              background="#E4E7EB"
-              height={75}
-              marginLeft={50}
-              marginRight={100}
+              key={classes.id}
+              height={80}
+              elevation={1}
               marginTop={20}
-              borderRadius={10}
-              paddingTop={10}
-              paddingLeft={10}
             >
-              <Pane display="flex">
-                <Heading size={500} paddingLeft={20} paddingRight={20}>
-                  {classes.amountSet + ' Học phần'}
-                </Heading>
-                <DragHandleVerticalIcon />
-                <Heading size={500} paddingLeft={20} paddingRight={20}>
-                  {classes.amountMember + ' Thành viên'}
-                </Heading>
-                <DragHandleVerticalIcon />
-                <Heading size={500} paddingLeft={20} paddingRight={20}>
-                  {classes.nameSchool}
-                </Heading>
-              </Pane>
-              <Menu.Item>
-                <Link
-                  to={classes.path}
-                  style={{ textDecoration: 'none', display: 'flex' }}
+              <Link to={`/classes/${classes.id}`}>
+                <Pane 
+                  height={75} 
+                  width="100%"
+                  background="white"
+                  paddingTop={20}
+                  paddingLeft={40}
+                  
                 >
-                  <PeopleIcon color="#FEF8E7" size={20} />
-                  <Heading size={500} paddingLeft={10}>
+                  <Text 
+                    fontWeight={400} 
+                    fontSize={16} 
+                    verticalAlign="top"
+                    display="block"
+                    paddingBottom={5}
+                    color="#A6B1BB"
+                  >
+                    {classes.amountSet + " terms"}
+                  </Text>
+                  
+                  <Text fontWeight={600} fontSize={20}>
                     {classes.nameClass}
-                  </Heading>
-                </Link>
-              </Menu.Item>
+                  </Text>
+
+                </Pane>
+              </Link>
             </Pane>
           ))}
-        </Menu>
+        </Pane>
       </Pane>
     )
   }

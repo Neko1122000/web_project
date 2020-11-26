@@ -1,5 +1,10 @@
 import React from 'react'
-import { Pane, Text, Button, TextInput } from 'evergreen-ui'
+import { 
+  Pane, 
+  Text, 
+  Button, 
+  TextInput 
+} from 'evergreen-ui'
 import {DragHandleVerticalIcon, TrashIcon} from 'evergreen-ui'
 
 const language = {
