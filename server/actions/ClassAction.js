@@ -37,7 +37,8 @@ const _allow_update = async (classId, userId) => {
 const update = async (classId, args, userId) => {
     await _allow_update(classId, userId)
 
-    args = (({sets, folders, members, name, description }) => ({sets, folders, members, name, description}))(args);
+    args = (({sets, folders, members, name, description, allow_member_change, address})
+        => ({sets, folders, members, name, description, allow_member_change, address}))(args);
 
     const Class = getModel('Class')
     return Class.updateOne({_id: classId}, {$set: args})
