@@ -14,58 +14,66 @@ const language = {
 
 const CreateSet = () => (
   <Pane marginLeft="auto" marginRight="auto" marginTop={75} width={1200}>
-    <Text fontSize={16} fontWeight={700}>
-      Create a new study set
-    </Text>
-    <Button
-      height={40}
-      fontWeight={400}
-      fontSize={16}
-      float="right"
-      backgroundColor="#3ccfcf"
-    >
-      Create
-    </Button>
+    
+    {/* Header */}
+    <Pane>
+      <Text fontSize={16} fontWeight={700}>
+        Create a new study set
+      </Text>
+      <Button
+        height={40}
+        fontWeight={400}
+        fontSize={16}
+        float="right"
+        backgroundColor="#3ccfcf"
+      >
+        Create
+      </Button>
+    </Pane>
 
-    <TextInput
-      display="block"
-      marginTop={20}
-      marginBottom={20}
-      height={50}
-      width={600}
-      placeholder={language.title.en}
-      label="PLEASE ENTER A TITLE TO CREATE YOUR SET"
-      required
-      border="none"
-      outline="none"
-    ></TextInput>
-    <TextInput
-      marginTop={20}
-      marginBottom={20}
-      height={50}
-      width="50%"
-      placeholder={language.des.en}
-    ></TextInput>
+    {/* Informaion field */}
+    <Pane>
+      <TextInput
+        display="block"
+        marginTop={20}
+        marginBottom={20}
+        height={50}
+        width={600}
+        placeholder={language.title.en}
+        label="PLEASE ENTER A TITLE TO CREATE YOUR SET"
+      ></TextInput>
+      <TextInput
+        marginTop={20}
+        marginBottom={20}
+        height={50}
+        width="50%"
+        placeholder={language.des.en}
+      ></TextInput>
+    </Pane>
 
-    <Pane
-      width="100%"
-      height={50}
-      borderTop
-      borderTopLeftRadius={10}
-      borderTopRightRadius={10}
-      marginBottom={5}
-      border
-    ></Pane>
-    <Pane
-      width="100%"
-      height={120}
-      borderBottom
-      marginBottom={10}
-      border
-      borderBottomRightRadius={10}
-      borderBottomLeftRadius={10}
-    ></Pane>
+    {/* Input field */}
+    <Pane>
+      <Pane
+        width="100%"
+        height={50}
+        borderTop
+        borderTopLeftRadius={10}
+        borderTopRightRadius={10}
+        marginBottom={5}
+        border
+      ></Pane>
+      <Pane
+        width="100%"
+        height={120}
+        borderBottom
+        marginBottom={10}
+        border
+        borderBottomRightRadius={10}
+        borderBottomLeftRadius={10}
+      ></Pane>
+    </Pane>
 
+    {/* Add button */}
     <Pane
       width="100%"
       height={150}
