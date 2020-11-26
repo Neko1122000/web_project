@@ -70,7 +70,7 @@ class Set extends React.Component {
     var length = this.state.data.length
     this.setState({
       slideIndex:
-        this.state.slideIndex - 1 > 0 ? this.state.slideIndex : length,
+        --this.state.slideIndex > 0 ? this.state.slideIndex : length,
       status: true,
     })
   }
@@ -79,7 +79,7 @@ class Set extends React.Component {
     var length = this.state.data.length
     this.setState({
       slideIndex:
-        this.state.slideIndex + 1 <= length ? this.state.slideIndex : 1,
+        ++this.state.slideIndex <= length ? this.state.slideIndex : 1,
       status: true,
     })
   }
