@@ -3,7 +3,18 @@ import { Route, Switch, Redirect } from 'react-router-dom'
 import { Pane } from 'evergreen-ui'
 import { connect } from 'react-redux'
 
-import { Landing, Sets, Folders, Classes, CreateSet, Set, Folder } from '../pages'
+import {
+  Landing,
+  Sets,
+  Folders,
+  Classes,
+  CreateSet,
+  Set,
+  Folder,
+  Test,
+  Learn,
+  CreateFolder,
+} from '../pages'
 import SideBar from '../SideBar'
 
 const routes = [
@@ -50,6 +61,9 @@ const Routes = (props) => {
         <SideBar selectedTab={selectedTab} />
       </Route>
       <Route path="/create-set" component={CreateSet} />
+      <Route path="/create-folder" component={CreateFolder} />
+      <Route path="/learn" component={Learn} />
+      <Route path="/test" component={Test} />
       <Route path="/folders/:id" component={Folder} />
       <Route path="/set/:id" component={Set} />
       <Switch>

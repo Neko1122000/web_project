@@ -4,9 +4,6 @@ import { connect } from 'react-redux'
 import { fetchSet, fetchSetsUser } from '../../actions/sets'
 
 const Test = (props) => {
-  console.log('p:')
-  props.fetchSet('5fb4f8cd0da1be32a047f48e')
-  console.log(props)
   return <Heading size={600}>Test</Heading>
 }
 

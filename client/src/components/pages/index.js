@@ -6,5 +6,18 @@ import Folder from './Folder'
 import Classes from './Classes'
 import CreateSet from './CreateSet'
 import Set from './Set'
+import Learn from './Learn'
+import CreateFolder from './CreateFolder'
 
-export { Landing, Test, Sets, Folders, Classes, CreateSet, Set, Folder }
+export {
+  Landing,
+  Test,
+  Sets,
+  Folders,
+  Classes,
+  CreateSet,
+  Set,
+  Folder,
+  Learn,
+  CreateFolder,
+}
