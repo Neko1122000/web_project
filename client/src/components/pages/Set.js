@@ -92,7 +92,7 @@ class Set extends React.Component {
         icon: CreditCardIcon,
       },
       {
-        path: '/latest',
+        path: '/learn',
         tabname: 'Học',
         icon: AutomaticUpdatesIcon,
       },

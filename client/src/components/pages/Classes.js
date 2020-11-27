@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   Pane,
-  Menu,
   Text
 } from 'evergreen-ui'
 import UserHeader from '../UserHeader'
