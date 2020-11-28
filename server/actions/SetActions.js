@@ -1,6 +1,7 @@
 const {getModel} = require('../connection/mongodb')
 const FlashCardAction = require('./FlashCardAction')
 const joi = require('joi')
+const Promise = require('bluebird')
 
 const _validate = async (args, creator = '') => {
     const validate_schema = joi.object({
@@ -141,5 +142,11 @@ exports.create = async(args, creator) => {
 
 exports.search = async (userId) => {
     const Sets = getModel('Set')
-    return Sets.find({creator: userId, is_active: true}).select('_id img description name created_at updated_at').lean()
+    const sets = await  Sets.find({creator: userId, is_active: true}).select('_id img description name created_at updated_at').lean()
+
+    const FlashCard = getModel('FlashCard')
+    return Promise.map(sets, async (set) => {
+        const number_flash_card = await FlashCard.countDocuments({set: set._id, is_active: true})
+        return Object.assign({}, set, {number_flash_card})
+    }, {concurrency: 5})
 }
