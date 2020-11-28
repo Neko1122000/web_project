@@ -2,14 +2,26 @@ import React from 'react'
 import UserHeader from '../UserHeader'
 
 import { Link } from 'react-router-dom'
-import { SearchInput, SelectMenu, Pane, Button, Heading, Text } from 'evergreen-ui'
+import {
+  SearchInput,
+  SelectMenu,
+  Pane,
+  Button,
+  Heading,
+  Text,
+} from 'evergreen-ui'
+import { connect } from 'react-redux'
+import { fetchSetsUser } from '../../actions'
 
 class Sets extends React.Component {
+  componentDidMount() {
+    this.props.fetchSetsUser()
+  }
   state = {
     listGroups: [],
     sort: 'Lastest',
     search: '',
-    currentMonth:'',
+    currentMonth: '',
     success: true,
     data: [
       {
@@ -39,58 +51,53 @@ class Sets extends React.Component {
     ],
   }
 
-  formatDate (date){
-    var options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-    return new Date(date).toLocaleDateString([],options);
+  formatDate(date) {
+    var options = { year: 'numeric', month: 'numeric', day: 'numeric' }
+    return new Date(date).toLocaleDateString([], options)
   }
-  formatDateByMonth(date){
-    var options = { month: 'numeric' };
-    return new Date(date).toLocaleDateString([],options);
+  formatDateByMonth(date) {
+    var options = { month: 'numeric' }
+    return new Date(date).toLocaleDateString([], options)
   }
 
-  sortAlphabetical = () =>{
+  sortAlphabetical = () => {
     this.setState({
-      data:[
-        ...this.state.data.sort((a, b) => a.name
-          .localeCompare(b.name)
-        )
-      ]
+      data: [...this.state.data.sort((a, b) => a.name.localeCompare(b.name))],
     })
   }
   sortLastest = () => {
     this.setState({
-      data:[
+      data: [
         ...this.state.data.sort((a, b) =>
-        this.formatDate(b.created_at).split('/').reverse().join()
-        .localeCompare(
-          this.formatDate(a.created_at).split('/').reverse().join()
-          )
-        )
-      ]
+          this.formatDate(b.created_at)
+            .split('/')
+            .reverse()
+            .join()
+            .localeCompare(
+              this.formatDate(a.created_at).split('/').reverse().join()
+            )
+        ),
+      ],
     })
   }
 
-  sort = (sortType) =>{
-    this.state.sort !== "Lastest" ? this.sortLastest():this.sortAlphabetical()
+  sort = (sortType) => {
+    this.state.sort !== 'Lastest' ? this.sortLastest() : this.sortAlphabetical()
     this.setState({
-      sort:sortType
+      sort: sortType,
     })
   }
 
   render() {
+    console.log(this.props.data)
     return (
       <Pane background="tint2">
         <UserHeader path="/latest" />
-        <Pane paddingLeft="7%" marginTop={30} width={800}>
-
+        <Pane paddingLeft="7%" marginTop={30} marginBottom={30} width={800}>
           {/* Sort and filter bar */}
           <Pane display="flex" justifyContent="space-between">
             <Pane>
-              <Heading
-                paddingRight={20}
-              >
-                Sort{' '}
-              </Heading>
+              <Heading paddingRight={20}>Sort </Heading>
               <SelectMenu
                 hasTitle={false}
                 hasFilter={false}
@@ -118,12 +125,13 @@ class Sets extends React.Component {
 
           {/*Main content*/}
           <Pane>
-            {this.state.data.map((item, index) => (
-              <Pane key={item._id} name={item.name}>
-              
-                { item.name.includes(this.state.search) ?
-                  <Pane>
-                    { /* Date create bar 
+            {!this.props.data
+              ? 'loading'
+              : this.props.data.map((item, index) => (
+                  <Pane key={item._id} name={item.name}>
+                    {item.name.includes(this.state.search) ? (
+                      <Pane>
+                        {/* Date create bar 
                       this.state.sort === "Lastest"?
                         <Pane marginBottom={30}  marginTop={40}>
                           <Text 
@@ -140,32 +148,45 @@ class Sets extends React.Component {
                           >
                             <hr/>
                           </Pane>
-                        </Pane>:<Pane></Pane>*/
-                    }
+                        </Pane>:<Pane></Pane>*/}
 
-                    <Pane height={80} elevation={1} marginTop={20}>
-                      <Link to={`/set/${item._id}`}>
-                        <Pane
-                          height={75}
-                          width="100%"
-                          background="white"
-                          paddingTop={20}
-                          paddingLeft={40}
-                        >
-                          <Heading fontWeight={600} fontSize={20}>
-                            {item.name}
-                          </Heading>
+                        <Pane height={80} elevation={1} marginTop={20}>
+                          <Link to={`/set/${item._id}`}>
+                            <Pane
+                              height={75}
+                              width="100%"
+                              background="white"
+                              paddingTop={20}
+                              paddingLeft={40}
+                            >
+                              <Heading
+                                fontWeight={600}
+                                fontSize={20}
+                                marginBottom={6}
+                              >
+                                {item.name}
+                              </Heading>
+                              <Text>
+                                {item.number_flash_card + ' thuật ngữ'}
+                              </Text>
+                            </Pane>
+                          </Link>
                         </Pane>
-                      </Link>
-                    </Pane>
-                  </Pane> : <Pane></Pane>
-                }
-              </Pane>
-            ))}
+                      </Pane>
+                    ) : (
+                      <Pane></Pane>
+                    )}
+                  </Pane>
+                ))}
           </Pane>
         </Pane>
       </Pane>
     )
   }
 }
-export default Sets
+
+const mapStateToProps = ({ info }) => {
+  return { data: { ...info }.data }
+}
+
+export default connect(mapStateToProps, { fetchSetsUser })(Sets)

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Heading } from 'evergreen-ui'
 import { connect } from 'react-redux'
-import { fetchSet, fetchSetsUser } from '../../actions/sets'
+import { fetchSet, fetchSetsUser } from '../../actions'
 
 const Test = (props) => {
   console.log('p:')
