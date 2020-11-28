@@ -146,7 +146,7 @@ exports.search = async (userId) => {
 
     const FlashCard = getModel('FlashCard')
     return Promise.map(sets, async (set) => {
-        const number_flash_card = await FlashCard.count({set: set._id, is_active: true})
+        const number_flash_card = await FlashCard.countDocuments({set: set._id, is_active: true})
         return Object.assign({}, set, {number_flash_card})
     }, {concurrency: 5})
 }
