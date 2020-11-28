@@ -4,6 +4,7 @@ import Sets from './Sets'
 import Folders from './Folders'
 import Folder from './Folder'
 import Classes from './Classes'
+import Class from './Class'
 import CreateSet from './CreateSet'
 import Set from './Set'
 import Learn from './Learn'
@@ -16,6 +17,7 @@ export {
   Sets,
   Folders,
   Classes,
+  Class,
   CreateSet,
   Set,
   Folder,

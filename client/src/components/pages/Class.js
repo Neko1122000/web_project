@@ -8,25 +8,34 @@ import {
     SelectMenu, 
     Button, 
     TextInput,
-    toaster
+    toaster,
+    Heading, 
+    SearchInput
 } from 'evergreen-ui'
 import { 
     AddIcon, 
     TrashIcon, 
     EditIcon, 
-    FolderOpenIcon, 
+    FolderOpenIcon,
+    FolderCloseIcon, 
     LearningIcon 
 } from 'evergreen-ui'
 import {Link} from "react-router-dom";
 
-class Folder extends React.Component {
+const heightItem = 75
+const widthItem = 800
+
+class Class extends React.Component {
     state = {
         isShown: '',
-        srcSet: 'yourSets',
-        path: "/sets",
-        id:5,
-        name: "Folder",
-        description: "folder description",
+        sort:'Lastest',
+        search:'',
+        name: '11A1',
+        description:"Lop 11A1",
+        numberOfSet:2,
+        numberOfMember:19,
+        address: 'THPT Ky Anh',
+        allow_member_change:true,
         listSets: [
             {
                 id: 1,
@@ -126,43 +135,40 @@ class Folder extends React.Component {
         ]
     }
 
-    /* show diablog */
-    isShowed = () => {
-        return this.state.isShown === '' ? false : true;
+    formatDate(date) {
+        var options = { year: 'numeric', month: 'numeric', day: 'numeric' }
+        return new Date(date).toLocaleDateString([], options)
+    }
+    formatDateByMonth(date) {
+        var options = { month: 'numeric' }
+        return new Date(date).toLocaleDateString([], options)
     }
 
-    /* close diablog */
-    showReset = () => {
-        this.setState({isShown: ''})
-    }
-
-    redirect(){
-        window.location.href="/folders"
-    }
-    /* remove folder */
-    removeFolder = () => {
-        console.log(this.state.id)
-        toaster.success(
-            'Delete successful'
-        )
-        window.setTimeout(() => {
-            this.redirect()
-        }, 500)
-    }
-
-    /* change this folder's name */
-    setName = () => {
-        var name = this.refs.name.value;
-        this.setState({name: name})
-        this.showReset()
-    }
-
-    /* remover set in this folder*/
-    removeSet = (id) => {
+    sortAlphabetical = () => {
         this.setState({
-            data:[
-                ...this.state.data.filter((i)=>i.id!==id)
-            ]
+            data: [...this.state.data.sort((a, b) => a.name.localeCompare(b.name))],
+        })
+    }
+    sortLastest = () => {
+        this.setState({
+            data: [
+                ...this.state.data.sort((a, b) =>
+                    this.formatDate(b.created_at)
+                        .split('/')
+                        .reverse()
+                        .join()
+                        .localeCompare(
+                            this.formatDate(a.created_at).split('/').reverse().join()
+                        )
+                ),
+            ],
+        })
+    }
+
+    sort = (sortType) => {
+        this.state.sort !== 'Lastest' ? this.sortLastest() : this.sortAlphabetical()
+        this.setState({
+            sort: sortType,
         })
     }
 
@@ -288,7 +294,7 @@ class Folder extends React.Component {
 
         return (
             <Pane background="tint2" width="100%">
-
+ 
                 {/* Header */}
                 <Pane
                     borderBottom
@@ -375,57 +381,120 @@ class Folder extends React.Component {
                     {diablog}
 
                 </Pane>
-
-                {/* List sets */}
-                <Pane>
-                    <Pane marginLeft={100}/>
-                    {this.state.data.map((set) => (
-                        <Pane
-                            key={set.id}
-                            width="400px"
-                            marginLeft={100}
-                            height={150}
-                            elevation={2}
-                            display="inline-block"
-                            marginTop={10}
-                            paddingTop={30}
-                            paddingLeft={30}
-                        >
-                            <Link to={`/set/${set.id}`}>
-                                <Pane>
-                                    <Text fontSize={20} display={"block"} marginBottom={10} fontWeight={550}>
-                                        {set.name}
-                                    </Text>
-                                    <Text
-                                        fontSize={16}
-                                        color={"gray"}
-                                        display={"block"}
-                                        marginBottom={30}
-                                    >
-                                        {set.number_flash_card + " terms"}
-                                    </Text>
-                                </Pane>
-                            </Link>
-
-                            {/* Owner and remove */}
-                            <Pane display={"flex"} justifyContent={"space-between"} paddingRight={20}>
-                                <Text fontSize={20}>
-                                    <Link
-                                        to={this.state.path}
-                                        style={{color: '#14B5D0'}}
-                                    >
-                                        {this.props.user.username}
-                                    </Link>
-                                </Text>
-                                <Pane onClick={()=>{this.removeSet(set.id)}}>
-                                    <Tooltip content={"Remove"}>
-                                        <TrashIcon color={"red"} />
-                                    </Tooltip>
-                                </Pane>
+                
+                {/* Container */}
+                <Pane  display="flex">
+                    <Pane paddingLeft={"7%"} flex="100%">
+                        {/* Sort and filter bar */}
+                        <Pane display="flex" justifyContent="space-between">
+                            <Pane>
+                                <Heading paddingRight={20}>Sort </Heading>
+                                <SelectMenu
+                                    hasTitle={false}
+                                    hasFilter={false}
+                                    closeOnSelect={true}
+                                    height={70}
+                                    options={['Alphabetical', 'Lastest'].map((label) => ({
+                                        label,
+                                        value: label,
+                                    }))}
+                                    selected={this.state.sort}
+                                    onSelect={(item) => this.sort(item.value)}
+                                >
+                                    <Button lineHeight="40px" height={40}>
+                                        {this.state.sort}
+                                    </Button>
+                                </SelectMenu>
                             </Pane>
+                            <SearchInput
+                                placeholder="Filter traits..."
+                                onChange={(e) => {
+                                    this.setState({ search: e.target.value })
+                                }}
+                            />
                         </Pane>
-                    ))}
+                        {/* List sets */}
+                        <Pane>
+                            {this.state.data.map((set) => (
+                            <Pane>
+                            {set.name.includes(this.state.search) ? (
+                                <Link to={`/set/${set.id}`}>
+                                    <Pane 
+                                        key={set.id} 
+                                        height={heightItem} 
+                                        marginTop ={12} 
+                                    >
+                                        <Pane
+                                            backgroundColor="white"
+                                            height={heightItem}
+                                            width="100%"
+                                            elevation={1}
+                                            //onMouseEnter={(e) => {this.focus(e)}}
+                                            //onMouseLeave={(e) => {this.blur(e)}}
+                                            display="flex"
+                                            justifyContent={"space-between"}
+                                        >
+
+                                            <Pane>
+                                                <FolderCloseIcon
+                                                    size={25}
+                                                    color="#E4E7EB"
+                                                    bottom={5}
+                                                    lineHeight="100px"
+                                                    marginRight={10}
+                                                    marginLeft={30}
+                                                />
+                                                <Text fontSize={20} lineHeight="80px" fontWeight={550}>
+                                                    {set.name}
+                                                </Text>
+                                            </Pane>
+
+                                            <Pane
+                                                display="flex"
+                                                justifyContent={"space-around"}
+                                                width="12%"
+                                                paddingTop={25}
+                                                paddingRight={20}
+                                            >
+                                                <Pane>
+                                                    <Tooltip content="Edit this folder" >
+                                                        <EditIcon
+                                                            color="#1070CA"
+                                                            size={20}
+                                                        />
+                                                    </Tooltip>
+                                                </Pane>
+
+                                                <Pane>
+                                                    <Tooltip content="Remove this folder">
+                                                        <TrashIcon
+                                                            color="#EC4C47"
+                                                            size={20}
+                                                        />
+                                                    </Tooltip>
+                                                </Pane>
+
+                                            </Pane>
+                                        </Pane>
+                                        <Pane id="line" width="100%" backgroundColor="#1070CA"></Pane>
+                                    
+                                    </Pane> 
+                                </Link>
+                            ):<Pane></Pane>}
+                            </Pane>
+                        ))}
+                    </Pane>
+                    </Pane>
+                    <Pane flex={"400px"} paddingLeft={30} paddingTop={30} >
+                        <Heading>Class detail</Heading>
+                        <Pane display="flex" flexDirection="column">
+                            <Text>{this.state.address}</Text>
+                            <Text>{this.state.numberOfSet + " sets"}</Text>
+                            <Text>{this.state.numberOfSet + " members"}</Text>
+                        </Pane>
+                    </Pane>
                 </Pane>
+    
             </Pane>
         )
     }
@@ -433,4 +502,4 @@ class Folder extends React.Component {
 const mapStateToProps = ({ auth }) => {
     return { user: { ...{ ...auth }.data } }
   }
-export default connect(mapStateToProps)(Folder)
+export default connect(mapStateToProps)(Class)
