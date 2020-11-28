@@ -27,7 +27,6 @@ import { fetchSet } from '../../actions'
 class Set extends React.Component {
   componentDidMount() {
     this.props.fetchSet(this.props.location.pathname.substring(5))
-    console.log(this.props.location.pathname.substring(5))
   }
   state = {
     slideIndex: 1,
@@ -51,7 +50,6 @@ class Set extends React.Component {
     })
   }
   render() {
-    console.log(this.props.sets ? this.props.sets.flash_cards : 'loading')
     var flash_cards = this.props.sets ? this.props.sets.flash_cards : null
     var tabs1 = [
       {

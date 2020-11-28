@@ -4,7 +4,7 @@ export default (state = null, action) => {
   console.log(action)
   switch (action.type) {
     case FETCH_SETS_USER:
-      return action.payload || false
+      return action.payload
     default:
       return state
   }

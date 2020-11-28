@@ -22,7 +22,7 @@ const refreshToken = async (callback) => {
     params: { refresh_token: getToken().refreshToken },
   })
   document.cookie = 'access_token=' + res.data.data.token
-  document.cookie = 'refresh_token=' + res.data.data.refresh_tokens
+  document.cookie = 'refresh_token=' + res.data.data.refresh_token
   callback()
   window.location.reload()
 }

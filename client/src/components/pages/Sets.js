@@ -14,8 +14,12 @@ import { connect } from 'react-redux'
 import { fetchSetsUser } from '../../actions'
 
 class Sets extends React.Component {
-  componentDidMount() {
-    this.props.fetchSetsUser()
+  async componentDidMount() {
+    await this.props.fetchSetsUser()
+    if (this.props.data)
+      this.setState({
+        data: this.props.data,
+      })
   }
   state = {
     listGroups: [],
@@ -23,32 +27,7 @@ class Sets extends React.Component {
     search: '',
     currentMonth: '',
     success: true,
-    data: [
-      {
-        _id: '43',
-        created_at: '2020-11-15T10:58:18.135Z',
-        name: 'z 2020-11-15',
-        description: '123',
-        updated_at: '2020-11-19T05:10:28.692Z',
-        number_flash_card: 3,
-      },
-      {
-        _id: '5fb4fe4a918c235d022c4bb7394',
-        created_at: '2020-11-18T10:58:18.135Z',
-        name: 'b 2020 11 18',
-        description: '123',
-        updated_at: '2020-11-19T05:10:28.692Z',
-        number_flash_card: 3,
-      },
-      {
-        _id: '124',
-        created_at: '2020-11-14T10:58:18.135Z',
-        name: 'c 2020 11 14',
-        description: '123',
-        updated_at: '2020-11-19T05:10:28.692Z',
-        number_flash_card: 3,
-      },
-    ],
+    data: [],
   }
 
   formatDate(date) {
@@ -89,11 +68,10 @@ class Sets extends React.Component {
   }
 
   render() {
-    console.log(this.props.data)
     return (
       <Pane background="tint2">
         <UserHeader path="/latest" />
-        <Pane paddingLeft="7%" marginTop={30} marginBottom={30} width={800}>
+        <Pane paddingLeft="7%" marginTop={30} paddingBottom={30} width={800}>
           {/* Sort and filter bar */}
           <Pane display="flex" justifyContent="space-between">
             <Pane>
@@ -125,9 +103,9 @@ class Sets extends React.Component {
 
           {/*Main content*/}
           <Pane>
-            {!this.props.data
+            {!this.state.data
               ? 'loading'
-              : this.props.data.map((item, index) => (
+              : this.state.data.map((item, index) => (
                   <Pane key={item._id} name={item.name}>
                     {item.name.includes(this.state.search) ? (
                       <Pane>

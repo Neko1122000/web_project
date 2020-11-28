@@ -5,7 +5,7 @@ import * as action from '../../actions'
 
 class Test extends React.Component {
   test = () => {
-    this.props.fetchSet('5fc1b600d6d6ea1ae0692a3e')
+    this.props.fetchSetsUser()
   }
   render() {
     return <Button onClick={this.test}>Test</Button>
