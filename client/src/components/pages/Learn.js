@@ -6,7 +6,7 @@ import {
 } from 'evergreen-ui'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { fetchSet, fetchSetsUser } from '../../actions/sets'
+import { fetchSet, fetchSetsUser } from '../../actions'
 
 class Learn extends React.Component {
   constructor(props) {
