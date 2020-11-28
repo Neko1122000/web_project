@@ -65,11 +65,7 @@ class Classes extends React.Component {
           <Pane 
             height={75} 
             width="100%"
-<<<<<<< HEAD
-            background="white"
-=======
             background="#47B881"
->>>>>>> 3951869a12cce5e9b536ed8f0434b1327db1924e
             textAlign="center"
             marginBottom={20}
           >
