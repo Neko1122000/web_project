@@ -58,7 +58,7 @@ class Set extends React.Component {
         icon: CreditCardIcon,
       },
       {
-        path: '/learn',
+        path: `/learn/${this.props.location.pathname.substring(5)}`,
         tabname: 'Học',
         icon: AutomaticUpdatesIcon,
       },
@@ -73,7 +73,7 @@ class Set extends React.Component {
         icon: VolumeUpIcon,
       },
       {
-        path: '/latest',
+        path: `/exam/${this.props.location.pathname.substring(5)}`,
         tabname: 'Kiểm tra',
         icon: ApplicationIcon,
       },

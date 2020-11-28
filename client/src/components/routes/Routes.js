@@ -13,6 +13,7 @@ import {
   Folder,
   Test,
   Learn,
+  Exam,
   CreateFolder,
 } from '../pages'
 import SideBar from '../SideBar'
@@ -62,7 +63,8 @@ const Routes = (props) => {
       </Route>
       <Route path="/create-set" component={CreateSet} />
       <Route path="/create-folder" component={CreateFolder} />
-      <Route path="/learn" component={Learn} />
+      <Route path="/learn/:id" component={Learn} />
+      <Route path="/exam/:id" component={Exam} />
       <Route path="/test" component={Test} />
       <Route path="/folders/:id" component={Folder} />
       <Route path="/set/:id" component={Set} />
