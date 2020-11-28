@@ -1,17 +1,17 @@
 const Promise = require('bluebird')
 const {getModel} = require('../connection/mongodb')
 
-exports.create = async (flashCards, setId) =>{
+const create = async (flashCards, setId) =>{
     const FlashCard = getModel('FlashCard')
     return Promise.map(flashCards, async(flashCard) => {
         return FlashCard.create({...flashCard, set: setId})
     }, {concurrency: 10})
 }
+exports.create = create
 
-exports.update  = async (flashCards) => {
+exports.update  = async (setId, flashCards) => {
     const FlashCard = getModel('FlashCard')
-    return Promise.map(flashCards, async(flashCard) => {
-        const {_id, ...info} = flashCard
-        return FlashCard.updateOne({_id}, {$set: info})
-    }, {concurrency: 10})
+    await FlashCard.updateMany({set: setId}, {$set: {is_active: false}})
+
+    await create(flashCards, setId)
 }
