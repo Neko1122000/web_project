@@ -1,3 +1,4 @@
+
 import React from 'react'
 import {
     Pane,
@@ -6,36 +7,40 @@ import {
     TextInput,
     Tooltip,
     Dialog,
-    Select
+    Select,
+    SelectMenu,
 } from 'evergreen-ui'
 
 import { TrashIcon} from 'evergreen-ui'
 
 const visible = ['everyone', 'only_me', 'classes', 'password']
 const update = ['only_me', 'classes', 'password']
+const language =['vietnamese', 'english']
 
 class CreateSet extends React.Component{
     state = {
-        name:'',
-        description:'',
-        updated_by: update[0],
-        updated_password:'',
-        class_updated:'',
-        visible_by:visible[0],
-        visible_password:'',
-        class_visible:'',
-        flash_cards:[
-            {
-                title:'',
-                description:'',
-                language:''
-            },
-            {
-                title:'',
-                description:'',
-                language:''
-            },
-        ],
+        set:{
+            name:'',
+            description:'',
+            updated_by: update[0],
+            updated_password:'',
+            class_updated:'',
+            visible_by:visible[0],
+            visible_password:'',
+            class_visible:'',
+            flash_cards:[
+                {
+                    title:'',
+                    description:'',
+                    language:''
+                },
+                {
+                    title:'',
+                    description:'',
+                    language:''
+                },
+            ],
+        },
         isShow:false
     }
 
@@ -51,51 +56,75 @@ class CreateSet extends React.Component{
         currentLine.style.height="1px"
     }
     setTitle = (e, index) =>{
-        var flash_cards = this.state.flash_cards;
+        var flash_cards = this.state.set.flash_cards;
         let addTitle = {...flash_cards[index]}
         addTitle.title = e.target.value;
         flash_cards[index] = addTitle;
         this.setState({
-            flash_cards: flash_cards
+            set:{
+                ...this.state.set,
+                flash_cards:flash_cards
+            }
         })
     }
     setDescription = (e, index) =>{
-        var flash_cards = this.state.flash_cards;
+        var flash_cards = this.state.set.flash_cards;
         let addTitle = {...flash_cards[index]}
         addTitle.description = e.target.value;
         flash_cards[index] = addTitle;
         this.setState({
-            flash_cards: flash_cards
+            set:{
+                ...this.state.set,
+                flash_cards:flash_cards
+            }
         })
     }
-
+    submit = () => {
+        var check = document.querySelectorAll('input')
+        check.forEach((item, index)=>{
+            if(item.value === ''){
+                item.parentNode.querySelector('#require').style.display = "block"
+                item.parentNode.querySelector('#hint').style.display = "none"
+            }
+            else{
+                item.parentNode.querySelector('#require').style.display = "none"
+                item.parentNode.querySelector('#hint').style.display = "block"
+            }
+        })
+        console.log(this.state.set)
+    }
     addCard = () =>{
         var newCard = {
             title: '',
             description: '',
             language: ''
         }
-        this.setState({flash_cards: [
-                ...this.state.flash_cards,
-                newCard
-            ]
+        this.setState({
+            set:{
+                ...this.state.set,
+                flash_cards: [
+                    ...this.state.set.flash_cards,
+                    newCard
+                ]
+            }
         })
     }
-
     removeCard(index){
-        var arr = this.state.flash_cards
-        arr = arr.filter((_, i) => i != index)
-        this.setState({flash_cards:arr})
-        //this.setState((prevState) => ({
-         //   flash_cards: prevState.flash_cards.filter((_, i) => i != index)
-        //}))
+        this.setState({
+            set:{
+                ...this.state.set,
+                flash_cards:[
+                    ...this.state.set.flash_cards.filter((_,i) => i !== index)
+                ]
+            }})
     }
+
     render(){
 
         var visible_title = '';
         var editable_title = '';
 
-        switch (this.state.visible_by) {
+        switch (this.state.set.visible_by) {
             case visible[0]:
                 visible_title="Visible to "+visible[0];
                 break;
@@ -110,7 +139,7 @@ class CreateSet extends React.Component{
                 break;
             default:break
         }
-        switch (this.state.updated_by) {
+        switch (this.state.set.updated_by) {
             case update[0]:
                 editable_title="Only editable by me";
                 break;
@@ -138,7 +167,7 @@ class CreateSet extends React.Component{
                         fontSize={16}
                         float="right"
                         backgroundColor="#3ccfcf"
-                        onClick={()=>{console.log(this.state)}}
+                        onClick={this.submit}
                     >
                         Create
                     </Button>
@@ -150,6 +179,7 @@ class CreateSet extends React.Component{
                     {/* Name */}
                     <Pane width="50%" marginTop={20} marginBottom={20}>
                         <TextInput
+                            required={true}
                             display="block"
                             height={50}
                             width="100%"
@@ -157,7 +187,12 @@ class CreateSet extends React.Component{
                             label="PLEASE ENTER A TITLE TO CREATE YOUR SET"
                             onFocus={(e) => {this.focus(e)}}
                             onBlur={(e) => {this.blur(e)}}
-                            onChange={(e)=>{this.setState({name:e.target.value})}}
+                            onChange={(e)=>{this.setState({
+                                set:{
+                                    ...this.state.set,
+                                    name:e.target.value
+                                }
+                            })}}
                         ></TextInput>
                         <Pane
                             width="100%"
@@ -166,14 +201,27 @@ class CreateSet extends React.Component{
                             height={1}
                             backgroundColor="black"
                         ></Pane>
-                        <Text
-                            fontSize={16}
-                            marginLeft={10}
-                            fontWeight={500}
-                            color="#A6B1BB"
-                        >
-                            TITLE
-                        </Text>
+
+                        <Pane paddingLeft={10}>
+                            <Text
+                                fontWeight={550}
+                                fontSize={18}
+                                marginBottom={10}
+                                id={"require"}
+                                color={"red"}
+                                display={"none"}
+                            > THIS IS REQUIRED</Text>
+                            <Text
+                                id={"hint"}
+                                fontSize={16}
+                                fontWeight={500}
+                                color="#A6B1BB"
+                                display={"block"}
+                            >
+                                TITLE
+                            </Text>
+                        </Pane>
+
                     </Pane>
 
                     {/* Description */}
@@ -184,7 +232,12 @@ class CreateSet extends React.Component{
                             placeholder="Add a description"
                             onFocus={(e) => {this.focus(e)}}
                             onBlur={(e) => {this.blur(e)}}
-                            onChange={(e)=>{this.setState({description:e.target.value})}}
+                            onChange={(e)=>{this.setState({
+                                set:{
+                                    ...this.state.set,
+                                    description:e.target.value
+                                }
+                            })}}
                         ></TextInput>
                         <Pane
                             width="100%"
@@ -193,14 +246,25 @@ class CreateSet extends React.Component{
                             height={1}
                             backgroundColor="black"
                         ></Pane>
-                        <Text
-                            fontSize={16}
-                            marginLeft={10}
-                            fontWeight={500}
-                            color="#A6B1BB"
-                        >
-                            DESCRIPTION
-                        </Text>
+                        <Pane paddingLeft={10}>
+                            <Text
+                                fontWeight={550}
+                                fontSize={18}
+                                marginBottom={10}
+                                id={"require"}
+                                color={"red"}
+                                display={"none"}
+                            > THIS IS REQUIRED</Text>
+                            <Text
+                                id={"hint"}
+                                fontSize={16}
+                                fontWeight={500}
+                                color="#A6B1BB"
+                                display={"block"}
+                            >
+                                DESCRIPTION
+                            </Text>
+                        </Pane>
                     </Pane>
 
                     {/* Change privacy */}
@@ -226,7 +290,7 @@ class CreateSet extends React.Component{
                                 </Text>
                             </Pane>
 
-                            { this.state.visible_by != visible[1]?(
+                            { this.state.set.visible_by !== visible[1]?(
                                 <Pane
                                     display={"inline-block"}
                                     marginLeft={"2rem"}
@@ -246,7 +310,7 @@ class CreateSet extends React.Component{
                                         Change
                                     </Text>
                                 </Pane>
-                                ):<Pane></Pane>
+                            ):<Pane></Pane>
                             }
                         </Pane>
                     </Pane>
@@ -255,54 +319,168 @@ class CreateSet extends React.Component{
 
                 <Dialog
                     isShown={this.state.isShow}
+                    header={"Options"}
                     cancelLabel={"SAVE"}
                     onCloseComplete={()=>{this.setState({isShow:false})}}
                 >
-                    
+
                     <Pane display={"flex"} justifyContent={"space-around"}>
-                        
+
                         {/* Visible side */}
                         <Pane
                             width={"45%"}
                         >
-                            <Text display={"block"} fontSize={16} paddingBottom={10}>
-                                Visible to
-                            </Text>
-                            <Select
-                                value={this.state.visible_by}
-                                width="80%"
-                                onChange={e => this.setState({ visible_by: e.target.value })}
+                            <Text
+                                display={"block"}
+                                fontSize={16}
+                                paddingBottom={10}
+                                fontWeight={500}
                             >
-                                {visible.map((item, index) =>(
-                                    <option key={index} value={item} selected>{item}</option>
-                                ))}
-                            </Select>
+                                VISIBLE TO
+                            </Text>
+                            <SelectMenu
+                                width="240px"
+                                hasFilter={false}
+                                hasTitle={false}
+                                options={
+                                    visible.map( label =>({label, value:label}))
+                                }
+                                selected={this.state.set.visible_by}
+                                onSelect={
+                                    item =>{this.setState({
+                                        set:{
+                                            ...this.state.set,
+                                            visible_by: item.value
+                                        }
+                                    })}
+                                }
+                            >
+                                <Pane
+                                    borderRadius={5}
+                                    height={35}
+                                    lineHeight="35px"
+                                    paddingLeft={20}
+                                    fontSize={20}
+                                    elevation={1}
+                                    backgroundColor={"#579AD9"}
+                                    color={"white"}
+                                >
+                                    {this.state.set.visible_by}
+                                </Pane>
+                            </SelectMenu>
+
+                            <Text paddingLeft={7} lineHeight="35px" marginBottom={20} color={"#A6B1BB"}>
+                                Who can see your set
+                            </Text>
+
+                            {this.state.set.visible_by === visible[3]?(
+                                <Pane>
+                                    <TextInput
+                                        required={true}
+                                        display="block"
+                                        marginTop={10}
+                                        height={40}
+                                        width="100%"
+                                        placeholder="Enter a password"
+                                        onChange={(e)=>{this.setState({
+                                            set:{
+                                                ...this.state.set,
+                                                visible_password:e.target.value
+                                            }
+                                        })}}
+                                    ></TextInput>
+                                    <Text>
+                                        PASSWORD
+                                    </Text>
+                                </Pane>
+                            ):<Pane></Pane>}
                         </Pane>
+
 
                         {/* Editable side */}
-                        <Pane
-                            width={"45%"}
-                        >
-
-                            <Text display={"block"} fontSize={16} paddingBottom={10}>
-                                Editable
-                            </Text>
-                            <Select
-                                value={this.state.updated_by}
-                                width="80%"
-                                onChange={e => this.setState({ update_by: e.target.value })}
+                        { this.state.set.visible_by !== visible[1]?(
+                            <Pane
+                                width={"45%"}
                             >
-                                {update.map((item, index) =>(
-                                    <option key={index} value={item} selected>{item}</option>
-                                ))}
-                            </Select>
-                        </Pane>
+                                <Text
+                                    display={"block"}
+                                    fontSize={16}
+                                    paddingBottom={10}
+                                    fontWeight={500}
+                                >
+                                    EDITABLE
+                                </Text>
+
+                                <SelectMenu
+                                    width="240px"
+                                    hasFilter={false}
+                                    hasTitle={false}
+                                    options={
+                                        update.map( label =>({label, value:label}))
+                                    }
+                                    selected={this.state.set.updated_by}
+                                    onSelect={
+                                        item =>{this.setState({
+                                            set:{
+                                                ...this.state.set,
+                                                updated_by: item.value
+                                            }
+                                        })}
+                                    }
+                                >
+                                    <Pane
+                                        borderRadius={5}
+                                        height={35}
+                                        lineHeight="35px"
+                                        paddingLeft={20}
+                                        fontSize={20}
+                                        elevation={1}
+                                        backgroundColor={"#579AD9"}
+                                        color={"white"}
+                                    >
+                                        {this.state.set.updated_by}
+                                    </Pane>
+                                </SelectMenu>
+
+                                <Text
+                                    paddingLeft={7}
+                                    lineHeight="35px"
+                                    marginBottom={20}
+                                    color={"#A6B1BB"}
+                                >
+                                    Who can edit your set
+                                </Text>
+
+                                {this.state.set.updated_by === update[2]?(
+                                    <Pane>
+                                        <TextInput
+                                            required={true}
+                                            display="block"
+                                            marginTop={10}
+                                            height={40}
+                                            width="100%"
+                                            placeholder="Enter a password"
+                                            onChange={(e)=>{this.setState({
+                                                set:{
+                                                    ...this.state.set,
+                                                    updated_password:e.target.value
+                                                }
+                                            })}}
+                                        ></TextInput>
+                                        <Text>
+                                            PASSWORD
+                                        </Text>
+                                    </Pane>
+                                ):<Pane></Pane>}
+                            </Pane>
+                        ) : <Pane  width={"45%"}></Pane> }
+
                     </Pane>
                 </Dialog>
 
 
                 {/* Input field */}
-                {this.state.flash_cards.map((item, index)=>(
+                {this.state.set.flash_cards.map((item, index)=>(
 
                     <Pane key={index}>
                         {/* Action bar */}
@@ -332,7 +510,7 @@ class CreateSet extends React.Component{
                                 top={12}
                                 height={50}
                             >
-                                { this.state.flash_cards.length>2?(
+                                { this.state.set.flash_cards.length>2?(
 
                                     <Tooltip content={"Remove this card"}>
                                         <TrashIcon size={20} color="red" onClick={() => {this.removeCard(index)}}/>
@@ -369,6 +547,7 @@ class CreateSet extends React.Component{
                                     onChange={(e)=>{this.setTitle(e, index)}}
                                 >
                                 </TextInput>
+
                                 <Pane
                                     width="100%"
                                     marginTop={10}
@@ -376,14 +555,29 @@ class CreateSet extends React.Component{
                                     height={1}
                                     backgroundColor="black"
                                 ></Pane>
-                                <Text
-                                    fontSize={16}
-                                    marginLeft={10}
-                                    fontWeight={500}
-                                    color="#A6B1BB"
-                                >
-                                    TERM
-                                </Text>
+
+
+                                <Pane paddingLeft={10}>
+                                    <Text
+                                        fontWeight={550}
+                                        fontSize={18}
+                                        marginBottom={10}
+                                        id={"require"}
+                                        color={"red"}
+                                        display={"none"}
+                                    > THIS IS REQUIRED</Text>
+                                    <Text
+                                        id={"hint"}
+                                        fontSize={16}
+                                        fontWeight={500}
+                                        color="#A6B1BB"
+                                        display={"block"}
+                                    >
+                                        TERM
+                                    </Text>
+                                </Pane>
+
+
 
                             </Pane>
 
@@ -398,6 +592,7 @@ class CreateSet extends React.Component{
                                     onChange={(e)=>{this.setDescription(e, index)}}
                                 >
                                 </TextInput>
+
                                 <Pane
                                     width="100%"
                                     marginTop={10}
@@ -405,14 +600,27 @@ class CreateSet extends React.Component{
                                     height={1}
                                     backgroundColor="black"
                                 ></Pane>
-                                <Text
-                                    fontSize={16}
-                                    marginLeft={10}
-                                    fontWeight={500}
-                                    color="#A6B1BB"
-                                >
-                                    DEFINITION
-                                </Text>
+
+                                <Pane paddingLeft={10}>
+                                    <Text
+                                        fontWeight={550}
+                                        fontSize={18}
+                                        marginBottom={10}
+                                        id={"require"}
+                                        color={"red"}
+                                        display={"none"}
+                                    > THIS IS REQUIRED</Text>
+                                    <Text
+                                        id={"hint"}
+                                        fontSize={16}
+                                        fontWeight={500}
+                                        color="#A6B1BB"
+                                        display={"block"}
+                                    >
+                                        DEFINITION
+                                    </Text>
+                                </Pane>
+
                             </Pane>
                         </Pane>
 
