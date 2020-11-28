@@ -15,6 +15,7 @@ import {
   Learn,
   Exam,
   CreateFolder,
+  Class,
 } from '../pages'
 import SideBar from '../SideBar'
 
@@ -67,6 +68,7 @@ const Routes = (props) => {
       <Route path="/exam/:id" component={Exam} />
       <Route path="/test" component={Test} />
       <Route path="/folders/:id" component={Folder} />
+      <Route path="/classes/:id" component={Class} />
       <Route path="/set/:id" component={Set} />
       <Switch>
         {routes.map(({ path, tab, page }, index) => (
