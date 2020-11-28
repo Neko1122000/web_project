@@ -23,68 +23,34 @@ import {
   ArrowRightIcon,
   ArrowLeftIcon,
 } from 'evergreen-ui'
+import { fetchSet } from '../../actions'
 class Set extends React.Component {
+  componentDidMount() {
+    this.props.fetchSet(this.props.location.pathname.substring(5))
+  }
   state = {
     slideIndex: 1,
     status: false,
-    data: [
-      {
-        _id: '1',
-        is_active: true,
-        created_at: '2020-11-18T10:58:18.956Z',
-        title: 1,
-        description: 'số 1',
-        language: 'VN',
-        __v: 0,
-      },
-      {
-        _id: '2',
-        is_active: true,
-        created_at: '2020-11-18T10:58:18.956Z',
-        title: 2,
-        description: 'số 2',
-        language: 'VN',
-        __v: 0,
-      },
-      {
-        _id: '3',
-        is_active: true,
-        created_at: '2020-11-18T10:58:18.956Z',
-        title: 3,
-        description: 'số 3',
-        language: 'VN',
-        __v: 0,
-      },
-      {
-        _id: '4',
-        is_active: true,
-        created_at: '2020-11-18T10:58:18.956Z',
-        title: 4,
-        description: 'số 4',
-        language: 'VN',
-        __v: 0,
-      },
-    ],
   }
   backward() {
-    var length = this.state.data.length
+    var length = this.props.sets.flash_cards.length
     this.setState({
       slideIndex:
-        --this.state.slideIndex > 0 ? this.state.slideIndex : length,
+        this.state.slideIndex - 1 > 0 ? this.state.slideIndex - 1 : length,
       status: true,
     })
   }
 
   next() {
-    var length = this.state.data.length
+    var length = this.props.sets.flash_cards.length
     this.setState({
       slideIndex:
-        ++this.state.slideIndex <= length ? this.state.slideIndex : 1,
+        this.state.slideIndex + 1 <= length ? this.state.slideIndex + 1 : 1,
       status: true,
     })
   }
   render() {
-    var flash_cards = this.state.data
+    var flash_cards = this.props.sets ? this.props.sets.flash_cards : null
     var tabs1 = [
       {
         path: '/latest',
@@ -92,7 +58,7 @@ class Set extends React.Component {
         icon: CreditCardIcon,
       },
       {
-        path: '/learn',
+        path: `/learn/${this.props.location.pathname.substring(5)}`,
         tabname: 'Học',
         icon: AutomaticUpdatesIcon,
       },
@@ -107,7 +73,7 @@ class Set extends React.Component {
         icon: VolumeUpIcon,
       },
       {
-        path: '/latest',
+        path: `/exam/${this.props.location.pathname.substring(5)}`,
         tabname: 'Kiểm tra',
         icon: ApplicationIcon,
       },
@@ -154,9 +120,11 @@ class Set extends React.Component {
                 }}
               >
                 <Heading size={600}>
-                  {this.state.status
-                    ? flash_cards[this.state.slideIndex - 1].title
-                    : flash_cards[this.state.slideIndex - 1].description}
+                  {flash_cards
+                    ? this.state.status
+                      ? flash_cards[this.state.slideIndex - 1].title
+                      : flash_cards[this.state.slideIndex - 1].description
+                    : 'loading'}
                 </Heading>
               </Pane>
               <Pane marginLeft={160} paddingTop={20} display="flex">
@@ -174,7 +142,8 @@ class Set extends React.Component {
                   marginLeft={150}
                   marginRight={130}
                 >
-                  {this.state.slideIndex + '/' + this.state.data.length}
+                  {flash_cards &&
+                    this.state.slideIndex + '/' + flash_cards.length}
                 </Heading>
                 <Button
                   onClick={() => {
@@ -251,26 +220,27 @@ class Set extends React.Component {
                 </Table.TextHeaderCell>
               </Table.Head>
               <Table.Body>
-                {flash_cards.map((card, index) => (
-                  <Pane
-                    key={index}
-                    background="#FFFFFF"
-                    width={900}
-                    borderRadius={10}
-                    marginTop={15}
-                    paddingLeft={30}
-                    paddingTop={25}
-                  >
-                    <Table.Row display="flex">
-                      <Table.TextCell>
-                        <Heading size={600}>{card.title}</Heading>
-                      </Table.TextCell>
-                      <Table.TextCell>
-                        <Heading size={600}>{card.description}</Heading>
-                      </Table.TextCell>
-                    </Table.Row>
-                  </Pane>
-                ))}
+                {flash_cards &&
+                  flash_cards.map((card, index) => (
+                    <Pane
+                      key={index}
+                      background="#FFFFFF"
+                      width={900}
+                      borderRadius={10}
+                      marginTop={15}
+                      paddingLeft={30}
+                      paddingTop={25}
+                    >
+                      <Table.Row display="flex">
+                        <Table.TextCell>
+                          <Heading size={600}>{card.title}</Heading>
+                        </Table.TextCell>
+                        <Table.TextCell>
+                          <Heading size={600}>{card.description}</Heading>
+                        </Table.TextCell>
+                      </Table.Row>
+                    </Pane>
+                  ))}
               </Table.Body>
             </Table>
           </Pane>
@@ -279,7 +249,7 @@ class Set extends React.Component {
     )
   }
 }
-const mapStateToProps = ({ auth }) => {
-  return { user: { ...{ ...auth }.data } }
+const mapStateToProps = ({ auth, sets }) => {
+  return { user: { ...{ ...auth }.data }, sets: { ...sets }.data }
 }
-export default connect(mapStateToProps)(Set)
+export default connect(mapStateToProps, { fetchSet })(Set)

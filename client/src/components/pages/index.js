@@ -8,6 +8,7 @@ import CreateSet from './CreateSet'
 import Set from './Set'
 import Learn from './Learn'
 import CreateFolder from './CreateFolder'
+import Exam from './Exam'
 
 export {
   Landing,
@@ -20,4 +21,5 @@ export {
   Folder,
   Learn,
   CreateFolder,
+  Exam,
 }
