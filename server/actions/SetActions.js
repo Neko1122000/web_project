@@ -15,7 +15,6 @@ const _validate = async (args, creator = '') => {
         visible_password: joi.when('update_by', {is: 'password', then: joi.string().required()}),
         class_visible: joi.when('updated_by', {is: 'classes', then: joi.array().items(joi.string())}),
         flashcards: joi.array().min(2).items(joi.object({
-            _id: joi.string().trim(),
             title: joi.string().trim().required(),
             description: joi.string().trim().required(),
             language: joi.string().trim(),
@@ -115,7 +114,7 @@ exports.updateSet = async (setId, userId, args, oldPassword) => {
     const res = await  Set.updateOne({_id: setId, is_active: true}, {$set: {...data, updated_at: Date.now()}})
     if (!res.n || !res.nModified) throw new Error ('Set not found')
 
-    await FlashCardAction.update(flashcards)
+    await FlashCardAction.update(setId, flashcards)
     return true
 }
 
