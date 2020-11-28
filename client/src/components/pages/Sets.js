@@ -2,19 +2,20 @@ import React from 'react'
 import UserHeader from '../UserHeader'
 
 import { Link } from 'react-router-dom'
-import { SearchInput, SelectMenu, Pane, Button, Heading } from 'evergreen-ui'
+import { SearchInput, SelectMenu, Pane, Button, Heading, Text } from 'evergreen-ui'
 
 class Sets extends React.Component {
   state = {
     listGroups: [],
     sort: 'Lastest',
     search: '',
+    currentMonth:'',
     success: true,
     data: [
       {
         _id: '43',
-        created_at: '2020-11-18T10:58:18.135Z',
-        name: 'z321',
+        created_at: '2020-11-15T10:58:18.135Z',
+        name: 'z 2020-11-15',
         description: '123',
         updated_at: '2020-11-19T05:10:28.692Z',
         number_flash_card: 3,
@@ -22,15 +23,15 @@ class Sets extends React.Component {
       {
         _id: '5fb4fe4a918c235d022c4bb7394',
         created_at: '2020-11-18T10:58:18.135Z',
-        name: 'b321',
+        name: 'b 2020 11 18',
         description: '123',
         updated_at: '2020-11-19T05:10:28.692Z',
         number_flash_card: 3,
       },
       {
         _id: '124',
-        created_at: '2020-11-18T10:58:18.135Z',
-        name: 'c321',
+        created_at: '2020-11-14T10:58:18.135Z',
+        name: 'c 2020 11 14',
         description: '123',
         updated_at: '2020-11-19T05:10:28.692Z',
         number_flash_card: 3,
@@ -38,19 +39,55 @@ class Sets extends React.Component {
     ],
   }
 
+  formatDate (date){
+    var options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    return new Date(date).toLocaleDateString([],options);
+  }
+  formatDateByMonth(date){
+    var options = { month: 'numeric' };
+    return new Date(date).toLocaleDateString([],options);
+  }
+
+  sortAlphabetical = () =>{
+    this.setState({
+      data:[
+        ...this.state.data.sort((a, b) => a.name
+          .localeCompare(b.name)
+        )
+      ]
+    })
+  }
+  sortLastest = () => {
+    this.setState({
+      data:[
+        ...this.state.data.sort((a, b) =>
+        this.formatDate(b.created_at).split('/').reverse().join()
+        .localeCompare(
+          this.formatDate(a.created_at).split('/').reverse().join()
+          )
+        )
+      ]
+    })
+  }
+
+  sort = (sortType) =>{
+    this.state.sort !== "Lastest" ? this.sortLastest():this.sortAlphabetical()
+    this.setState({
+      sort:sortType
+    })
+  }
+
   render() {
     return (
       <Pane background="tint2">
         <UserHeader path="/latest" />
         <Pane paddingLeft="7%" marginTop={30} width={800}>
+
           {/* Sort and filter bar */}
           <Pane display="flex" justifyContent="space-between">
             <Pane>
               <Heading
                 paddingRight={20}
-                onClick={() => {
-                  console.log(this.state.search)
-                }}
               >
                 Sort{' '}
               </Heading>
@@ -64,7 +101,7 @@ class Sets extends React.Component {
                   value: label,
                 }))}
                 selected={this.state.sort}
-                onSelect={(item) => this.setState({ sort: item.value })}
+                onSelect={(item) => this.sort(item.value)}
               >
                 <Button lineHeight="40px" height={40}>
                   {this.state.sort}
@@ -83,8 +120,29 @@ class Sets extends React.Component {
           <Pane>
             {this.state.data.map((item, index) => (
               <Pane key={item._id} name={item.name}>
-                {
+              
+                { item.name.includes(this.state.search) ?
                   <Pane>
+                    { /* Date create bar 
+                      this.state.sort === "Lastest"?
+                        <Pane marginBottom={30}  marginTop={40}>
+                          <Text 
+                            display="table-cell" 
+                            whiteSpace="nowrap" 
+                            paddingRight={10}
+                          >
+                            {this.formatDateByMonth(item.created_at)}
+                          </Text>
+                          <Pane 
+                            display="table-cell" 
+                            width="100%" 
+                            verticalAlign="bottom"
+                          >
+                            <hr/>
+                          </Pane>
+                        </Pane>:<Pane></Pane>*/
+                    }
+
                     <Pane height={80} elevation={1} marginTop={20}>
                       <Link to={`/set/${item._id}`}>
                         <Pane
@@ -100,7 +158,7 @@ class Sets extends React.Component {
                         </Pane>
                       </Link>
                     </Pane>
-                  </Pane>
+                  </Pane> : <Pane></Pane>
                 }
               </Pane>
             ))}
