@@ -33,7 +33,7 @@ const _getSet = async (setId, select = '') => {
     if (!set) throw new Error('Set not found')
 
     const FlashCard = getModel('FlashCard')
-    const flash_cards = await FlashCard.find({set: setId}).select('-set').lean()
+    const flash_cards = await FlashCard.find({set: setId, is_active: true}).select('-set').lean()
 
     return {
         ...set, flash_cards
