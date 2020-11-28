@@ -7,76 +7,44 @@ import {
   SelectMenu, 
   Pane, 
   Button, 
-  Text 
+  Heading 
 } from 'evergreen-ui'
 
 class Sets extends React.Component {
-  state = {
-    sort:'Lastest',
-    search:''
+  constructor(props) {
+    super(props)
+    this.state = {
+        listGroups:[],
+        sort:'Lastest',
+        search:'',
+        success: true,
+        data: [
+            {
+                _id: "5fb4fe4a918cd022c4bb7394",
+                created_at: "2020-11-18T10:58:18.135Z",
+                name: "321",
+                description: "123",
+                updated_at: "2020-11-19T05:10:28.692Z"
+            },
+            {
+              _id: "5fb4fe4a918cd022c4bb7394",
+              created_at: "2020-11-18T10:58:18.135Z",
+              name: "321",
+              description: "123",
+              updated_at: "2020-11-19T05:10:28.692Z"
+            },
+            {
+              _id: "5fb4fe4a918cd022c4bb7394",
+              created_at: "2020-11-18T10:58:18.135Z",
+              name: "321",
+              description: "123",
+              updated_at: "2020-11-19T05:10:28.692Z"
+            }
+        ]
+      }
   }
   
   render() {
-    var listGroups = [
-      {
-        id: 1,
-        date: 'Tháng 10',
-        items: [
-          {
-            id: 1,
-            amount: 10,
-            title: 'Title11',
-          },
-          {
-            id: 2,
-            amount: 4,
-            title: 'Title12',
-          },
-          {
-            id: 3,
-            amount: 9,
-            title: 'Title23',
-          },
-          {
-            id: 4,
-            amount: 9,
-            title: 'Title24',
-          },
-        ],
-      },
-      {
-        id: 2,
-        date: 'Tháng 11',
-        items: [
-          {
-            id: 1,
-            amount: 5,
-            title: 'Title21',
-          },
-          {
-            id: 2,
-            amount: 9,
-            title: 'Title22',
-          },
-          {
-            id: 3,
-            amount: 9,
-            title: 'Title23',
-          },
-          {
-            id: 4,
-            amount: 9,
-            title: 'Title24',
-          },
-          {
-            id: 5,
-            amount: 9,
-            title: 'Title25',
-          },
-        ],
-      },
-    ]
-
     return (
       <Pane background="tint2">
         <UserHeader path="/latest" />
@@ -88,7 +56,7 @@ class Sets extends React.Component {
             justifyContent="space-between"
           >
             <Pane>
-              <Text paddingRight={20} onClick={()=>{console.log(this.state.search)}}>Sort  </Text>
+              <Heading paddingRight={20} onClick={()=>{console.log(this.state.search)}}>Sort  </Heading>
               <SelectMenu
                 hasTitle={false}
                 hasFilter={false}
@@ -114,69 +82,31 @@ class Sets extends React.Component {
           
           {/*Main content*/}
           <Pane>
-            {listGroups.map((group) => (
+            {this.state.data.map((item,index) => (
               
-              <Pane key={group.id} title={group.date}>
-                
-                { /* Date create bar */
-                  this.state.sort == "Lastest" ?
-                    <Pane marginBottom={30}  marginTop={40}>
-                      <Text 
-                        display="table-cell" 
-                        whiteSpace="nowrap" 
-                        paddingRight={10}
-                      >
-                        {group.date}
-                      </Text>
-                      <Pane 
-                        display="table-cell" 
-                        width="100%" 
-                        verticalAlign="bottom"
-                      >
-                        <hr/>
-                      </Pane>
-                    </Pane>:<Pane></Pane>
-                }
-
-              {/* List sets */}
-                {group.items.map((item) => (
-                  <Pane key={item.id}>
-                    {item.title.includes(this.state.search)?
+              <Pane key={item._id} name={item.name}>
+                 { <Pane>
                     <Pane
                       height={80}
                       elevation={1}
                       marginTop={20}
                     >
-                      <Link to={`/set/${item.id}`}>
+                      <Link to={`/set/${item._id}`}>
                         <Pane 
                           height={75} 
                           width="100%"
                           background="white"
                           paddingTop={20}
                           paddingLeft={40}
-                          
                         >
-                          <Text 
-                            fontWeight={400} 
-                            fontSize={16} 
-                            verticalAlign="top"
-                            display="block"
-                            paddingBottom={5}
-                            color="#A6B1BB"
-                          >
-                            {item.amount + " terms"}
-                          </Text>
-                          <Text fontWeight={600} fontSize={20}>
-                            {item.title}
-                          </Text>
-
+                          <Heading fontWeight={600} fontSize={20}>
+                            {item.name}
+                          </Heading>
                         </Pane>
-                
                       </Link>
-                    </Pane>: <Pane></Pane>
-                    }
+                    </Pane> 
                   </Pane>
-                ))}
+                 }
               </Pane>
             ))}
           </Pane>
