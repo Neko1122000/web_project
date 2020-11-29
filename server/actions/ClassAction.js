@@ -75,7 +75,7 @@ exports.getDetail = async (classId, userId) => {
         const Set = getModel('Set')
         const _sets = await Set.find(query).select('name description creator visible_by').lean()
 
-        const data =  Object.assign({}, _class, {folder: _folders, sets, _sets})
+        const data =  Object.assign({}, _class, {folder: _folders, sets: _sets})
         return {data, member: true}
     } else return {data: _class, member: false}
 }
@@ -94,5 +94,13 @@ exports.search = async (args, userId) => {
     }
 
     const Class = getModel('Class')
-    return Class.find(query).select('name description creator').sort(sort).lean()
+
+    const _class = await Class.find(query).select('name description address creator folders sets members').sort(sort).lean()
+    const {folders, sets, members, ...data} = _class
+    return {
+        ...data,
+        numberOfSet: sets.length,
+        numberOfFolder: folders.length,
+        numberOfMember: members.length
+    }
 }
