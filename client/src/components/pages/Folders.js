@@ -19,6 +19,7 @@ const widthItem = 800
 class Folders extends React.Component {
     state = {
         isShown:false,
+        removeFolder:-1,
         folder: {
             name: '',
             description: '',
@@ -111,13 +112,21 @@ class Folders extends React.Component {
             )
         }
     }
+    isRemoveFolder = (id) =>{
+      this.setState({
+        removeFolder:id
+      })
+      console.log(this.state.removeFolder)
+    }
     removeFolder =(id)=>{
       /// remove
       this.setState({
         data:[
           ...this.state.data.filter(item => item.id !== id)
-        ]
+        ],
+        removeFolder:-1
       })
+      
     }
 
     render() {
@@ -287,7 +296,7 @@ class Folders extends React.Component {
                                         </Tooltip>
                                     </Pane>
 
-                                    <Pane onClick={()=>{this.removeFolder(folder.id)}}>
+                                    <Pane onClick={()=>{this.isRemoveFolder(folder.id)}}>
                                         <Tooltip content="Remove this folder">
                                             <TrashIcon
                                                 color="#EC4C47"
@@ -301,6 +310,22 @@ class Folders extends React.Component {
                             </Pane>
                             <Pane id="line" width="100%" backgroundColor="#1070CA"></Pane>
                             
+                          <Dialog
+                            isShown={this.state.removeFolder === folder.id}
+                            onConfirm={()=>{this.removeFolder(folder.id)}}
+                            title={"DELETE FOLDER"}
+                          >
+                            <Pane>
+                              <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                                  <Text fontSize={25} fontWeight={600} >{folder.name}</Text> <hr/>
+                                  Deleting a folder is a PERMANENT action. This cannot be undone.
+                                  Are you sure you want to delete <Text fontWeight={550} color={"red"}>{folder.name}</Text>? The sets in this folder will not be
+                                  deleted.
+                              </Text>
+                            </Pane>
+                          </Dialog>
+
+
                         </Pane>
                     ))}
                 </Pane>

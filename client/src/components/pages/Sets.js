@@ -9,10 +9,16 @@ import {
     Button,
     Heading,
     Text,
+    Tooltip,
+    EditIcon, 
+    TrashIcon,
+    Dialog
 } from 'evergreen-ui'
 import { connect } from 'react-redux'
 import { fetchSetsUser } from '../../actions'
 const heightItem = 75
+const widthItem = 800
+
 class Sets extends React.Component {
     async componentDidMount() {
         await this.props.fetchSetsUser()
@@ -25,6 +31,7 @@ class Sets extends React.Component {
         listGroups: [],
         sort: 'Lastest',
         search: '',
+        isShown:-1,
         currentMonth: '',
         success: true,
         data: [],
@@ -70,12 +77,23 @@ class Sets extends React.Component {
     redirect = (path) =>{
         window.location.href=path
     }
+    removeSet = (id)=>{
+      this.setState({
+        data:[
+          this.state.data.filter(item => item.id !== id)
+        ], 
+        isShown:-1
+      })
+    }
+    isRemoveSet=(id)=>{
+      this.setState({isShown:id})
+    }
 
     render() {
         return (
             <Pane background="tint2">
                 <UserHeader path="/latest" />
-                <Pane paddingLeft="7%" marginTop={30} paddingBottom={30} width={800}>
+                <Pane paddingLeft="7%" marginTop={30} paddingBottom={30} width={widthItem}>
                     {/* Add new set */}
                     <Pane
                         height={heightItem}
@@ -137,54 +155,83 @@ class Sets extends React.Component {
                                 <Pane key={item._id} name={item.name}>
                                     {item.name.includes(this.state.search) ? (
                                         <Pane>
-                                            {/* Date create bar
-                                            this.state.sort === "Lastest"?
-                                              <Pane marginBottom={30}  marginTop={40}>
-                                                <Text
-                                                  display="table-cell"
-                                                  whiteSpace="nowrap"
-                                                  paddingRight={10}
-                                                >
-                                                  {this.formatDateByMonth(item.created_at)}
-                                                </Text>
-                                                <Pane
-                                                  display="table-cell"
-                                                  width="100%"
-                                                  verticalAlign="bottom"
-                                                >
-                                                  <hr/>
-                                                </Pane>
-                                              </Pane>:<Pane></Pane>*/}
-
                                             <Pane height={heightItem} elevation={1} marginTop={20}>
+                                              
+                                              <Pane
+                                                  height={75}
+                                                  width="100%"
+                                                  background="white"
+                                                  paddingTop={20}
+                                                  paddingLeft={40}
+                                                  display="flex"
+                                                  justifyContent="space-between"
+                                              >
                                                 <Link to={`/set/${item._id}`}>
-                                                    <Pane
-                                                        height={75}
-                                                        width="100%"
-                                                        background="white"
-                                                        paddingTop={20}
-                                                        paddingLeft={40}
+                                                  <Pane width={widthItem*3/4}>
+                                                    <Text
+                                                        fontWeight={600}
+                                                        fontSize={20}
+                                                        marginBottom={6}
                                                     >
-                                                        <Heading
-                                                            fontWeight={600}
-                                                            fontSize={20}
-                                                            marginBottom={6}
-                                                        >
-                                                            {item.name}
-                                                        </Heading>
-                                                        <Text>
-                                                            {item.number_flash_card+' terms'}
-                                                        </Text>
-                                                    </Pane>
+                                                        {item.name}
+                                                    </Text>
+                                                    <br/>
+                                                    <Text>
+                                                        {item.number_flash_card+' terms'}
+                                                    </Text>
+                                                  </Pane>
                                                 </Link>
+                                                <Pane
+                                                    display="flex"
+                                                    justifyContent={"space-around"}
+                                                    width="12%"
+                                                    paddingTop={5}
+                                                    paddingRight={20}
+                                                >
+                                                    <Pane>
+                                                        <Tooltip content="Edit this folder" >
+                                                            <EditIcon
+                                                                color="#1070CA"
+                                                                size={20}
+                                                            />
+                                                        </Tooltip>
+                                                    </Pane>
+
+                                                    <Pane onClick={()=>{this.isRemoveSet(item._id)}}>
+                                                        <Tooltip content="Remove this folder">
+                                                            <TrashIcon
+                                                                color="#EC4C47"
+                                                                size={20}
+                                                            />
+                                                        </Tooltip>
+                                                    </Pane>
+
+                                                </Pane>
+                                              </Pane>
+                                                
                                             </Pane>
+                                            <Dialog
+                                              isShown={this.state.isShown===item._id}
+                                              onConfirm={()=>{this.removeSet(item._id)}}
+                                              title={"DELETE SET" }
+                                            >
+                                              <Pane>
+                                                <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                                                    <Text fontSize={25} fontWeight={600} >{item.name}</Text> <hr/>
+                                                    Deleting a set is a PERMANENT action. This cannot be undone.
+                                                    Are you sure you want to delete <Text color={"red"} fontWeight={550}>{item.name}</Text> ? 
+                                                </Text>
+                                              </Pane>
+                                          </Dialog>
                                         </Pane>
                                     ) : (
                                         <Pane></Pane>
                                     )}
+                                    
                                 </Pane>
                             ))}
                     </Pane>
+                    
                 </Pane>
             </Pane>
         )
