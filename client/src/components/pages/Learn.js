@@ -57,12 +57,39 @@ class Learn extends React.Component {
             description: 'số 5',
             language: 'VN',
             __v: 0,
-          }
+          },
+          {
+            _id: '4',
+            is_active: true,
+            created_at: '2020-11-18T10:58:18.956Z',
+            title: 6,
+            description: 'số 6',
+            language: 'VN',
+            __v: 0,
+          },
+          {
+            _id: '4',
+            is_active: true,
+            created_at: '2020-11-18T10:58:18.956Z',
+            title: 7,
+            description: 'số 7',
+            language: 'VN',
+            __v: 0,
+          },
+          {
+            _id: '4',
+            is_active: true,
+            created_at: '2020-11-18T10:58:18.956Z',
+            title: 8,
+            description: 'số 8',
+            language: 'VN',
+            __v: 0,
+          },
         ],
         cardIndex:0,//index của thẻ đang được học
         right_ans_1:[],//mảng chứa index của thẻ đã được trả lời đúng 1 lần
         right_ans_2:[],//mảng chứa index của thẻ đã được trả lời đúng 2 lần
-        options:[],// mảng chứa các lựa chọn cho người học
+        options:[0,1],// mảng chứa các lựa chọn cho người học
         status:1,// 1 là câu hỏi title, 0 là câu hỏi description
         isShowAnsTrue:false,
         isShowAnsFalse:false,
@@ -72,22 +99,70 @@ class Learn extends React.Component {
           ans_false :"Bạn trả lời sai",
           done_learn:"Hoàn thành bài học"
         }
-      }
-      this.shuffleOptions();
     }
-     shuffleOptions(){
+    }
+    check_ans(option) {
+      var cardIndex=this.state.cardIndex;
       var data_length=this.state.data.length;
-      this.state.options=[];
-      for(var i=0;i<data_length;i++){
-        if(i!=this.state.cardIndex){
-          this.state.options.push(i);
+      if(option === cardIndex){
+        this.setState({ isShowAnsTrue:true})
+        if(!this.state.right_ans_1.includes(cardIndex)){
+          this.state.right_ans_1.push(cardIndex);
+          var newIndex=this.updateCardIndex();
+          this.setState({options:this.shuffleOptions(newIndex)});
+          this.setState({cardIndex:newIndex});
+          console.log(this.state.cardIndex);
+          console.log(this.state.options);
+        }
+        else{
+          this.state.right_ans_2.push(cardIndex);
+          if(this.state.right_ans_2.length===data_length){
+            this.setState({ isShowDoneLearn:true})
+          }
+          else{
+            var newIndex=this.updateCardIndex();
+            this.setState({options:this.shuffleOptions(newIndex)});
+            this.setState({cardIndex:newIndex});
+            console.log(this.state.cardIndex);
+            console.log(this.state.options);
+          }
         }
       }
-      this.state.options=this.shuffle(this.state.options);
-      this.state.options=this.state.options.slice(0,data_length>5?3:2);
-      this.state.options.push(this.state.cardIndex);
-      this.state.options=this.shuffle(this.state.options);
-      console.log(this.state.options)
+      else{
+        this.setState({ isShowAnsFalse:true});
+        var newIndex=this.updateCardIndex();
+        this.setState({options:this.shuffleOptions(newIndex)});
+        this.setState({cardIndex:newIndex});
+        console.log(this.state.cardIndex);
+        console.log(this.state.options);
+      }
+    }
+     shuffleOptions(cardIndex){
+      console.log(cardIndex)
+      var data_length=this.state.data.length;
+      var tem_options=[];
+      for(var i=0;i<data_length;i++){
+        if(i!==cardIndex){
+          tem_options.push(i);
+        }
+      }
+      tem_options=this.shuffle(tem_options);
+      tem_options=tem_options.slice(0,data_length>5?3:2);
+      tem_options.push(cardIndex);
+      tem_options=this.shuffle(tem_options)
+      return tem_options;
+     }
+     updateCardIndex(){
+      var cardIndex=this.state.cardIndex;
+      var data_length=this.state.data.length;
+      while(true){
+        cardIndex=  Math.floor((Math.random() * data_length));
+        if(!this.state.right_ans_2.includes(cardIndex)){
+          break;
+        }         
+      }
+      return cardIndex;
+
      }
      shuffle(array) {
       var currentIndex = array.length, temporaryValue, randomIndex;
@@ -100,53 +175,10 @@ class Learn extends React.Component {
       }
       return array;
     }
-    check_ans(option) {
-      var cardIndex=this.state.cardIndex;
-      var data_length=this.state.data.length;
-      if(option === cardIndex){
-        this.setState({ isShowAnsTrue:true})
-        if(!this.state.right_ans_1.includes(cardIndex)){
-          this.state.right_ans_1.push(cardIndex);
-          while(true){
-            cardIndex=  Math.floor((Math.random() * data_length));
-            if(!this.state.right_ans_2.includes(cardIndex)){
-              break;
-            }         
-          }
-          this.setState({cardIndex: cardIndex});
-          this.shuffleOptions();
-        }
-        else{
-          this.state.right_ans_2.push(cardIndex);
-          if(this.state.right_ans_2.length==data_length){
-            this.setState({ isShowDoneLearn:true})
-          }
-          else{
-            while(true){
-              cardIndex=  Math.floor((Math.random() * data_length));
-              if(!this.state.right_ans_2.includes(cardIndex)){
-                break;
-              }         
-            }
-            this.setState({cardIndex: cardIndex});
-            this.shuffleOptions();
-          }
-        }
-      }
-      else{
-        this.setState({ isShowAnsFalse:true});
-        while(true){
-          cardIndex=  Math.floor((Math.random() * data_length));
-          if(!this.state.right_ans_2.includes(cardIndex)){
-            break;
-          }         
-        }
-        this.setState({cardIndex: cardIndex});
-        this.shuffleOptions();
-      }
-    }
+    
   render() {
     return (
+       
       <Pane
         display="flex"
         justifyContent="space-between"
