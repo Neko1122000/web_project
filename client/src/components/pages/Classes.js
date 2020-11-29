@@ -19,6 +19,7 @@ const widthItem = 800
 class Classes extends React.Component {
     state = {
         isShown:false,
+        removeClass:-1,
         class:{
             name:'',
             description:'',
@@ -93,12 +94,18 @@ class Classes extends React.Component {
 
     }
 
+    isRemoveClass = (id)=>{
+      this.setState({removeClass:id})
+    }
     removeClass = (id) =>{
       this.setState({
         listClasses:[
           ...this.state.listClasses.filter(item => item.id !==id )
         ]
       })
+      toaster.success(
+        'Create successful'
+      )
     }
 
     render() {
@@ -356,7 +363,7 @@ class Classes extends React.Component {
                                 </Pane>
                                 <Pane 
                                   marginRight={"5%"}
-                                  onClick={()=>{this.removeClass(classes.id)}}
+                                  onClick={()=>{this.isRemoveClass(classes.id)}}
                                 >
                                   <Tooltip content="Remove this class">
                                       <TrashIcon
@@ -370,6 +377,22 @@ class Classes extends React.Component {
                             
                           </Pane>
                           <Pane id="line" width="100%" backgroundColor="#1070CA"></Pane>
+
+                          <Dialog
+                            isShown={this.state.removeClass === classes.id}
+                            onConfirm={()=>{this.removeClass(classes.id)}}
+                            title={"DELETE CLASS"}
+                          >
+                            <Pane>
+                              <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                                  <Text fontSize={25} fontWeight={600} >{classes.name}</Text> <hr/>
+                                  Deleting a folder is a PERMANENT action. This cannot be undone.
+                                  Are you sure you want to delete <Text fontWeight={550} color={"red"}>{classes.name}</Text>? The sets in this folder will not be
+                                  deleted.
+                              </Text>
+                            </Pane>
+                          </Dialog>
+
                         </Pane>
                     ))}
                 </Pane>
