@@ -1,6 +1,10 @@
 const {Schema} = require('mongoose')
 
 module.exports = new Schema({
+    code: {
+        type: String,
+        unique: true
+    },
     name: {
         type: String,
         index: true

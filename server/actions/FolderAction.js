@@ -40,15 +40,18 @@ exports.search = async (userId) => {
 
 exports.getDetail = async (folderId, userId) => {
     const Folder = getModel('Folder')
-    const folder = Folder.findOne({_id: folderId, creator: userId, is_active: true})
+    const Set = getModel('Set')
+
+    const folder = await Folder.findOne({_id: folderId, creator: userId, is_active: true})
         .populate({
             path: 'sets',
             select: 'name description creator'
         })
         .lean()
     if (!folder) throw new Error ('Folder not found')
+
     const User = getModel('User')
-    const sets =  await Promise.map(folder.set, set => {
+    const sets =  await Promise.map(folder.sets, set => {
         const user = User.findById(set.creator).select('username')
         return Object.assign({}, set, {creator: user})
     }, {concurrency: 10})
