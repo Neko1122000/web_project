@@ -5,9 +5,10 @@ module.exports = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    flashcard: {
+    set: {
         type: Schema.Types.ObjectId,
-        ref: 'FlashCard'
+        ref: 'Set',
+        index: true
     },
     result: {
         type: String,

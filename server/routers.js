@@ -42,5 +42,9 @@ routers.post('/class/:id/approve-members', Oauth.authenticate, classRequest.appr
 routers.post('/class/:id/reject-members', Oauth.authenticate, classRequest.rejectMembers)
 
 const history = require('./controllers/user-history')
-routers.post('/user/history', Oauth.authenticate, history.create)
+routers.post('/user/history', Oauth.authenticate, history.updateOrCreateIfNotExist)
+routers.get('/user/history', Oauth.authenticate, history.getUserHistory)
+
+const game = require('./controllers/game')
+routers.get('/set/:id/game-record', Oauth.authenticate, game.getRecord)
 module.exports = routers
