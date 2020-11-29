@@ -12,7 +12,7 @@ module.exports = new Schema({
         type: [{
             type: Schema.Types.ObjectId,
             ref: 'Set'
-        }]  ,
+        }],
         default: []
     },
     is_active: {

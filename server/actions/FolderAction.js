@@ -1,5 +1,6 @@
 const joi = require('joi')
 const {getModel} = require('../connection/mongodb')
+const Promise = require('bluebird')
 
 const _validate = async (args) => {
     const validate_schema = joi.object({
@@ -39,17 +40,20 @@ exports.search = async (userId) => {
 
 exports.getDetail = async (folderId, userId) => {
     const Folder = getModel('Folder')
-    const folder = Folder.findOne({_id: folderId, creator: userId, is_active: true})
+    const Set = getModel('Set')
+
+    const folder = await Folder.findOne({_id: folderId, creator: userId, is_active: true})
         .populate({
             path: 'sets',
             select: 'name description creator'
         })
         .lean()
     if (!folder) throw new Error ('Folder not found')
+
     const User = getModel('User')
-    const sets =  await Promise.map(folder.set, set => {
-        const user = User.findById(set.creator).select('username')
-        return Object.assign({}, set, {creator: user})
+    const sets =  await Promise.map(folder.sets, async (set) => {
+        const user = await User.findById(set.creator).select('username')
+        return Object.assign({}, set, {creator: user.username})
     }, {concurrency: 10})
     return Object.assign({}, folder, {sets})
 }
