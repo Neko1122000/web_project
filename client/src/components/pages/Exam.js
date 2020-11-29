@@ -62,11 +62,12 @@ class Test extends React.Component {
   }
   calculator_mark(){
     var count_true_answ=0;
-    for(var i=0;i<this.state.data.length;i++){
+    var data_length=this.state.data.length==0?1:this.state.data.length
+    for(var i=0;i<data_length;i++){
       if(this.state.statuses[i]==="true")
         count_true_answ++;
     }
-   return Math.floor(count_true_answ*100/this.state.data.length)
+   return Math.floor(count_true_answ*100/data_length)
   }
  
   render() {
