@@ -27,6 +27,7 @@ class Classes extends React.Component {
         },
         listClasses:[
             {
+                id:1,
                 name: '11A1',
                 description:"Lop 11A1",
                 numberOfSet:2,
@@ -35,6 +36,7 @@ class Classes extends React.Component {
                 allow_member_change:true,
             },
             {
+                id:2,
                 name: '11A2',
                 description:"Lop 11A2",
                 numberOfSet:3,
@@ -43,6 +45,7 @@ class Classes extends React.Component {
                 allow_member_change:true,
             },
             {
+                id:3,
                 name: '11A3',
                 description:"Lop 11A3",
                 numberOfSet:8,
@@ -88,6 +91,14 @@ class Classes extends React.Component {
             )
         }
 
+    }
+
+    removeClass = (id) =>{
+      this.setState({
+        listClasses:[
+          ...this.state.listClasses.filter(item => item.id !==id )
+        ]
+      })
     }
 
     render() {
@@ -316,44 +327,49 @@ class Classes extends React.Component {
                             elevation={1}
                             marginTop={20}
                         >
+                          <Pane
+                              height={heightItem}
+                              width="100%"
+                              background="white"
+                              paddingTop={8}
+                              paddingLeft={40}
+                              onMouseEnter={(e) => {this.focus(e)}}
+                              onMouseLeave={(e) => {this.blur(e)}}
+                          >
                             <Link to={`/classes/${classes.name}`}>
-                                <Pane
-                                    height={heightItem}
-                                    width="100%"
-                                    background="white"
-                                    paddingTop={8}
-                                    paddingLeft={40}
-                                    onMouseEnter={(e) => {this.focus(e)}}
-                                    onMouseLeave={(e) => {this.blur(e)}}
-                                >
-                                    <Pane>
-                                        <Text
-                                            fontWeight={400}
-                                            fontSize={16}
-                                            marginBottom={7}
-                                            color="#A6B1BB"
-                                        >
-                                            {classes.numberOfSet + " sets"}
-                                        </Text>
-                                    </Pane>
-                                    <Pane>
-                                        <Text fontWeight={600} fontSize={20}>
-                                            {classes.name}
-                                        </Text>
-                                        <Tooltip content="Remove this class">
-                                            <TrashIcon
-                                                color="red"
-                                                float="right"
-                                                marginRight={"5%"}
-                                                size={20}
-                                            />
-                                        </Tooltip>
-                                    </Pane>
-
-                                </Pane>
-                                <Pane id="line" width="100%" backgroundColor="#1070CA"></Pane>
+                              <Pane width={widthItem*3/4}>
+                                  <Text
+                                      fontWeight={400}
+                                      fontSize={16}
+                                      marginBottom={7}
+                                      color="#A6B1BB"
+                                  >
+                                      {classes.numberOfSet + " sets"}
+                                  </Text>
+                              </Pane>
                             </Link>
-
+                              <Pane display="flex" justifyContent="space-between">
+                                <Pane>
+                                  <Text fontWeight={600} fontSize={20}>
+                                      {classes.name}
+                                  </Text>
+                                </Pane>
+                                <Pane 
+                                  marginRight={"5%"}
+                                  onClick={()=>{this.removeClass(classes.id)}}
+                                >
+                                  <Tooltip content="Remove this class">
+                                      <TrashIcon
+                                          color="red"
+                                          size={20}
+                                      />
+                                  </Tooltip>
+                                </Pane>
+                                  
+                              </Pane>
+                            
+                          </Pane>
+                          <Pane id="line" width="100%" backgroundColor="#1070CA"></Pane>
                         </Pane>
                     ))}
                 </Pane>
