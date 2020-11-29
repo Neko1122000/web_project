@@ -1,4 +1,5 @@
 import Landing from './Landing'
+import Latest from './Latest'
 import Test from './Test'
 import Sets from './Sets'
 import Folders from './Folders'
@@ -14,6 +15,7 @@ import Exam from './Exam'
 
 export {
   Landing,
+  Latest,
   Test,
   Sets,
   Folders,

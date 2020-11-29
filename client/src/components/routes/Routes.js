@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 
 import {
   Landing,
+  Latest,
   Sets,
   Folders,
   Classes,
@@ -24,7 +25,7 @@ const routes = [
   {
     path: '/latest',
     tab: 'Home',
-    page: <Landing />,
+    page: <Latest />,
   },
   {
     path: '/progress',
