@@ -90,6 +90,64 @@ export const deleteSet = async (id) => {
   }
 }
 
+// Folder
+
+export const fetchFolder = (id) => async (dispatch) => {
+  if (getToken().accessToken) {
+    const res = await axios
+      .get(`/api/folder/${id}`, options)
+      .catch(async (error) => {
+        await refreshToken(fetchFolder)
+      })
+    if (res) {
+      console.log(res)
+      dispatch({ type: types.FETCH_FOLDER, payload: res.data })
+    }
+  } else dispatch({ type: types.FETCH_FOLDER, payload: false })
+}
+
+export const createFolder = async (folder) => {
+  if (getToken().accessToken) {
+    const res = await axios
+      .post(`/api/folder`, folder, options)
+      .catch(async (error) => {
+        await refreshToken(createFolder)
+      })
+    console.log(res)
+  }
+}
+export const editFolderInfo = async (id, folder) => {
+  if (getToken().accessToken) {
+    const res = await axios
+      .post(`/api/folder/${id}`, folder, options)
+      .catch((error) => {
+        console.log(error)
+      })
+    console.log(res)
+  }
+}
+export const editFolderSets = async (id, sets) => {
+  if (getToken().accessToken) {
+    const res = await axios
+      .post(`/api/folder/${id}/sets`, sets, options)
+      .catch((error) => {
+        console.log(error)
+      })
+    console.log(res)
+  }
+}
+
+export const deleteFolder = async (id) => {
+  if (getToken().accessToken) {
+    const res = await axios
+      .delete(`/api/folder/${id}`, options)
+      .catch((error) => {
+        console.log(error)
+      })
+    console.log(res)
+  }
+}
+
 // User -
 
 /* Sets -- */
@@ -101,4 +159,12 @@ export const fetchSetsUser = () => async (dispatch) => {
     })
     if (res) dispatch({ type: types.FETCH_SETS_USER, payload: res.data })
   } else dispatch({ type: types.FETCH_SETS_USER, payload: false })
+}
+export const fetchFoldersUser = () => async (dispatch) => {
+  if (getToken().accessToken) {
+    const res = await axios.get('/api/folder', options).catch(async (error) => {
+      await refreshToken(fetchFoldersUser)
+    })
+    if (res) dispatch({ type: types.FETCH_FOLDERS_USER, payload: res.data })
+  } else dispatch({ type: types.FETCH_FOLDERS_USER, payload: false })
 }
