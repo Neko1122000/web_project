@@ -1,5 +1,6 @@
 const joi = require('joi')
 const {getModel} = require('../connection/mongodb')
+const Promise = require('bluebird')
 
 const _validate = async (args) => {
     const validate_schema = joi.object({
