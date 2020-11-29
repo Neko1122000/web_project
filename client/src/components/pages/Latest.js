@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pane, Button } from 'evergreen-ui'
 
-class Landing extends React.Component {
+class Latest extends React.Component {
   render() {
     return (
       <Pane>
@@ -95,4 +95,4 @@ class Landing extends React.Component {
     )
   }
 }
-export default Landing
+export default Latest

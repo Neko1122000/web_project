@@ -5,10 +5,12 @@ import { connect } from 'react-redux'
 
 import {
   Landing,
+  Latest,
   Sets,
   Folders,
   Classes,
   CreateSet,
+  EditSet,
   Set,
   Folder,
   Test,
@@ -23,7 +25,7 @@ const routes = [
   {
     path: '/latest',
     tab: 'Home',
-    page: <Landing />,
+    page: <Latest />,
   },
   {
     path: '/progress',
@@ -63,6 +65,7 @@ const Routes = (props) => {
         <SideBar selectedTab={selectedTab} />
       </Route>
       <Route path="/create-set" component={CreateSet} />
+      <Route path="/edit-set/:id" component={EditSet} />
       <Route path="/create-folder" component={CreateFolder} />
       <Route path="/learn/:id" component={Learn} />
       <Route path="/exam/:id" component={Exam} />

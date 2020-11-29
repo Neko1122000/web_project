@@ -19,6 +19,7 @@ const widthItem = 800
 class Folders extends React.Component {
     state = {
         isShown:false,
+        removeFolder:-1,
         folder: {
             name: '',
             description: '',
@@ -110,6 +111,25 @@ class Folders extends React.Component {
                 'Create error'
             )
         }
+    }
+    isRemoveFolder = (id) =>{
+      this.setState({
+        removeFolder:id
+      })
+      console.log(this.state.removeFolder)
+    }
+    removeFolder =(id)=>{
+      /// remove
+      this.setState({
+        data:[
+          ...this.state.data.filter(item => item.id !== id)
+        ],
+        removeFolder:-1
+      })
+      toaster.success(
+        'Create successful'
+      )
+      
     }
 
     render() {
@@ -237,61 +257,78 @@ class Folders extends React.Component {
                     {this.state.data.map((folder) => (
 
                         <Pane key={folder.id} height={heightItem} marginTop ={12} >
-                            <Link to={`/folders/${folder.id}`} >
-                                <Pane
-                                    backgroundColor="white"
-                                    height={heightItem}
-                                    width="100%"
-                                    elevation={1}
-                                    onMouseEnter={(e) => {this.focus(e)}}
-                                    onMouseLeave={(e) => {this.blur(e)}}
-                                    display="flex"
-                                    justifyContent={"space-between"}
-                                >
-
-                                    <Pane>
-                                        <FolderCloseIcon
-                                            size={25}
-                                            color="#E4E7EB"
-                                            bottom={5}
-                                            lineHeight="100px"
-                                            marginRight={10}
-                                            marginLeft={30}
-                                        />
-                                        <Text fontSize={20} lineHeight="80px" fontWeight={550}>
-                                            {folder.name}
-                                        </Text>
-                                    </Pane>
-
-                                    <Pane
-                                        display="flex"
-                                        justifyContent={"space-around"}
-                                        width="12%"
-                                        paddingTop={25}
-                                        paddingRight={20}
-                                    >
-                                        <Pane>
-                                            <Tooltip content="Edit this folder" >
-                                                <EditIcon
-                                                    color="#1070CA"
-                                                    size={20}
-                                                />
-                                            </Tooltip>
-                                        </Pane>
-
-                                        <Pane>
-                                            <Tooltip content="Remove this folder">
-                                                <TrashIcon
-                                                    color="#EC4C47"
-                                                    size={20}
-                                                />
-                                            </Tooltip>
-                                        </Pane>
-
-                                    </Pane>
+                            
+                            <Pane
+                                backgroundColor="white"
+                                height={heightItem}
+                                width="100%"
+                                elevation={1}
+                                onMouseEnter={(e) => {this.focus(e)}}
+                                onMouseLeave={(e) => {this.blur(e)}}
+                                display="flex"
+                                justifyContent={"space-between"}
+                            >
+                              <Link to={`/folders/${folder.id}`}>
+                                <Pane flex="50%" width={widthItem*3/4}>
+                                    <FolderCloseIcon
+                                        size={25}
+                                        color="#E4E7EB"
+                                        bottom={5}
+                                        lineHeight="100px"
+                                        marginRight={10}
+                                        marginLeft={30}
+                                    />
+                                    <Text fontSize={20} lineHeight="80px" fontWeight={550}>
+                                        {folder.name}
+                                    </Text>
                                 </Pane>
-                                <Pane id="line" width="100%" backgroundColor="#1070CA"></Pane>
-                            </Link>
+                              </Link>
+                                <Pane
+                                    display="flex"
+                                    justifyContent={"space-around"}
+                                    width="12%"
+                                    paddingTop={25}
+                                    paddingRight={20}
+                                >
+                                    <Pane>
+                                        <Tooltip content="Edit this folder" >
+                                            <EditIcon
+                                                color="#1070CA"
+                                                size={20}
+                                            />
+                                        </Tooltip>
+                                    </Pane>
+
+                                    <Pane onClick={()=>{this.isRemoveFolder(folder.id)}}>
+                                        <Tooltip content="Remove this folder">
+                                            <TrashIcon
+                                                color="#EC4C47"
+                                                size={20}
+                                            />
+                                        </Tooltip>
+                                    </Pane>
+
+                                </Pane>
+                                
+                            </Pane>
+                            <Pane id="line" width="100%" backgroundColor="#1070CA"></Pane>
+                            
+                          <Dialog
+                            isShown={this.state.removeFolder === folder.id}
+                            onConfirm={()=>{this.removeFolder(folder.id)}}
+                            title={"DELETE FOLDER"}
+                          >
+                            <Pane>
+                              <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                                  <Text fontSize={25} fontWeight={600} >{folder.name}</Text> <hr/>
+                                  Deleting a folder is a PERMANENT action. This cannot be undone.
+                                  Are you sure you want to delete <Text fontWeight={550} color={"red"}>{folder.name}</Text>? The sets in this folder will not be
+                                  deleted.
+                              </Text>
+                            </Pane>
+                          </Dialog>
+
+
                         </Pane>
                     ))}
                 </Pane>
