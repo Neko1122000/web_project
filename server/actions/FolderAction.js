@@ -51,9 +51,9 @@ exports.getDetail = async (folderId, userId) => {
     if (!folder) throw new Error ('Folder not found')
 
     const User = getModel('User')
-    const sets =  await Promise.map(folder.sets, set => {
-        const user = User.findById(set.creator).select('username')
-        return Object.assign({}, set, {creator: user})
+    const sets =  await Promise.map(folder.sets, async (set) => {
+        const user = await User.findById(set.creator).select('username')
+        return Object.assign({}, set, {creator: user.username})
     }, {concurrency: 10})
     return Object.assign({}, folder, {sets})
 }
