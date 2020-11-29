@@ -18,7 +18,7 @@ class Landing extends React.Component {
           <Button
             width={200}
             height={100}
-            style={{ textAlign: 'center' }}
+            style={{ textAlign: 'center', justifyContent: 'center' }}
             appearance="primary"
           >
             Bắt đầu học

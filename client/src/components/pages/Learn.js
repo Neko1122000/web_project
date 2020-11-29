@@ -3,7 +3,7 @@ import { Pane, Heading, Button, Dialog } from 'evergreen-ui'
 import { ChevronLeftIcon, AutomaticUpdatesIcon } from 'evergreen-ui'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { fetchSet, fetchSetsUser } from '../../actions'
+import { fetchSet } from '../../actions'
 
 class Learn extends React.Component {
   async componentDidMount() {

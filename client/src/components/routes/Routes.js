@@ -9,6 +9,7 @@ import {
   Folders,
   Classes,
   CreateSet,
+  EditSet,
   Set,
   Folder,
   Test,
@@ -63,6 +64,7 @@ const Routes = (props) => {
         <SideBar selectedTab={selectedTab} />
       </Route>
       <Route path="/create-set" component={CreateSet} />
+      <Route path="/edit-set/:id" component={EditSet} />
       <Route path="/create-folder" component={CreateFolder} />
       <Route path="/learn/:id" component={Learn} />
       <Route path="/exam/:id" component={Exam} />
