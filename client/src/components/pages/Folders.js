@@ -126,6 +126,9 @@ class Folders extends React.Component {
         ],
         removeFolder:-1
       })
+      toaster.success(
+        'Create successful'
+      )
       
     }
 

@@ -103,6 +103,9 @@ class Classes extends React.Component {
           ...this.state.listClasses.filter(item => item.id !==id )
         ]
       })
+      toaster.success(
+        'Create successful'
+      )
     }
 
     render() {

@@ -12,6 +12,7 @@ import {
     Tooltip,
     EditIcon, 
     TrashIcon,
+    toaster,
     Dialog
 } from 'evergreen-ui'
 import { connect } from 'react-redux'
@@ -84,6 +85,9 @@ class Sets extends React.Component {
         ], 
         isShown:-1
       })
+      toaster.success(
+        'Create successful'
+      )
     }
     isRemoveSet=(id)=>{
       this.setState({isShown:id})
