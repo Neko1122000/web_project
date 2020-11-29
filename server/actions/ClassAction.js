@@ -1,5 +1,6 @@
 const joi = require('joi')
 const {getModel} = require('../connection/mongodb')
+const shortid = require('shortid')
 
 const _validate = async (args) => {
     const validate_schema = joi.object({
@@ -12,10 +13,26 @@ const _validate = async (args) => {
     return validate_schema.validateAsync(args)
 }
 
+const _generateCode = async () => {
+    const Class = getModel('Class')
+
+    let cnt = 15
+    while (cnt--) {
+        const code = shortid.generate()
+
+        const exist = await Class.findOne({code}).lean()
+        if (!exist) return code
+    }
+
+    throw new Error("Something went wrong. Please wait for few minutes and create again.")
+    return true
+}
+
 exports.create = async (args, userId) => {
     const data = await _validate(args)
     const Class = getModel('Class')
-    return Class.create({...data, members: [userId],creator: userId})
+    const code = await _generateCode()
+    return Class.create({...data, members: [userId],creator: userId, code})
 }
 
 const _allow_update = async (classId, userId) => {
@@ -83,7 +100,7 @@ exports.getDetail = async (classId, userId) => {
 exports.search = async (args, userId) => {
     const query = {is_active: true, creator: userId}
     const sort = {created: -1}
-    const {name} = args
+    const {name, code} = args
 
     if (name)  {
         delete query.creator
@@ -92,15 +109,20 @@ exports.search = async (args, userId) => {
         delete sort.created
         sort['score'] = {$meta: "textScore"}
     }
+    if (code) {
+        query['code'] = code
+    }
 
     const Class = getModel('Class')
 
-    const _class = await Class.find(query).select('name description address creator folders sets members').sort(sort).lean()
-    const {folders, sets, members, ...data} = _class
-    return {
-        ...data,
-        numberOfSet: sets.length,
-        numberOfFolder: folders.length,
-        numberOfMember: members.length
-    }
+    const classes = await Class.find(query).select('code name description address creator folders sets members').sort(sort).lean()
+    return classes.map(_class => {
+        const {sets, members, folders, ...data} = _class
+        return {
+            ...data,
+            numberOfSet: sets.length,
+            numberOfMember: members.length,
+            numberOfFolder: folders.length
+        }
+    })
 }
