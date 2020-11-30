@@ -1,5 +1,5 @@
 import React from 'react'
-import { Pane, Button } from 'evergreen-ui'
+import { Pane, Button, Text, Link } from 'evergreen-ui'
 
 class Latest extends React.Component {
   render() {
@@ -27,34 +27,35 @@ class Latest extends React.Component {
                 height="100"
                 alt="lul"
               />
-            </Pane> 
-            <Pane
-              textAlign="center"
-              paddingTop={15}>
-              <p>Bạn đã tự tin với những gì mình được học, hãy <b>kiểm tra </b> nào.</p>
-              <Button appearance="primary"> Test</Button>
+            </Pane>
+            <Pane textAlign="center" paddingTop={15}>
+              <Text>
+                Bạn đã tự tin với những gì mình được học, hãy <b>kiểm tra </b>
+                nào.
+              </Text>
+              <br />
+              <Button appearance="primary" marginTop={16}>
+                Test
+              </Button>
             </Pane>
           </Pane>
           <Pane margin={34}>
-            <Pane
-              float="left"
-              fontSize={22}
-              style={{ fontFamily: 'Arial'}}>
+            <Pane float="left" fontSize={22} style={{ fontFamily: 'Arial' }}>
               Recent
-            </Pane>    
-            <Pane height={22} textAlign="right" 
-              fontSize={14}>
-              <a href="#"> Show all</a>
-            </Pane>   
-          </Pane> 
-          <Button 
+            </Pane>
+            <Pane height={22} textAlign="right" fontSize={14}>
+              <Link href="#"> Show all</Link>
+            </Pane>
+          </Pane>
+          <Button
             float="left"
             width={300}
             height={120}
             marginLeft={34}
             marginBottom={15}
             justifyContent="center"
-            alignItems="center"> 
+            alignItems="center"
+          >
             <p>Bài 1</p>
           </Button>
           <Button
@@ -63,7 +64,8 @@ class Latest extends React.Component {
             marginLeft={34}
             marginBottom={15}
             justifyContent="center"
-            alignItems="center">
+            alignItems="center"
+          >
             Bài 2
           </Button>
           <Button
@@ -73,16 +75,20 @@ class Latest extends React.Component {
             marginLeft={34}
             marginBottom={15}
             justifyContent="center"
-            alignItems="center">
+            alignItems="center"
+          >
             Bài 3
           </Button>
-          <Button 
+          <Button
             width={300}
             height={120}
             marginLeft={34}
             marginBottom={15}
             justifyContent="center"
-            alignItems="center">Bài 4</Button>
+            alignItems="center"
+          >
+            Bài 4
+          </Button>
         </Pane>
         <img
           style={{}}
@@ -91,7 +97,6 @@ class Latest extends React.Component {
           height="1000"
           alt="lul"
         />
-
       </Pane>
     )
   }

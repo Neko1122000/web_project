@@ -5,9 +5,9 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { fetchSet } from '../../actions'
 
-class Exam extends React.Component {
+class Game extends React.Component {
   async componentDidMount() {
-    await this.props.fetchSet(this.props.location.pathname.substring(5))
+    await this.props.fetchSet(this.props.match.params.id)
     this.setState({ data: this.props.sets.flash_cards })
   }
   state = {
@@ -246,4 +246,4 @@ const mapStateToProps = ({ sets }) => {
   return { sets: { ...sets }.data }
 }
 
-export default connect(mapStateToProps, { fetchSet })(Exam)
+export default connect(mapStateToProps, { fetchSet })(Game)

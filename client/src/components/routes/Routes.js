@@ -16,6 +16,7 @@ import {
   Test,
   Learn,
   Exam,
+  Game,
   CreateFolder,
   Class,
 } from '../pages'
@@ -69,6 +70,7 @@ const Routes = (props) => {
       <Route path="/create-folder" component={CreateFolder} />
       <Route path="/learn/:id" component={Learn} />
       <Route path="/exam/:id" component={Exam} />
+      <Route path="/game/:id" component={Game} />
       <Route path="/test" component={Test} />
       <Route path="/folders/:id" component={Folder} />
       <Route path="/classes/:id" component={Class} />
