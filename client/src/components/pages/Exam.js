@@ -131,9 +131,9 @@ class Test extends React.Component {
                textAlign="center"
                paddingTop={10}
             >
-              <Link to={`/exam/${this.props.location.pathname.substring(5)}`}>
+              <Button onClick={()=>{window.location.reload(false)}}>
                 <Heading size={400}  fontWeight={700}>Kiểm tra lại</Heading>
-              </Link>
+              </Button>
             </Pane>
             </Pane>
           </Pane>
@@ -197,7 +197,7 @@ class Test extends React.Component {
                 this.check_answers()
               }}
             >
-              <Heading size={700} fontWeight={900}>{this.state.data
+              <Heading size={700} fontWeight={900}>{!this.state.data
                 ? 'loading'
                 :"Nộp bài"}</Heading>
             </Button>
