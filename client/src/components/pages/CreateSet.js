@@ -8,8 +8,9 @@ import {
     Dialog,
     SelectMenu,
     toaster,
+    TrashIcon
 } from 'evergreen-ui'
-import { TrashIcon } from 'evergreen-ui'
+
 
 import { createSet } from '../../actions'
 

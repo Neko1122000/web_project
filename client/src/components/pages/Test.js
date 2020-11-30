@@ -5,10 +5,11 @@ import * as action from '../../actions'
 
 class Test extends React.Component {
   test = () => {
-    // action.editFolderSets('5fc389202934531d8ce5cf14', {
-    //   sets: ['5fc1b600d6d6ea1ae0692a3e', '5fc23c29259b8c1bfc4c8cfc'],
-    // })
-    this.props.fetchFolder('5fc389202934531d8ce5cf14')
+    action.editFolderSets('5fc543a268cae4f0f3774aee', {
+      sets: ['5fc23f38f156464895448515', '5fc2414ef15646489544851d','5fc2420bf156464895448520'],
+    })
+    
+    this.props.fetchFolder('5fc543a268cae4f0f3774aee')
     this.props.fetchFoldersUser()
     this.props.fetchSetsUser()
   }
