@@ -10,22 +10,21 @@ import { Link } from 'react-router-dom'
 import { fetchSet } from '../../actions'
 
 class Test extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state={
-      isShow:false,
-      statuses:[],
-      pre_answer:{
-        index:0,
-        value:""
-      },
-      answers:[],
-      data: [],
-    }    
+  
+  async componentDidMount() {
+    await this.props.fetchSet(this.props.location.pathname.substring(5))
+    this.setState({ data: this.props.sets.flash_cards})
   }
-  componentDidMount() {
-    this.props.fetchSet(this.props.location.pathname.substring(5))
-  }
+  state={
+    isShow:false,
+    statuses:[],
+    pre_answer:{
+      index:0,
+      value:""
+    },
+    answers:[],
+    data: [],
+  }    
   check_answers(){
    var tem_isShow = true;
    this.setState({ isShow:tem_isShow})
