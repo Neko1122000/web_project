@@ -1,103 +1,20 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import {
-  Pane,
-  Text,
-  Tooltip,
-  Dialog,
-  SelectMenu,
-  Button,
-  TextInput,
-  toaster,
-} from 'evergreen-ui'
-import {
-  AddIcon,
-  TrashIcon,
-  EditIcon,
-  FolderOpenIcon,
-  LearningIcon,
-} from 'evergreen-ui'
+import { Pane, Text, Tooltip, Dialog, TextInput, toaster } from 'evergreen-ui'
+import { AddIcon, TrashIcon, EditIcon, FolderOpenIcon } from 'evergreen-ui'
 import { Link } from 'react-router-dom'
 
+import { fetchFolder, fetchSetsUser } from '../../actions'
+
 class Folder extends React.Component {
+  async componentDidMount() {
+    await this.props.fetchFolder(this.props.match.params.id)
+    await this.props.fetchSetsUser()
+  }
   state = {
-    isShown: '',
-    srcSet: 'yourSets',
+    showing: '',
+    isShown: false,
     path: '/sets',
-    id: 5,
-    name: 'Folder',
-    description: 'folder description',
-    listSets: [
-      {
-        id: 1,
-        setName: 'Folder1',
-        setInfo: 'smt',
-      },
-      {
-        id: 2,
-        setName: 'Folder2',
-        setInfo: 'smt2',
-      },
-      {
-        id: 3,
-        setName: 'Folder3',
-        setInfo: 'smt3',
-      },
-    ],
-    yourSets: [
-      {
-        id: 1,
-        setName: 'Folder1',
-        setInfo: 'smt',
-      },
-      {
-        id: 2,
-        setName: 'Folder2',
-        setInfo: 'smt2',
-      },
-      {
-        id: 3,
-        setName: 'Folder3',
-        setInfo: 'smt3',
-      },
-      {
-        id: 4,
-        setName: 'Folder4',
-        setInfo: 'smt4',
-      },
-      {
-        id: 5,
-        setName: 'Folder5',
-        setInfo: 'smt5',
-      },
-    ],
-    classSets: [
-      {
-        id: 3,
-        setName: 'Folder3',
-        setInfo: 'smt3',
-      },
-      {
-        id: 13,
-        setName: 'Folder13',
-        setInfo: 'smt13',
-      },
-      {
-        id: 14,
-        setName: 'Folder14',
-        setInfo: 'smt14',
-      },
-      {
-        id: 15,
-        setName: 'Folder15',
-        setInfo: 'smt15',
-      },
-      {
-        id: 16,
-        setName: 'Folder16',
-        setInfo: 'smt16',
-      },
-    ],
     data: [
       {
         id: '5fb4fe4a918cd022c4bb7394',
@@ -128,31 +45,31 @@ class Folder extends React.Component {
 
   /* show diablog */
   isShowed = () => {
-    return this.state.isShown === '' ? false : true
+    return this.state.isShown
   }
 
   /* close diablog */
   showReset = () => {
-    this.setState({ isShown: '' })
+    this.setState({ isShown: false })
   }
 
-  redirect() {
-    window.location.href = '/folders'
-  }
   /* remove folder */
   removeFolder = () => {
     console.log(this.state.id)
     toaster.success('Delete successful')
-    window.setTimeout(() => {
-      this.redirect()
-    }, 500)
   }
 
-  /* change this folder's name */
-  setName = () => {
-    var name = this.refs.name.value
-    this.setState({ name: name })
-    this.showReset()
+  getSetsIdList = () => {
+    var idList = []
+    return !this.props.folder
+      ? 'loading'
+      : this.props.folder.sets.map(({ _id }) => [...idList, _id])
+  }
+  getUserIdList = () => {
+    var idList = []
+    return !this.props.sets
+      ? 'loading'
+      : this.props.sets.map((set) => [...idList, set._id])
   }
 
   /* remover set in this folder*/
@@ -163,8 +80,10 @@ class Folder extends React.Component {
   }
 
   render() {
+    console.log(this.getSetsIdList())
+    console.log(this.getUserIdList())
     let diablog = null
-    switch (this.state.isShown) {
+    switch (this.state.showing) {
       case 'add':
         diablog = (
           <Dialog
@@ -187,100 +106,13 @@ class Folder extends React.Component {
                 </Text>
               </Link>
             </Pane>
-            <SelectMenu
-              hasTitle={false}
-              hasFilter={false}
-              options={[
-                'yourSets',
-                'classSets',
-                'Banana',
-                'Cherry',
-                'Cucumber',
-              ].map((label) => ({ label, value: label }))}
-              selected={this.state.srcSet}
-              onSelect={(item) => this.setState({ srcSet: item.value })}
-            >
-              <Button>{this.state.srcSet}</Button>
-            </SelectMenu>
-          </Dialog>
-        )
-        break
-      case 'study':
-        diablog = (
-          <Dialog
-            isShown={this.isShowed()}
-            title={'Study this folder'}
-            onCloseComplete={this.showReset}
-            hasFooter={false}
-          >
-            <Pane
-              paddingLeft=""
-              display={'flex'}
-              flexFlow={'wrap'}
-              justifyContent={'space-around'}
-            >
-              <Pane
-                height={150}
-                width="33%"
-                background={'greenTint'}
-                elevation={2}
-                marginBottom={10}
-              >
-                <LearningIcon size={45} />
-              </Pane>
-              <Pane
-                height={150}
-                width="33%"
-                background={'greenTint'}
-                elevation={2}
-                marginBottom={10}
-              >
-                <LearningIcon size={45} />
-              </Pane>
-              <Pane
-                height={150}
-                width="33%"
-                background={'greenTint'}
-                elevation={2}
-                marginBottom={10}
-              >
-                <LearningIcon size={45} />
-              </Pane>
-              <Pane
-                height={150}
-                width="33%"
-                background={'greenTint'}
-                elevation={2}
-                marginBottom={10}
-              >
-                <LearningIcon size={45} />
-              </Pane>
-              <Pane
-                height={150}
-                width="33%"
-                background={'greenTint'}
-                elevation={2}
-                marginBottom={10}
-              >
-                <LearningIcon size={45} />
-              </Pane>
-              <Pane
-                height={150}
-                width="33%"
-                background={'greenTint'}
-                elevation={2}
-                marginBottom={10}
-              >
-                <LearningIcon size={45} />
-              </Pane>
-            </Pane>
           </Dialog>
         )
         break
       case 'edit':
         diablog = (
           <Dialog
-            isShown={this.isShowed}
+            isShown={this.isShowed()}
             title={'Edit folder'}
             onCloseComplete={this.showReset}
             hasCancel={false}
@@ -295,8 +127,8 @@ class Folder extends React.Component {
                   marginTop={20}
                   height={50}
                   width="100%"
-                  placeholder={this.state.name}
-                  value={this.state.name}
+                  placeholder={'Name'}
+                  value={''}
                   onChange={(e) => {
                     this.setState({ name: e.target.value })
                   }}
@@ -310,7 +142,7 @@ class Folder extends React.Component {
                   marginTop={20}
                   height={50}
                   width="100%"
-                  value={this.state.description}
+                  value={''}
                   onChange={(e) => {
                     this.setState({ description: e.target.value })
                   }}
@@ -368,7 +200,8 @@ class Folder extends React.Component {
           <Pane marginTop="2%" marginLeft="7%" height={45}>
             <Pane marginBottom={20}>
               <Text display="inline-block" marginRight={20}>
-                {this.state.listSets.length} sets |
+                {!this.props.folder ? 'loading' : this.props.folder.sets.length}{' '}
+                sets |
               </Text>
               <Text display="inline-block" color={'#E4E7EB'}>
                 created by
@@ -393,7 +226,7 @@ class Folder extends React.Component {
                 fontWeight={500}
                 lineHeight="40px"
               >
-                {this.state.name}
+                {!this.props.folder ? 'loading' : this.props.folder.name}
               </Text>
             </Pane>
           </Pane>
@@ -403,26 +236,16 @@ class Folder extends React.Component {
             <Tooltip content="Add set">
               <AddIcon
                 onClick={() => {
-                  this.setState({ isShown: 'add' })
+                  this.setState({ showing: 'add', isShown: true })
                 }}
                 size={25}
                 color="lawngreen"
               />
             </Tooltip>
-            <Tooltip content={'Study'}>
-              <LearningIcon
-                onClick={() => {
-                  this.setState({ isShown: 'study' })
-                }}
-                size={25}
-                color={'#735DD0'}
-                marginLeft={10}
-              />
-            </Tooltip>
             <Tooltip content={'Edit'}>
               <EditIcon
                 onClick={() => {
-                  this.setState({ isShown: 'edit' })
+                  this.setState({ showing: 'edit', isShown: true })
                 }}
                 size={25}
                 color="dodgerblue"
@@ -432,7 +255,7 @@ class Folder extends React.Component {
             <Tooltip content={'Remove'}>
               <TrashIcon
                 onClick={() => {
-                  this.setState({ isShown: 'remove' })
+                  this.setState({ showing: 'remove', isShown: true })
                 }}
                 size={25}
                 color="tomato"
@@ -448,68 +271,66 @@ class Folder extends React.Component {
         {/* List sets */}
         <Pane>
           <Pane marginLeft={100} />
-          {this.state.data.map((set) => (
-            <Pane
-              key={set.id}
-              width="400px"
-              marginLeft={100}
-              height={150}
-              elevation={2}
-              display="inline-block"
-              marginTop={10}
-              paddingTop={30}
-              paddingLeft={30}
-            >
-              <Link to={`/set/${set.id}`}>
-                <Pane>
-                  <Text
-                    fontSize={20}
-                    display={'block'}
-                    marginBottom={10}
-                    fontWeight={550}
-                  >
-                    {set.name}
-                  </Text>
-                  <Text
-                    fontSize={16}
-                    color={'gray'}
-                    display={'block'}
-                    marginBottom={30}
-                  >
-                    {set.number_flash_card + ' terms'}
-                  </Text>
-                </Pane>
-              </Link>
-
-              {/* Owner and remove */}
-              <Pane
-                display={'flex'}
-                justifyContent={'space-between'}
-                paddingRight={20}
-              >
-                <Text fontSize={20}>
-                  <Link to={this.state.path} style={{ color: '#14B5D0' }}>
-                    {this.props.user.username}
-                  </Link>
-                </Text>
+          {!this.props.folder
+            ? 'loading'
+            : this.props.folder.sets.map((set, index) => (
                 <Pane
-                  onClick={() => {
-                    this.removeSet(set.id)
-                  }}
+                  key={index}
+                  width="400px"
+                  marginLeft={100}
+                  height={150}
+                  elevation={2}
+                  display="inline-block"
+                  marginTop={10}
+                  paddingTop={30}
+                  paddingLeft={30}
                 >
-                  <Tooltip content={'Remove'}>
-                    <TrashIcon color={'red'} />
-                  </Tooltip>
+                  <Link to={`/set/${set.id}`}>
+                    <Pane>
+                      <Text
+                        fontSize={20}
+                        display={'block'}
+                        marginBottom={10}
+                        fontWeight={550}
+                      >
+                        {set.name}
+                      </Text>
+                    </Pane>
+                  </Link>
+
+                  {/* Owner and remove */}
+                  <Pane
+                    display={'flex'}
+                    justifyContent={'space-between'}
+                    paddingRight={20}
+                  >
+                    <Text fontSize={20}>
+                      <Link to={this.state.path} style={{ color: '#14B5D0' }}>
+                        {this.props.user.username}
+                      </Link>
+                    </Text>
+                    <Pane
+                      onClick={() => {
+                        this.removeSet(set.id)
+                      }}
+                    >
+                      <Tooltip content={'Remove'}>
+                        <TrashIcon color={'red'} />
+                      </Tooltip>
+                    </Pane>
+                  </Pane>
                 </Pane>
-              </Pane>
-            </Pane>
-          ))}
+              ))}
         </Pane>
       </Pane>
     )
   }
 }
-const mapStateToProps = ({ auth }) => {
-  return { user: { ...{ ...auth }.data } }
+const mapStateToProps = ({ auth, folder, info }) => {
+  return {
+    user: { ...{ ...auth }.data },
+    folder: { ...{ ...folder } }.data,
+    sets: { ...{ ...info } }.data,
+  }
 }
-export default connect(mapStateToProps)(Folder)
+export default connect(mapStateToProps, { fetchFolder, fetchSetsUser })(Folder)
