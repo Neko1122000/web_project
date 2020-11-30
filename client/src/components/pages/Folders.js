@@ -11,53 +11,33 @@ import {
     EditIcon,
 } from 'evergreen-ui'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import {createFolder, fetchFoldersUser, deleteFolder, editFolderInfo} from '../../actions'
 import UserHeader from '../UserHeader'
 
 const heightItem = 75
 const widthItem = 800
 
 class Folders extends React.Component {
+  async componentDidMount() {
+    await this.props.fetchFoldersUser()
+    if (this.props.data)
+      this.setState({
+        data: this.props.data,
+      })
+  }
+
     state = {
         isShown:false,
         removeFolder:-1,
+        editFolder:-1,
+        editTitle:'',
+        editDescription:'',
         folder: {
             name: '',
             description: '',
         },
-        data: [
-            {
-                id: "5fb4fe4a918cd022c4bb7394",
-                created_at: "2020-11-18T10:58:18.135Z",
-                name: "321",
-                description: "123",
-                updated_at: "2020-11-19T05:10:28.692Z",
-                sets: ["5fb4fe4a918cd022c4bxxxxx"]
-            },
-            {
-                id: 1,
-                created_at: "2020-11-11T10:58:18.135Z",
-                name: "delete",
-                description: "123",
-                updated_at: "2020-11-10T05:10:28.692Z",
-                sets: ["5fb4fe4a918cd022c4bxxxxx"]
-            },
-            {
-                id: 2,
-                created_at: "2020-11-24T10:58:18.135Z",
-                name: "test",
-                description: "123",
-                updated_at: "2020-11-19T05:10:28.692Z",
-                sets: ["5fb4fe4a918cd022c4bxxxxx"]
-            },
-            {
-                id: 3,
-                created_at: "2020-11-20T10:58:18.135Z",
-                name: "learning",
-                description: "123",
-                updated_at: "2020-11-19T05:10:28.692Z",
-                sets: ["5fb4fe4a918cd022c4bxxxxx"]
-            },
-        ]
+        data: []
     }
 
     focus = (e) => {
@@ -100,7 +80,7 @@ class Folders extends React.Component {
         });
 
         if (check){
-            console.log(this.state.folder)
+            createFolder(this.state.folder)
             toaster.success(
                 'Create successful'
             )
@@ -120,16 +100,36 @@ class Folders extends React.Component {
     }
     removeFolder =(id)=>{
       /// remove
-      this.setState({
-        data:[
-          ...this.state.data.filter(item => item.id !== id)
-        ],
-        removeFolder:-1
-      })
+      deleteFolder(id)
       toaster.success(
         'Create successful'
       )
-      
+    }
+    isEditFolder=(id)=>{
+      var datas = this.state.data;
+      var index = datas.findIndex(x=>x._id === id)
+      var obj = {...datas[index]}
+      this.setState({
+        editFolder:id,
+        folder:{
+          ...this.state.folder,
+          name:obj.name,
+          description:obj.description
+        }
+      })
+    }
+    editFolder =(_id)=>{
+        // Thong tin sau chinh sua
+        // tai id = _id
+        // voi gia tri la folder
+        editFolderInfo(_id, this.state.folder)
+        this.setState({
+            editFolder:-1
+        })
+        toaster.success(
+            'Edit successful'
+        )
+        window.location.href="/folders"
     }
 
     render() {
@@ -256,7 +256,7 @@ class Folders extends React.Component {
                     {/* List folder */}
                     {this.state.data.map((folder) => (
 
-                        <Pane key={folder.id} height={heightItem} marginTop ={12} >
+                        <Pane key={folder._id} height={heightItem} marginTop ={12} >
                             
                             <Pane
                                 backgroundColor="white"
@@ -268,7 +268,7 @@ class Folders extends React.Component {
                                 display="flex"
                                 justifyContent={"space-between"}
                             >
-                              <Link to={`/folders/${folder.id}`}>
+                              <Link to={`/folders/${folder._id}`}>
                                 <Pane flex="50%" width={widthItem*3/4}>
                                     <FolderCloseIcon
                                         size={25}
@@ -290,16 +290,104 @@ class Folders extends React.Component {
                                     paddingTop={25}
                                     paddingRight={20}
                                 >
-                                    <Pane>
+                                    {/* EDIT FOLDER */}
+                                    <Pane onClick={()=>{this.isEditFolder(folder._id)}}>
                                         <Tooltip content="Edit this folder" >
                                             <EditIcon
                                                 color="#1070CA"
                                                 size={20}
                                             />
                                         </Tooltip>
+
+                                        <Dialog
+                                            isShown={this.state.editFolder === folder._id}
+                                            onConfirm={()=>{this.editFolder(folder._id)}}
+                                            onCloseComplete={
+                                                ()=>{
+                                                    this.setState({
+                                                        editFolder:-1,
+                                                        editTitle:'',
+                                                        editDescription:''
+                                                    })
+                                                }
+                                            }
+                                            title={"EDIT FOLDER"}
+                                        >
+                                            {/* Name field */}
+                                            <Pane height={100}>
+                                                <TextInput
+                                                    className='input'
+                                                    width="100%"
+                                                    height={50}
+                                                    marginBottom={7}
+                                                    placeholder={"Enter a title"}
+                                                    value={this.state.folder.name}
+                                                    onChange={(e) => {this.setTitle(e)}}
+                                                >
+                                                </TextInput>
+                                                <Pane paddingLeft={10}>
+                                                    <Text
+                                                        fontWeight={550}
+                                                        fontSize={18}
+                                                        marginBottom={10}
+                                                        id={'require'}
+                                                        color={'red'}
+                                                        display={'none'}
+                                                    >
+                                                        {' '}
+                                                        THIS IS REQUIRED
+                                                    </Text>
+                                                    <Text
+                                                        id={'hint'}
+                                                        fontSize={16}
+                                                        fontWeight={500}
+                                                        color="#A6B1BB"
+                                                        display={'block'}
+                                                    >
+                                                        FOLDER NAME
+                                                    </Text>
+                                                </Pane>
+                                            </Pane>
+                                            {/* Description field */}
+                                            <Pane height={100}>
+                                                <TextInput
+                                                    className='input'
+                                                    width="100%"
+                                                    height={50}
+                                                    marginBottom={7}
+                                                    value={this.state.folder.description}
+                                                    placeholder={"Enter a description (optional)"}
+                                                    onChange={(e) => {this.setDescription(e)}}
+                                                >
+
+                                                </TextInput>
+                                                <Pane paddingLeft={10}>
+                                                    <Text
+                                                        fontWeight={550}
+                                                        fontSize={18}
+                                                        marginBottom={10}
+                                                        id={'require'}
+                                                        color={'red'}
+                                                        display={'none'}
+                                                    >
+                                                        {' '}
+                                                        THIS IS REQUIRED
+                                                    </Text>
+                                                    <Text
+                                                        id={'hint'}
+                                                        fontSize={16}
+                                                        fontWeight={500}
+                                                        color="#A6B1BB"
+                                                        display={'block'}
+                                                    >
+                                                        DESCRIPTION
+                                                    </Text>
+                                                </Pane>
+                                            </Pane>
+                                        </Dialog>
                                     </Pane>
 
-                                    <Pane onClick={()=>{this.isRemoveFolder(folder.id)}}>
+                                    <Pane onClick={()=>{this.isRemoveFolder(folder._id)}}>
                                         <Tooltip content="Remove this folder">
                                             <TrashIcon
                                                 color="#EC4C47"
@@ -314,8 +402,8 @@ class Folders extends React.Component {
                             <Pane id="line" width="100%" backgroundColor="#1070CA"></Pane>
                             
                           <Dialog
-                            isShown={this.state.removeFolder === folder.id}
-                            onConfirm={()=>{this.removeFolder(folder.id)}}
+                            isShown={this.state.removeFolder === folder._id}
+                            onConfirm={()=>{this.removeFolder(folder._id)}}
                             title={"DELETE FOLDER"}
                           >
                             <Pane>
@@ -337,4 +425,9 @@ class Folders extends React.Component {
         )
     }
 }
-export default Folders
+const mapStateToProps = ({ info }) => {
+  return { data: { ...info }.data }
+}
+
+export default connect(mapStateToProps, { fetchFoldersUser })(Folders)
+
