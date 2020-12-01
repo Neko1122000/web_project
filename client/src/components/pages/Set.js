@@ -22,15 +22,18 @@ import {
   Icon,
   ArrowRightIcon,
   ArrowLeftIcon,
+  PredictiveAnalysisIcon
 } from 'evergreen-ui'
 import { fetchSet } from '../../actions'
 class Set extends React.Component {
   componentDidMount() {
     this.props.fetchSet(this.props.location.pathname.substring(5))
+    console.log(this.props.sets)
   }
   state = {
     slideIndex: 1,
     status: false,
+    title:""
   }
   backward() {
     var length = this.props.sets.flash_cards.length
@@ -63,26 +66,21 @@ class Set extends React.Component {
         icon: AutomaticUpdatesIcon,
       },
       {
-        path: '/latest',
-        tabname: 'Viết',
-        icon: AnnotationIcon,
-      },
-      {
-        path: '/latest',
-        tabname: 'Chính tả',
-        icon: VolumeUpIcon,
-      },
-      {
         path: `/exam/${this.props.location.pathname.substring(5)}`,
         tabname: 'Kiểm tra',
         icon: ApplicationIcon,
+      },
+      {
+        path: `/game/${this.props.location.pathname.substring(5)}`,
+        tabname: 'Game',
+        icon: PredictiveAnalysisIcon,
       },
     ]
     return (
       <Pane className="noselect">
         <Pane>
           <Heading size={900} padding={50} color="#303545" fontWeight={700}>
-            Tiêu đề
+          Tiêu đề
           </Heading>
           <Pane display="flex">
             <Tablist paddingLeft={20}>

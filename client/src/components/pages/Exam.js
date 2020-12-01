@@ -1,10 +1,10 @@
 import React from 'react'
-import { Pane, Heading, TextInput, Button, Dialog } from 'evergreen-ui'
+import { Pane, Heading, TextInput,Text, Button, Dialog } from 'evergreen-ui'
 import { ChevronLeftIcon, ApplicationIcon, TickCircleIcon } from 'evergreen-ui'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { fetchSet } from '../../actions'
-
+const heightItem = 75
 class Exam extends React.Component {
   async componentDidMount() {
     await this.props.fetchSet(this.props.location.pathname.substring(5))
@@ -83,14 +83,14 @@ class Exam extends React.Component {
                     <Pane key={index}>
                       <Pane marginTop={30} marginBottom={30}>
                         <Pane display="flex" marginBottom={20}>
-                          <Heading size={600} fontWeight={700} marginRight={10}>
+                          <Heading size={500} fontWeight={500} marginRight={10}>
                             Câu số {index}:
                           </Heading>
-                          <Heading size={600} fontWeight={400}>
+                          <Heading size={500} fontWeight={400}>
                             {item.title}
                           </Heading>
                         </Pane>
-                        <Pane display="flex" width="200">
+                        <Pane display="flex" width="300">
                           <Pane>
                             <Heading>
                               {this.state.answers[index] === ''
@@ -175,7 +175,7 @@ class Exam extends React.Component {
           paddingTop={30}
           textAlign="center"
         >
-          <Link to={'/latest'}>
+          <Link to={`/set/${this.props.match.params.id}`}>
             <Pane display="flex" borderBottom="default" paddingBottom={10}>
               <ChevronLeftIcon size={20} color="#28A7A7" />
               <Heading size={500} fontWeight={600}>
@@ -222,19 +222,27 @@ class Exam extends React.Component {
                   </Pane>
                 ))}
           </Pane>
-          <Pane marginLeft={50}>
-            <Button
-              height={100}
-              widht={1000}
-              appearance="primary"
-              onClick={() => {
-                this.check_answers()
-              }}
+          <Pane
+            backgroundColor="#47B881"
+            borderRadius={10}
+            height={heightItem}
+            elevation={1}
+            width="80%"
+            onClick={() => {
+              this.check_answers()
+            }}
+            textAlign="center"
+            cursor="pointer"
+            margin="auto"
+          >
+            <Text
+              fontSize={16}
+              lineHeight="75px"
+              fontWeight={500}
+              color="white"
             >
-              <Heading size={700} fontWeight={900}>
-                {!this.state.data ? 'loading' : 'Nộp bài'}
-              </Heading>
-            </Button>
+              NỘP BÀI
+            </Text>
           </Pane>
         </Pane>
       </Pane>
