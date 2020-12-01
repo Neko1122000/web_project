@@ -19,20 +19,18 @@ const heightItem = 75
 const widthItem = 800
 
 class Folders extends React.Component {
-  async componentDidMount() {
-    await this.props.fetchFoldersUser()
-    if (this.props.data)
-      this.setState({
-        data: this.props.data,
-      })
-  }
+    async componentDidMount() {
+        await this.props.fetchFoldersUser()
+        if (this.props.data)
+            this.setState({
+                data: this.props.data,
+            })
+    }
 
     state = {
         isShown:false,
         removeFolder:-1,
         editFolder:-1,
-        editTitle:'',
-        editDescription:'',
         folder: {
             name: '',
             description: '',
@@ -40,14 +38,6 @@ class Folders extends React.Component {
         data: []
     }
 
-    focus = (e) => {
-        //var currentFolder = e.target.parentNode.querySelector('#line')
-        //currentFolder.style.height="3px"
-    }
-    blur = (e) =>{
-        //var currentFolder = e.target.parentNode.querySelector('#line')
-        //currentFolder.style.height="0px"
-    }
     setTitle = (e) =>{
         this.setState({
             folder:{
@@ -64,7 +54,7 @@ class Folders extends React.Component {
             }
         })
     }
-    createFolder = () =>{
+    createFolder = async() =>{
         let check = true;
         var inputs = document.querySelectorAll('div .input')
         inputs.forEach(element => {
@@ -80,12 +70,18 @@ class Folders extends React.Component {
         });
 
         if (check){
-            createFolder(this.state.folder)
+            await createFolder(this.state.folder).then(()=>{
+                    this.setState({isShown:false})
+                }
+            )
+            await this.props.fetchFoldersUser()
+            if (this.props.data)
+                this.setState({
+                    data: this.props.data,
+                })
             toaster.success(
                 'Create successful'
             )
-            this.setState({isShown:false})
-            window.location.reload()
         }
         else{
             toaster.warning(
@@ -94,44 +90,69 @@ class Folders extends React.Component {
         }
     }
     isRemoveFolder = (id) =>{
-      this.setState({
-        removeFolder:id
-      })
-    }
-    removeFolder =(id)=>{
-      /// remove
-      deleteFolder(id)
-      toaster.success(
-        'Create successful'
-      )
-      this.setState({removeFolder:-1})
-      window.location.reload()
-    }
-    isEditFolder=(id)=>{
-      var datas = this.state.data;
-      var index = datas.findIndex(x=>x._id === id)
-      var obj = {...datas[index]}
-      this.setState({
-        editFolder:id,
-        folder:{
-          ...this.state.folder,
-          name:obj.name,
-          description:obj.description
-        }
-      })
-    }
-    editFolder =(_id)=>{
-        // Thong tin sau chinh sua
-        // tai id = _id
-        // voi gia tri la folder
-        editFolderInfo(_id, this.state.folder)
         this.setState({
-            editFolder:-1
+            removeFolder:id
         })
-        toaster.success(
-            'Edit successful'
-        )
-        window.location.href="/folders"
+    }
+    removeFolder = async (id) => {
+        await deleteFolder(id).then(()=>{
+            this.setState({removeFolder:-1})
+        })
+        await this.props.fetchFoldersUser()
+        if (this.props.data)
+            this.setState({
+                data: this.props.data,
+            })
+        toaster.success('Delete successful')
+    }
+    // removeFolder =(id)=>{
+    //   /// remove
+    //   deleteFolder(id).then(()=>{
+    //     window.location.reload()
+    //   }
+    // )
+    //   toaster.success(
+    //     'Create successful'
+    //   )
+    //   this.setState({removeFolder:-1})
+    //   //window.location.reload()
+    // }
+    isEditFolder=(id)=>{
+        var datas = this.state.data;
+        var index = datas.findIndex(x=>x._id === id)
+        var obj = {...datas[index]}
+        this.setState({
+            editFolder:id,
+            folder:{
+                ...this.state.folder,
+                name:obj.name,
+                description:obj.description
+            }
+        })
+    }
+    // editFolder =(_id)=>{
+    //     // Thong tin sau chinh sua
+    //     // tai id = _id
+    //     // voi gia tri la folder
+    //     editFolderInfo(_id, this.state.folder).then(()=>{
+    //       window.location.reload()
+    //     }
+    //   )
+    //     this.setState({editFolder:-1})
+    //     toaster.success(
+    //         'Edit successful'
+    //     )
+    // }
+    editFolder = async (_id) => {
+        await editFolderInfo(_id, this.state.folder).then(()=>{
+            this.setState({editFolder:-1})
+        })
+        await this.props.fetchFoldersUser()
+        if (this.props.data)
+            this.setState({
+                data: this.props.data,
+            })
+        toaster.success('Edit successful')
     }
 
     render() {
@@ -154,8 +175,6 @@ class Folders extends React.Component {
                             height={heightItem}
                             elevation={1}
                             width="100%"
-                            onMouseEnter={(e) => {this.focus(e)}}
-                            onMouseLeave={(e) => {this.blur(e)}}
                             onClick={()=>{this.setState({isShown:true})}}
                             textAlign="center"
                             cursor="pointer"
@@ -258,32 +277,30 @@ class Folders extends React.Component {
                     {this.state.data.map((folder) => (
 
                         <Pane key={folder._id} height={heightItem} marginTop ={12} >
-                            
+
                             <Pane
                                 backgroundColor="white"
                                 height={heightItem}
                                 width="100%"
                                 elevation={1}
-                                onMouseEnter={(e) => {this.focus(e)}}
-                                onMouseLeave={(e) => {this.blur(e)}}
                                 display="flex"
                                 justifyContent={"space-between"}
                             >
-                              <Link to={`/folders/${folder._id}`}>
-                                <Pane flex="50%" width={widthItem*3/4}>
-                                    <FolderCloseIcon
-                                        size={25}
-                                        color="#E4E7EB"
-                                        bottom={5}
-                                        lineHeight="100px"
-                                        marginRight={10}
-                                        marginLeft={30}
-                                    />
-                                    <Text fontSize={20} lineHeight="80px" fontWeight={550}>
-                                        {folder.name}
-                                    </Text>
-                                </Pane>
-                              </Link>
+                                <Link to={`/folders/${folder._id}`}>
+                                    <Pane flex="50%" width={widthItem*3/4}>
+                                        <FolderCloseIcon
+                                            size={25}
+                                            color="#E4E7EB"
+                                            bottom={5}
+                                            lineHeight="100px"
+                                            marginRight={10}
+                                            marginLeft={30}
+                                        />
+                                        <Text fontSize={20} lineHeight="80px" fontWeight={550}>
+                                            {folder.name}
+                                        </Text>
+                                    </Pane>
+                                </Link>
                                 <Pane
                                     display="flex"
                                     justifyContent={"space-around"}
@@ -395,29 +412,26 @@ class Folders extends React.Component {
                                                 size={20}
                                             />
                                         </Tooltip>
+                                        <Dialog
+                                            isShown={this.state.removeFolder === folder._id}
+                                            onConfirm={()=>{this.removeFolder(folder._id)}}
+                                            title={"DELETE FOLDER"}
+                                        >
+                                            <Pane>
+                                                <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                                                    <Text fontSize={25} fontWeight={600} >{folder.name}</Text> <hr/>
+                                                    Deleting a folder is a PERMANENT action. This cannot be undone.
+                                                    Are you sure you want to delete <Text fontWeight={550} color={"red"}>{folder.name}</Text>? The sets in this folder will not be
+                                                    deleted.
+                                                </Text>
+                                            </Pane>
+                                        </Dialog>
                                     </Pane>
 
                                 </Pane>
-                                
+
                             </Pane>
                             <Pane id="line" width="100%" backgroundColor="#1070CA"></Pane>
-                            
-                          <Dialog
-                            isShown={this.state.removeFolder === folder._id}
-                            onConfirm={()=>{this.removeFolder(folder._id)}}
-                            title={"DELETE FOLDER"}
-                          >
-                            <Pane>
-                              <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
-                                  <Text fontSize={25} fontWeight={600} >{folder.name}</Text> <hr/>
-                                  Deleting a folder is a PERMANENT action. This cannot be undone.
-                                  Are you sure you want to delete <Text fontWeight={550} color={"red"}>{folder.name}</Text>? The sets in this folder will not be
-                                  deleted.
-                              </Text>
-                            </Pane>
-                          </Dialog>
-
-
                         </Pane>
                     ))}
                 </Pane>
@@ -427,7 +441,7 @@ class Folders extends React.Component {
     }
 }
 const mapStateToProps = ({ info }) => {
-  return { data: { ...info }.data }
+    return { data: { ...info }.data }
 }
 
 export default connect(mapStateToProps, { fetchFoldersUser })(Folders)
