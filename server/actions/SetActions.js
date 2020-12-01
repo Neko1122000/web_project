@@ -45,7 +45,7 @@ const _compare = (str, str2) => {
 }
 exports.getSet = async(setId, userId = '', args = {}) => {
     const set = await _getSet(setId)
-    const {img, description, name, flash_cards, created_at, updated_at, visible_by, creator} = set
+    const {img, description, name, flash_cards, created_at, updated_at, visible_by, creator, updated_by, class_updated, class_visible} = set
     let flag = false
 
     if (visible_by === 'everyone') flag = true
@@ -73,6 +73,10 @@ exports.getSet = async(setId, userId = '', args = {}) => {
     }
 
     if (flag) return {
+        updated_by,
+        class_updated,
+        class_visible,
+        visible_by,
         img,
         description,
         name,
