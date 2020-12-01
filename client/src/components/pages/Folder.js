@@ -1,9 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Pane, Text, Tooltip, Dialog, TextInput, toaster } from 'evergreen-ui'
+import { Pane, Text, Tooltip, Dialog, TextInput, toaster, Spinner } from 'evergreen-ui'
 import { AddIcon, TrashIcon, EditIcon, FolderOpenIcon, Tab, Tablist } from 'evergreen-ui'
 import { Link, withRouter } from 'react-router-dom'
-
 
 import { 
     fetchFolder, 
@@ -12,68 +11,100 @@ import {
     editFolderInfo, 
     deleteFolder 
 } from '../../actions'
+import { compose } from 'redux'
+import { startSession } from 'mongoose'
 
 class Folder extends React.Component {
-  async componentDidMount() {
-    await this.props.fetchFolder(this.props.match.params.id)
-    await this.props.fetchSetsUser()
-    if (this.props.folder)
-      this.setState({
-        sets: this.props.folder.sets.map((set) => set._id)
-      })
-      this.setState({
-          folder:{
-              ...this.state.folder,
-              name:this.props.folder.name,
-              description:this.props.folder.description
-          }
-      })
-  }
+    async componentDidMount() {
+        await this.props.fetchFolder(this.props.match.params.id)
+        await this.props.fetchSetsUser()
+        if (this.props.folder)
+        this.setState({
+            folderSet:{
+                ...this.state.folderSet,
+                sets:this.props.folder.sets.map(item=>item._id)
+            }
+        })
+        this.setState({
+            folder:{
+                ...this.state.folder,
+                name:this.props.folder.name,
+                description:this.props.folder.description
+            }
+        })
+    }
   
-  state = {
-    showing: '',
-    isShown: false,
-    removeSet:-1,
-    path: '/sets',
-    check:false,
-    sets:[],
-    folder:{
-        name:'',
-        description:'',
-    },
-    srcIndex: 0,
-    srcSet: ['Your sets', 'Class sets', 'Studied sets']
-  }
+    state = {
+        showing: '',
+        isShown: false,
+        removeSet:-1,
+        path: '/sets',
+        check:false,
+        folderSet:{
+            sets:[]
+        },
+        folder:{
+            name:'',
+            description:'',
+        },
+        srcIndex: 0,
+        srcSet: ['Your sets', 'Class sets', 'Studied sets']
+    }
 
-  /* show diablog */
-  isShowed = () => {
-    return this.state.isShown
-  }
+    /* show diablog */
+    isShowed = () => {
+        return this.state.isShown
+    }
 
-  /* close diablog */
-  showReset = () => {
-    this.setState({ isShown: false })
-  }
+    /* close diablog */
+    showReset = () => {
+        var isChange = false;
+        this.setState({ 
+            isShown: false ,
+            removeSet:-1,
+        })
+        console.log(this.state.folderSet.sets.length)
+        console.log(this.props.folder.sets.length)
+        if(this.state.folderSet.sets.length !== this.props.folder.sets.length){
+            isChange=true
+        }
+        else this.props.folder.sets.map(item=>{
+            if(!this.state.folderSet.sets.join('_').includes(item._id)){
+                isChange=true
+            }
+        })
+        if(isChange){
+            toaster.success(
+                "Change successful"
+            )
+            //this.submitChange()
+        }
+    }
+    submitChange=()=>{
+        console.log(this.state.folderSet)
+        editFolderSets(this.props.folder._id, this.state.folderSet)
+    }
+ 
+    /* remove folder */
+    removeFolder = () => {
+        deleteFolder(this.props.folder._id)
+        window.location.href="/folders"
+        toaster.success('Delete successful')
+        this.setState({})
+    }
 
-  /* remove folder */
-  removeFolder = () => {
-    deleteFolder(this.props.folder._id)
-    window.location.href="/folders"
-    toaster.success('Delete successful')
-  }
-
-  getSetsIdList = () => {
-    var idList = []
-    return !this.props.folder
-      ? 'loading'
-      : this.props.folder.sets.map((set) => [...idList, set._id])
-  }
-  getUserSetsList = () => {
-    var idList = []
-    return !this.props.sets
-      ? 'loading'
-      : this.props.sets.map((set) => [...idList, set])
-  }
+    getSetsIdList = () => {
+        var idList = []
+        return !this.props.folder
+        ? 'loading'
+        : this.props.folder.sets.map((set) => [...idList, set._id])
+    }
+    getUserSetsList = () => {
+        var idList = []
+        return !this.props.sets
+        ? 'loading'
+        : this.props.sets.map((set) => [...idList, set])
+    }
     editFolder=()=>{
         editFolderInfo(this.props.folder._id, this.state.folder)
         toaster.success(
@@ -83,30 +114,37 @@ class Folder extends React.Component {
     }
     
     change = (id) =>{
-        var result = this.state.sets;
-        if(this.state.sets.join().includes(id)){
-            this.setState({sets:this.state.sets.filter(item=>item!== id)})
+        var newSets = this.state.folderSet.sets.filter(item=>item!== id)
+        if(this.state.folderSet.sets.join('_').includes(id)){
+            this.setState({
+                folderSet:{
+                    ...this.state.folderSet,
+                    sets:newSets,
+                }
+            })
         }else{
-            this.setState({sets:this.state.sets.push(id)})
+            this.setState({
+                folderSet:{
+                    ...this.state.folderSet,
+                    sets:[...this.state.folderSet.sets, id],
+                },
+            })
         }
-        console.log(this.state.folder)
-        /*this.state.sets.includes(id)?(
-            result = this.state.sets.filter(item=>item!== id)
-        ):(
-            result = this.state.sets.push(id)
-        )
-        this.setState({
-            sets:result
-        })*/
-
     }
-  /* remover set in this folder*/
-  removeSet = (id) => {
-    
-    toaster.success(
-        "Delete successful"
-    )
-  }
+
+    /* remover set in this folder*/
+    removeSet = (id) => {
+        var newSets = this.state.folderSet.sets.filter(item=>item!== id)
+        this.setState({
+            removeSet:-1,
+            folderSet:{
+                ...this.state.folderSet,
+                sets:newSets,
+            }
+        })
+        console.log(this.state.folderSet)
+        this.showReset()
+    }
 
   render() {
     //console.log(this.getSetsIdList())
@@ -197,7 +235,9 @@ class Folder extends React.Component {
                                             backgroundColor="#47B881"
                                             onClick={()=>{this.change(item[0]._id)}}
                                         >
-                                            {this.getSetsIdList().join('_').includes(item[0]._id)?"+":"-"}
+                                            <Text color="white"  fontSize={20}>
+                                                {this.state.folderSet.sets.join('_').includes(item[0]._id)?"-":"+"}
+                                            </Text>
                                         </Pane>
                                             
                                     </Pane>
@@ -319,7 +359,7 @@ class Folder extends React.Component {
           <Pane marginTop="2%" marginLeft="7%" height={45}>
             <Pane marginBottom={20}>
               <Text display="inline-block" marginRight={20}>
-                {!this.props.folder ? 'loading' : this.props.folder.sets.length}{' '}
+                {!this.props.folder ? (<Pane><Spinner/></Pane>) : this.props.folder.sets.length}{' '}
                 sets |
               </Text>
               <Text display="inline-block" color={'#E4E7EB'}>
@@ -351,42 +391,43 @@ class Folder extends React.Component {
           </Pane>
 
           {/* Action side */}
-          <Pane marginTop="4%" marginRight="5%">
-            <Tooltip content="Add set">
-              <AddIcon
-                onClick={() => {
-                  this.setState({ showing: 'add', isShown: true })
-                }}
-                size={25}
-                color="green"
-              />
-            </Tooltip>
-            <Tooltip content={'Edit'}>
-              <EditIcon
-                onClick={() => {
-                  this.setState({ showing: 'edit', isShown: true })
-                }}
-                size={25}
-                color="dodgerblue"
-                marginLeft={20}
-              />
-            </Tooltip>
-            <Tooltip content={'Remove'}>
-              <TrashIcon
-                onClick={() => {
-                  this.setState({ showing: 'remove', isShown: true })
-                }}
-                size={25}
-                color="tomato"
-                marginLeft={20}
-              />
-            </Tooltip>
-          </Pane>
-
-          {/* Diablog */}
+          {this.state.folder.name?(
+              <Pane marginTop="4%" marginRight="5%">
+              <Tooltip content="Add set">
+                <AddIcon
+                  onClick={() => {
+                    this.setState({ showing: 'add', isShown: true })
+                  }}
+                  size={25}
+                  color="green"
+                />
+              </Tooltip>
+              <Tooltip content={'Edit'}>
+                <EditIcon
+                  onClick={() => {
+                    this.setState({ showing: 'edit', isShown: true })
+                  }}
+                  size={25}
+                  color="dodgerblue"
+                  marginLeft={20}
+                />
+              </Tooltip>
+              <Tooltip content={'Remove'}>
+                <TrashIcon
+                  onClick={() => {
+                    this.setState({ showing: 'remove', isShown: true })
+                  }}
+                  size={25}
+                  color="tomato"
+                  marginLeft={20}
+                />
+              </Tooltip>
+            </Pane>
+            
+          
+          ):(<Pane></Pane>)}
           {diablog}
         </Pane>
-
         {/* List sets */}
         <Pane>
           {!this.props.folder

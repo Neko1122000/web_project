@@ -85,6 +85,7 @@ class Folders extends React.Component {
                 'Create successful'
             )
             this.setState({isShown:false})
+            window.location.reload()
         }
         else{
             toaster.warning(
@@ -96,7 +97,6 @@ class Folders extends React.Component {
       this.setState({
         removeFolder:id
       })
-      console.log(this.state.removeFolder)
     }
     removeFolder =(id)=>{
       /// remove
@@ -104,6 +104,8 @@ class Folders extends React.Component {
       toaster.success(
         'Create successful'
       )
+      this.setState({removeFolder:-1})
+      window.location.reload()
     }
     isEditFolder=(id)=>{
       var datas = this.state.data;
@@ -133,7 +135,6 @@ class Folders extends React.Component {
     }
 
     render() {
-
         return (
             <Pane>
                 <UserHeader path="/latest" />
