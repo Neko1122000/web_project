@@ -85,6 +85,11 @@ class Game extends React.Component {
     console.log(this.state.answers)
 
   }
+  reload_game(){
+    this.setState({ isShow: false })
+    window.location.reload(false)
+
+  }
   calculator_mark(){
     var count_true_answ = 0
     var data_length = this.state.data.length === 0 ? 1 : this.state.data.length
@@ -99,7 +104,7 @@ class Game extends React.Component {
         <Dialog
           isShown={this.state.isShown}
           title="Kết quả"
-          onCloseComplete={() => this.setState({ isShow: false })}
+          onCloseComplete={() => (this.reload_game())}
           hasFooter={false}
         >
           <Pane>
