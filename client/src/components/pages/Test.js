@@ -5,12 +5,14 @@ import * as action from '../../actions'
 
 class Test extends React.Component {
   test = () => {
-    action.editFolderSets('5fc543a268cae4f0f3774aee', {
-      sets: ['5fc23f38f156464895448515', '5fc2414ef15646489544851d','5fc2420bf156464895448520'],
-    })
-    
-    this.props.fetchFolder('5fc543a268cae4f0f3774aee')
-    this.props.fetchFoldersUser()
+    // action.createClass({
+    //   name: '123',
+    //   description: '213',
+    //   address: '123',
+    //   allow_member_change: true,
+    // })
+
+    this.props.fetchClasses()
     this.props.fetchSetsUser()
   }
   render() {

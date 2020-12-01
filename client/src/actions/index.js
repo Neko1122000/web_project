@@ -23,7 +23,6 @@ const refreshToken = async (callback) => {
   })
   document.cookie = 'access_token=' + res.data.data.token
   document.cookie = 'refresh_token=' + res.data.data.refresh_token
-  callback()
   window.location.reload()
 }
 const options = {
@@ -148,6 +147,52 @@ export const deleteFolder = async (id) => {
   }
 }
 
+// Class
+export const fetchClass = (id) => async (dispatch) => {
+  if (getToken().accessToken) {
+    const res = await axios
+      .get(`/api/class/${id}`, options)
+      .catch(async (error) => {
+        await refreshToken(fetchClass)
+      })
+    if (res) {
+      console.log(res)
+      dispatch({ type: types.FETCH_CLASS, payload: res.data })
+    }
+  } else dispatch({ type: types.FETCH_CLASS, payload: false })
+}
+
+export const createClass = async (classInfo) => {
+  if (getToken().accessToken) {
+    const res = await axios
+      .post(`/api/class`, classInfo, options)
+      .catch(async (error) => {
+        await refreshToken(createClass)
+      })
+    console.log(res)
+  }
+}
+export const editClass = async (id, classInfo) => {
+  if (getToken().accessToken) {
+    const res = await axios
+      .post(`/api/class/${id}`, classInfo, options)
+      .catch((error) => {
+        console.log(error)
+      })
+    console.log(res)
+  }
+}
+export const deleteClass = async (id) => {
+  if (getToken().accessToken) {
+    const res = await axios
+      .delete(`/api/class/${id}`, options)
+      .catch((error) => {
+        console.log(error)
+      })
+    console.log(res)
+  }
+}
+
 // User -
 
 /* Sets -- */
@@ -167,4 +212,14 @@ export const fetchFoldersUser = () => async (dispatch) => {
     })
     if (res) dispatch({ type: types.FETCH_FOLDERS_USER, payload: res.data })
   } else dispatch({ type: types.FETCH_FOLDERS_USER, payload: false })
+}
+export const fetchClasses = () => async (dispatch) => {
+  if (getToken().accessToken) {
+    const res = await axios
+      .get('/api/classes', { name: '123' }, options)
+      .catch(async (error) => {
+        await refreshToken(fetchClasses)
+      })
+    if (res) dispatch({ type: types.FETCH_CLASSES, payload: res.data })
+  } else dispatch({ type: types.FETCH_CLASSES, payload: false })
 }

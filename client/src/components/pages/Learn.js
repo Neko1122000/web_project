@@ -56,12 +56,9 @@ class Learn extends React.Component {
       newIndex = this.updateCardIndex()
       this.setState({ options: this.shuffleOptions(newIndex) })
       this.setState({ cardIndex: newIndex })
-      console.log(this.state.cardIndex)
-      console.log(this.state.options)
     }
   }
   shuffleOptions(cardIndex) {
-    console.log(cardIndex)
     var data_length = this.state.data.length
     var tem_options = []
     for (var i = 0; i < data_length; i++) {
@@ -143,7 +140,7 @@ class Learn extends React.Component {
           paddingTop={30}
           textAlign="center"
         >
-          <Link to={'/latest'}>
+          <Link to={`/set/${this.props.match.params.id}`}>
             <Pane display="flex" borderBottom="default" paddingBottom={10}>
               <ChevronLeftIcon size={20} color="#28A7A7" />
               <Heading size={500} fontWeight={600}>
@@ -165,7 +162,7 @@ class Learn extends React.Component {
               <Heading size={600} fontWeight={700}>
                 {this.state.data
                   ? this.state.data.length - this.state.right_ans_2.length
-                  : "0"}
+                  : '0'}
               </Heading>
             </Pane>
             <Pane marginLeft={10} marginTop={60}>
