@@ -1,150 +1,160 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Pane, Text, Tooltip, Dialog, TextInput, toaster, Spinner } from 'evergreen-ui'
-import { AddIcon, TrashIcon, EditIcon, FolderOpenIcon, Tab, Tablist } from 'evergreen-ui'
-import { Link, withRouter } from 'react-router-dom'
+import {
+  Pane,
+  Text,
+  Tooltip,
+  Dialog,
+  TextInput,
+  toaster,
+  Spinner,
+} from 'evergreen-ui'
+import {
+  AddIcon,
+  TrashIcon,
+  EditIcon,
+  FolderOpenIcon,
+  Tab,
+  Tablist,
+} from 'evergreen-ui'
+import { Link } from 'react-router-dom'
 
-import { 
-    fetchFolder, 
-    fetchSetsUser, 
-    editFolderSets, 
-    editFolderInfo, 
-    deleteFolder 
+import {
+  fetchFolder,
+  fetchSetsUser,
+  editFolderSets,
+  editFolderInfo,
+  deleteFolder,
 } from '../../actions'
-import { compose } from 'redux'
-import { startSession } from 'mongoose'
 
 class Folder extends React.Component {
-    async componentDidMount() {
-        await this.props.fetchFolder(this.props.match.params.id)
-        await this.props.fetchSetsUser()
-        if (this.props.folder)
-        this.setState({
-            folderSet:{
-                ...this.state.folderSet,
-                sets:this.props.folder.sets.map(item=>item._id)
-            }
-        })
-        this.setState({
-            folder:{
-                ...this.state.folder,
-                name:this.props.folder.name,
-                description:this.props.folder.description
-            }
-        })
-    }
-  
-    state = {
-        showing: '',
-        isShown: false,
-        removeSet:-1,
-        path: '/sets',
-        check:false,
-        folderSet:{
-            sets:[]
+  async componentDidMount() {
+    await this.props.fetchFolder(this.props.match.params.id)
+    await this.props.fetchSetsUser()
+    if (this.props.folder)
+      this.setState({
+        folderSet: {
+          ...this.state.folderSet,
+          sets: this.props.folder.sets.map((item) => item._id),
         },
-        folder:{
-            name:'',
-            description:'',
+      })
+    this.setState({
+      folder: {
+        ...this.state.folder,
+        name: this.props.folder.name,
+        description: this.props.folder.description,
+      },
+    })
+  }
+
+  state = {
+    showing: '',
+    isShown: false,
+    removeSet: -1,
+    path: '/sets',
+    check: false,
+    folderSet: {
+      sets: [],
+    },
+    folder: {
+      name: '',
+      description: '',
+    },
+    srcIndex: 0,
+    srcSet: ['Your sets', 'Class sets', 'Studied sets'],
+  }
+
+  /* show diablog */
+  isShowed = () => {
+    return this.state.isShown
+  }
+
+  /* close diablog */
+  showReset = () => {
+    var isChange = false
+    this.setState({
+      isShown: false,
+      removeSet: -1,
+    })
+    console.log(this.state.folderSet.sets.length)
+    console.log(this.props.folder.sets.length)
+    if (this.state.folderSet.sets.length !== this.props.folder.sets.length) {
+      isChange = true
+    } else
+      this.props.folder.sets.map((item) => {
+        if (!this.state.folderSet.sets.join('_').includes(item._id)) {
+          isChange = true
+        }
+      })
+    if (isChange) {
+      toaster.success('Change successful')
+      this.submitChange()
+    }
+  }
+  submitChange = async () => {
+    console.log(this.state.folderSet)
+    await editFolderSets(this.props.folder._id, this.state.folderSet)
+    await this.props.fetchFolder(this.props.match.params.id)
+  }
+
+  /* remove folder */
+  removeFolder = () => {
+    deleteFolder(this.props.folder._id)
+    window.location.href = '/folders'
+    toaster.success('Delete successful')
+    this.setState({})
+  }
+
+  getSetsIdList = () => {
+    var idList = []
+    return !this.props.folder
+      ? 'loading'
+      : this.props.folder.sets.map((set) => [...idList, set._id])
+  }
+  getUserSetsList = () => {
+    var idList = []
+    return !this.props.sets
+      ? 'loading'
+      : this.props.sets.map((set) => [...idList, set])
+  }
+  editFolder = () => {
+    editFolderInfo(this.props.folder._id, this.state.folder)
+    toaster.success('Edit successful')
+    this.setState({ isShown: '' })
+  }
+
+  change = (id) => {
+    var newSets = this.state.folderSet.sets.filter((item) => item !== id)
+    if (this.state.folderSet.sets.join('_').includes(id)) {
+      this.setState({
+        folderSet: {
+          ...this.state.folderSet,
+          sets: newSets,
         },
-        srcIndex: 0,
-        srcSet: ['Your sets', 'Class sets', 'Studied sets']
+      })
+    } else {
+      this.setState({
+        folderSet: {
+          ...this.state.folderSet,
+          sets: [...this.state.folderSet.sets, id],
+        },
+      })
     }
+  }
 
-    /* show diablog */
-    isShowed = () => {
-        return this.state.isShown
-    }
-
-    /* close diablog */
-    showReset = () => {
-        var isChange = false;
-        this.setState({ 
-            isShown: false ,
-            removeSet:-1,
-        })
-        console.log(this.state.folderSet.sets.length)
-        console.log(this.props.folder.sets.length)
-        if(this.state.folderSet.sets.length !== this.props.folder.sets.length){
-            isChange=true
-        }
-        else this.props.folder.sets.map(item=>{
-            if(!this.state.folderSet.sets.join('_').includes(item._id)){
-                isChange=true
-            }
-        })
-        if(isChange){
-            toaster.success(
-                "Change successful"
-            )
-            //this.submitChange()
-        }
-    }
-    submitChange=()=>{
-        console.log(this.state.folderSet)
-        editFolderSets(this.props.folder._id, this.state.folderSet)
-    }
- 
-    /* remove folder */
-    removeFolder = () => {
-        deleteFolder(this.props.folder._id)
-        window.location.href="/folders"
-        toaster.success('Delete successful')
-        this.setState({})
-    }
-
-    getSetsIdList = () => {
-        var idList = []
-        return !this.props.folder
-        ? 'loading'
-        : this.props.folder.sets.map((set) => [...idList, set._id])
-    }
-    getUserSetsList = () => {
-        var idList = []
-        return !this.props.sets
-        ? 'loading'
-        : this.props.sets.map((set) => [...idList, set])
-    }
-    editFolder=()=>{
-        editFolderInfo(this.props.folder._id, this.state.folder)
-        toaster.success(
-            "Edit successful"
-        )
-        this.setState({isShown:''})
-    }
-    
-    change = (id) =>{
-        var newSets = this.state.folderSet.sets.filter(item=>item!== id)
-        if(this.state.folderSet.sets.join('_').includes(id)){
-            this.setState({
-                folderSet:{
-                    ...this.state.folderSet,
-                    sets:newSets,
-                }
-            })
-        }else{
-            this.setState({
-                folderSet:{
-                    ...this.state.folderSet,
-                    sets:[...this.state.folderSet.sets, id],
-                },
-            })
-        }
-    }
-
-    /* remover set in this folder*/
-    removeSet = (id) => {
-        var newSets = this.state.folderSet.sets.filter(item=>item!== id)
-        this.setState({
-            removeSet:-1,
-            folderSet:{
-                ...this.state.folderSet,
-                sets:newSets,
-            }
-        })
-        console.log(this.state.folderSet)
-        this.showReset()
-    }
+  /* remover set in this folder*/
+  removeSet = (id) => {
+    var newSets = this.state.folderSet.sets.filter((item) => item !== id)
+    this.setState({
+      removeSet: -1,
+      folderSet: {
+        ...this.state.folderSet,
+        sets: newSets,
+      },
+    })
+    console.log(this.state.folderSet)
+    this.showReset()
+  }
 
   render() {
     //console.log(this.getSetsIdList())
@@ -153,103 +163,111 @@ class Folder extends React.Component {
     switch (this.state.showing) {
       case 'add':
         diablog = (
-            <Dialog
-                isShown={this.isShowed()}
-                title={'Add a set'}
-                onCloseComplete={this.showReset}
-                hasFooter={false}
-                minHeightContent={800}
-            >
-                <Link to={'/create-set'}>
-                    <Pane 
-                        background="#47B881" 
-                        height={100} 
-                        textAlign={'center'}
-                        elevation={2}
-                        marginBottom={20}
-                    >
-                        <Text
-                            width="100%"
-                            height={100}
-                            lineHeight="90px"
-                            fontSize={30}
-                            color={'white'}
-                            textAlign={'center'}
-                        >
-                        + Create a new set
-                        </Text>
-                    </Pane>
-                </Link>
-                <Pane height={120} >
-                    <Tablist marginBottom={16} display="flex" >
-                        {this.state.srcSet.map((tab, index) => (
-                        <Tab
-                            key={tab}
-                            id={tab}
-                            onSelect={() => this.setState({ srcIndex: index })}
-                            isSelected={index === this.state.srcIndex}
-                            aria-controls={`panel-${tab}`}
-                            flex="100%"
-                        >
-                            {tab}
-                        </Tab>
-                        ))}
-                    </Tablist>
-                    <Pane background="tint1" flex="1">
-                        {this.state.srcSet.map((tab, index) => (
-                        <Pane
-                            key={tab}
-                            id={`panel-${tab}`}
-                            role="tabpanel"
-                            aria-labelledby={tab}
-                            aria-hidden={index !== this.state.srcIndex}
-                            display={index === this.state.srcIndex ? 'block' : 'none'}
-                            backgroundColor="white"
-                            border
-                        >
-                            {tab!=="Your sets"?<Pane>Nothing</Pane>:(
-                                <Pane>
-                                {this.getUserSetsList?(this.getUserSetsList().map((item, index)=>(
-                                    <Pane
-                                        key={item[0]._id}
-                                        width="100%"
-                                        height={70}
-                                        elevation={2}
-                                        display="flex"
-                                        justifyContent="space-between"
-                                        paddingRight={10}
-                                    >
-                                        <Text paddingLeft={30} alignSelf="center">
-                                            {item[0].name}
-                                        </Text>
-                                        
-                                        <Pane
-                                            className="modify"
-                                            width={50}
-                                            height={50}
-                                            border
-                                            textAlign="center"
-                                            lineHeight="50px"
-                                            alignSelf="center"
-                                            cursor="pointer"
-                                            backgroundColor="#47B881"
-                                            onClick={()=>{this.change(item[0]._id)}}
-                                        >
-                                            <Text color="white"  fontSize={20}>
-                                                {this.state.folderSet.sets.join('_').includes(item[0]._id)?"-":"+"}
-                                            </Text>
-                                        </Pane>
-                                            
-                                    </Pane>
-                                ))):''}
+          <Dialog
+            isShown={this.isShowed()}
+            title={'Add a set'}
+            onCloseComplete={this.showReset}
+            hasFooter={false}
+            minHeightContent={800}
+          >
+            <Link to={'/create-set'}>
+              <Pane
+                background="#47B881"
+                height={100}
+                textAlign={'center'}
+                elevation={2}
+                marginBottom={20}
+              >
+                <Text
+                  width="100%"
+                  height={100}
+                  lineHeight="90px"
+                  fontSize={30}
+                  color={'white'}
+                  textAlign={'center'}
+                >
+                  + Create a new set
+                </Text>
+              </Pane>
+            </Link>
+            <Pane height={120}>
+              <Tablist marginBottom={16} display="flex">
+                {this.state.srcSet.map((tab, index) => (
+                  <Tab
+                    key={tab}
+                    id={tab}
+                    onSelect={() => this.setState({ srcIndex: index })}
+                    isSelected={index === this.state.srcIndex}
+                    aria-controls={`panel-${tab}`}
+                    flex="100%"
+                  >
+                    {tab}
+                  </Tab>
+                ))}
+              </Tablist>
+              <Pane background="tint1" flex="1">
+                {this.state.srcSet.map((tab, index) => (
+                  <Pane
+                    key={tab}
+                    id={`panel-${tab}`}
+                    role="tabpanel"
+                    aria-labelledby={tab}
+                    aria-hidden={index !== this.state.srcIndex}
+                    display={index === this.state.srcIndex ? 'block' : 'none'}
+                    backgroundColor="white"
+                    border
+                  >
+                    {tab !== 'Your sets' ? (
+                      <Pane>Nothing</Pane>
+                    ) : (
+                      <Pane>
+                        {this.getUserSetsList
+                          ? this.getUserSetsList().map((item, index) => (
+                              <Pane
+                                key={item[0]._id}
+                                width="100%"
+                                height={70}
+                                elevation={2}
+                                display="flex"
+                                justifyContent="space-between"
+                                paddingRight={10}
+                              >
+                                <Text paddingLeft={30} alignSelf="center">
+                                  {item[0].name}
+                                </Text>
+
+                                <Pane
+                                  className="modify"
+                                  width={50}
+                                  height={50}
+                                  border
+                                  textAlign="center"
+                                  lineHeight="50px"
+                                  alignSelf="center"
+                                  cursor="pointer"
+                                  backgroundColor="#47B881"
+                                  onClick={() => {
+                                    this.change(item[0]._id)
+                                  }}
+                                >
+                                  <Text color="white" fontSize={20}>
+                                    {this.state.folderSet.sets
+                                      .join('_')
+                                      .includes(item[0]._id)
+                                      ? '-'
+                                      : '+'}
+                                  </Text>
                                 </Pane>
-                            )}
-                            
-                        </Pane>
-                        ))}
-                    </Pane>
-                </Pane>
-            </Dialog>
+                              </Pane>
+                            ))
+                          : ''}
+                      </Pane>
+                    )}
+                  </Pane>
+                ))}
+              </Pane>
+            </Pane>
+          </Dialog>
         )
         break
       case 'edit':
@@ -260,7 +278,9 @@ class Folder extends React.Component {
             onCloseComplete={this.showReset}
             hasCancel={false}
             confirmLabel={'Save'}
-            onConfirm={()=>{this.editFolder()}}
+            onConfirm={() => {
+              this.editFolder()
+            }}
           >
             <Pane paddingLeft={'3%'} paddingRight={'3%'}>
               <Pane display={'block'}>
@@ -274,10 +294,10 @@ class Folder extends React.Component {
                   value={this.state.folder.name}
                   onChange={(e) => {
                     this.setState({
-                        folder:{
-                            ...this.state.folder,
-                            name:e.target.value
-                        }
+                      folder: {
+                        ...this.state.folder,
+                        name: e.target.value,
+                      },
                     })
                   }}
                   border="none"
@@ -293,10 +313,10 @@ class Folder extends React.Component {
                   value={this.state.folder.description}
                   onChange={(e) => {
                     this.setState({
-                        folder:{
-                            ...this.state.folder,
-                            description:e.target.value
-                        }
+                      folder: {
+                        ...this.state.folder,
+                        description: e.target.value,
+                      },
                     })
                   }}
                   placeholder="Add a description"
@@ -320,22 +340,18 @@ class Folder extends React.Component {
             }}
           >
             <Pane>
-                <Text
-                    fontSize={18}
-                    fontWeight={200}
-                    lineHeight={'25px'}
-                >
-                    <Text fontSize={25} fontWeight={600}>
-                        {this.props.folder.name}{' '}
-                    </Text> 
-                    <hr />
-                        Deleting a set is a PERMANENT action. This cannot
-                        be undone. Are you sure you want to delete{' '}
-                    <Text color={'red'} fontWeight={550}>
-                        {this.props.folder.name}{' '}
-                    </Text>
-                    The sets in this folder will not be deleted.?
+              <Text fontSize={18} fontWeight={200} lineHeight={'25px'}>
+                <Text fontSize={25} fontWeight={600}>
+                  {this.props.folder.name}{' '}
                 </Text>
+                <hr />
+                Deleting a set is a PERMANENT action. This cannot be undone. Are
+                you sure you want to delete{' '}
+                <Text color={'red'} fontWeight={550}>
+                  {this.props.folder.name}{' '}
+                </Text>
+                The sets in this folder will not be deleted.?
+              </Text>
             </Pane>
           </Dialog>
         )
@@ -345,7 +361,6 @@ class Folder extends React.Component {
     }
     return (
       <Pane background="tint2" width="100%">
-          
         <Pane
           borderBottom
           display="flex"
@@ -359,7 +374,13 @@ class Folder extends React.Component {
           <Pane marginTop="2%" marginLeft="7%" height={45}>
             <Pane marginBottom={20}>
               <Text display="inline-block" marginRight={20}>
-                {!this.props.folder ? (<Pane><Spinner/></Pane>) : this.props.folder.sets.length}{' '}
+                {!this.props.folder ? (
+                  <Pane>
+                    <Spinner />
+                  </Pane>
+                ) : (
+                  this.props.folder.sets.length
+                )}{' '}
                 sets |
               </Text>
               <Text display="inline-block" color={'#E4E7EB'}>
@@ -391,8 +412,8 @@ class Folder extends React.Component {
           </Pane>
 
           {/* Action side */}
-          {this.state.folder.name?(
-              <Pane marginTop="4%" marginRight="5%">
+          {this.state.folder.name ? (
+            <Pane marginTop="4%" marginRight="5%">
               <Tooltip content="Add set">
                 <AddIcon
                   onClick={() => {
@@ -423,9 +444,9 @@ class Folder extends React.Component {
                 />
               </Tooltip>
             </Pane>
-            
-          
-          ):(<Pane></Pane>)}
+          ) : (
+            <Pane></Pane>
+          )}
           {diablog}
         </Pane>
         {/* List sets */}
@@ -436,7 +457,7 @@ class Folder extends React.Component {
                 <Pane
                   key={index}
                   width="400px"
-                  marginLeft={"10%"}
+                  marginLeft={'10%'}
                   height={150}
                   elevation={2}
                   display="inline-block"
@@ -471,27 +492,41 @@ class Folder extends React.Component {
                     <Pane
                       onClick={() => {
                         this.setState({
-                            removeSet:set._id
+                          removeSet: set._id,
                         })
                       }}
                     >
-                        <Tooltip content={'Remove'}>
-                            <TrashIcon color={'red'} />
-                        </Tooltip>
-                        <Dialog
-                            isShown={this.state.removeSet === set._id}
-                            onConfirm={()=>{this.removeSet(set._id)}}
-                            onCloseComplete={()=>{this.setState({removeSet:-1})}}
-                            title={"DELETE SET"}
-                        >
-                            <Pane>
-                                <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
-                                    <Text fontSize={25} fontWeight={600} >{set.name}</Text> <hr/>
-                                    Deleting a set is a PERMANENT action. This cannot be undone.
-                                    Are you sure you want to delete <Text fontWeight={550} color={"red"}>{set.name}</Text>
-                                </Text>
-                            </Pane>
-                        </Dialog>
+                      <Tooltip content={'Remove'}>
+                        <TrashIcon color={'red'} />
+                      </Tooltip>
+                      <Dialog
+                        isShown={this.state.removeSet === set._id}
+                        onConfirm={() => {
+                          this.removeSet(set._id)
+                        }}
+                        onCloseComplete={() => {
+                          this.setState({ removeSet: -1 })
+                        }}
+                        title={'DELETE SET'}
+                      >
+                        <Pane>
+                          <Text
+                            fontSize={18}
+                            fontWeight={200}
+                            lineHeight={'25px'}
+                          >
+                            <Text fontSize={25} fontWeight={600}>
+                              {set.name}
+                            </Text>{' '}
+                            <hr />
+                            Deleting a set is a PERMANENT action. This cannot be
+                            undone. Are you sure you want to delete{' '}
+                            <Text fontWeight={550} color={'red'}>
+                              {set.name}
+                            </Text>
+                          </Text>
+                        </Pane>
+                      </Dialog>
                     </Pane>
                   </Pane>
                 </Pane>

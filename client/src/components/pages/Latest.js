@@ -93,7 +93,7 @@ class Latest extends React.Component {
         <img
           style={{}}
           src="https://znews-photo.zadn.vn/w660/Uploaded/fcivbqmv/2019_06_15/gg_zing_2.jpg"
-          width="250"
+          width="554"
           height="1000"
           alt="lul"
         />
