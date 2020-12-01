@@ -56,7 +56,7 @@ class Set extends React.Component {
     var flash_cards = this.props.sets ? this.props.sets.flash_cards : null
     var tabs1 = [
       {
-        path: '/latest',
+        path: `/set/${this.props.match.params.id}`,
         tabname: 'Thẻ ghi nhớ',
         icon: CreditCardIcon,
       },
