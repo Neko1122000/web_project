@@ -1,0 +1,8 @@
+{
+  "name": "fake-quizlearn",
+  "version": "1.0.0",
+  "scripts": {
+    "install": "yarn --cwd client install && yarn --cwd server install",
+    "start": "yarn --cwd client dev"
+  }
+}
