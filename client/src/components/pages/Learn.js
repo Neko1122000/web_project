@@ -165,7 +165,7 @@ class Learn extends React.Component {
               <Heading size={600} fontWeight={700}>
                 {this.state.data
                   ? this.state.data.length - this.state.right_ans_2.length
-                  : '0'}
+                  : "0"}
               </Heading>
             </Pane>
             <Pane marginLeft={10} marginTop={60}>
@@ -208,7 +208,7 @@ class Learn extends React.Component {
             {this.state.options.map((option, index) => (
               <Button
                 key={index}
-                width={150}
+                width="20%"
                 height={80}
                 border="default"
                 borderRadius={10}
@@ -217,7 +217,7 @@ class Learn extends React.Component {
                 marginRight={100}
                 paddingTop={30}
                 paddingBottom={30}
-                paddingLeft={50}
+                paddingLeft="6%"
                 onClick={() => {
                   this.check_ans(option)
                 }}
