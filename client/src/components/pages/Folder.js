@@ -24,9 +24,9 @@ class Folder extends React.Component {
                     sets:this.props.folder.sets.map(item=>item._id)
                 },
                 folder:{
-                  ...this.state.folder,
-                  name:this.props.folder.name,
-                  description:this.props.folder.description
+                    ...this.state.folder,
+                    name:this.props.folder.name,
+                    description:this.props.folder.description
                 }
             })
     }
@@ -83,10 +83,10 @@ class Folder extends React.Component {
         if (this.props.folder)
             this.setState({
                 folderSet:{
-                  ...this.state.folder,
-                  sets:this.props.folder.sets.map(item=>item._id)
+                    ...this.state.folder,
+                    sets:this.props.folder.sets.map(item=>item._id)
                 }
-          })
+            })
     }
 
     /* remove folder */
@@ -112,17 +112,17 @@ class Folder extends React.Component {
     }
     editFolder=async()=>{
         await editFolderInfo(this.props.folder._id, this.state.folder).then(()=>{
-          this.setState({isShown:false})
+            this.setState({isShown:false})
         })
         await this.props.fetchFolder(this.props.folder._id)
         await this.props.fetchSetsUser()
         if (this.props.folder)
             this.setState({
                 folderSet:{
-                  ...this.state.folder,
-                  sets:this.props.folder.sets.map(item=>item._id)
+                    ...this.state.folder,
+                    sets:this.props.folder.sets.map(item=>item._id)
                 }
-          })
+            })
         toaster.success(
             "Edit successful"
         )

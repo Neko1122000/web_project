@@ -12,11 +12,20 @@ import {
 } from 'evergreen-ui'
 import UserHeader from '../UserHeader'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import {fetchClasses, createClass, editClass, deleteClass} from '../../actions'
 
 const heightItem = 75
 const widthItem = 800
 
 class Classes extends React.Component {
+    async componentDidMount() {
+        await this.props.fetchClasses()
+        if (this.props.data)
+            this.setState({
+                listClasses: this.props.data,
+            })
+    }
     state = {
         isShown: false,
         removeClass: -1,
@@ -28,48 +37,12 @@ class Classes extends React.Component {
             allow_member_change: true,
         },
         listClasses: [
-            {
-                _id: 1,
-                name: '11A1',
-                description: 'Lop 11A1',
-                numberOfSet: 4,
-                numberOfFolder: 2,
-                numberOfMember: 19,
-                address: 'THPT Ky Anh',
-                allow_member_change: true,
-            },
-            {
-                _id: 2,
-                name: '11A2',
-                description: 'Lop 11A2',
-                numberOfSet: 14,
-                numberOfFolder: 2,
-                numberOfMember: 9,
-                address: 'THPT Ky Anh',
-                allow_member_change: true,
-            },
-            {
-                _id: 3,
-                name: '11A3',
-                description: 'Lop 11A3',
-                numberOfSet: 8,
-                numberOfFolder: 3,
-                numberOfMember: 14,
-                address: 'THPT Ky Anh',
-                allow_member_change: true,
-            },
+
         ],
     }
 
-    focus = (e) => {
-        //var currentFolder = e.target.parentNode.querySelector('#line')
-        //currentFolder.style.height="3px"
-    }
-    blur = (e) => {
-        //var currentFolder = e.target.parentNode.querySelector('#line')
-        //currentFolder.style.height="0px"
-    }
-    createClass = () => {
+
+    createClass = async() => {
         let check = true
         var inputs = document.querySelectorAll('div .input')
         inputs.forEach((element) => {
@@ -80,14 +53,21 @@ class Classes extends React.Component {
             } else {
                 element.parentNode.querySelector('#require').style.display = 'none'
                 element.parentNode.querySelector('#hint').style.display = 'block'
+                check = true
             }
         })
         if (check) {
-            console.log(this.state.class)
+            await createClass(this.state.class)
+            //reload data
+            await this.props.fetchClasses()
+            if (this.props.data)
+                this.setState({
+                    listClasses: this.props.data,
+                })
             toaster.success('Create successful')
             this.setState({ isShown: false })
         } else {
-            console.log(inputs)
+            //console.log(inputs)
             toaster.warning('Create error')
         }
     }
@@ -95,11 +75,15 @@ class Classes extends React.Component {
     isRemoveClass = (id) => {
         this.setState({ removeClass: id })
     }
-    removeClass = (id) => {
-        this.setState({
-            listClasses: [...this.state.listClasses.filter((item) => item.id !== id)],
-        })
-        toaster.success('Create successful')
+    removeClass =async(id) => {
+        await editClass(id)
+        await this.props.fetchClasses()
+        if (this.props.data)
+            this.setState({
+                listClasses: this.props.data,
+                removeClass: -1
+            })
+        toaster.success('Remove successful')
     }
     isEditClass=(id)=>{
         var datas = this.state.listClasses;
@@ -116,9 +100,15 @@ class Classes extends React.Component {
             }
         })
     }
-    editClass=(id)=>{
-        console.log(id)
-        console.log(this.state.class)
+    editClass=async(id)=>{
+        await editClass(id, this.state.class)
+        await this.props.fetchClasses()
+        if (this.props.data)
+            this.setState({
+                listClasses: this.props.data,
+                editClass: -1
+            })
+        toaster.success('Edit successful')
     }
 
     render() {
@@ -149,7 +139,7 @@ class Classes extends React.Component {
                                 + ADD A NEW CLASS
                             </Text>
                         </Pane>
-                        <Pane id="line" width="100%" backgroundColor="#1070CA"></Pane>
+
                     </Pane>
 
                     <hr />
@@ -174,7 +164,7 @@ class Classes extends React.Component {
                                 height={50}
                                 marginBottom={7}
                                 placeholder={
-                                    'Enter a class name (subject, teacher, year, section, etc.)'
+                                    'Enter a class name (subject, teacher, year, section, etc...)'
                                 }
                                 onChange={(e) => {
                                     this.setState({
@@ -182,7 +172,7 @@ class Classes extends React.Component {
                                             ...this.state.class,
                                             name: e.target.value,
                                         },
-                                    })
+                                    });
                                 }}
                             ></TextInput>
                             <Pane paddingLeft={10}>
@@ -222,7 +212,7 @@ class Classes extends React.Component {
                                             ...this.state.class,
                                             description: e.target.value,
                                         },
-                                    })
+                                    });
                                 }}
                             ></TextInput>
                             <Pane paddingLeft={10}>
@@ -257,13 +247,13 @@ class Classes extends React.Component {
                                 height={50}
                                 marginBottom={7}
                                 placeholder={'Enter the address'}
-                                onChange={(e) => {
-                                    this.setState({
+                                onChange={async(e) => {
+                                    await this.setState({
                                         class: {
                                             ...this.state.class,
                                             address: e.target.value,
                                         },
-                                    })
+                                    });
                                 }}
                             ></TextInput>
                             <Pane paddingLeft={10}>
@@ -299,14 +289,14 @@ class Classes extends React.Component {
                         >
                             <Checkbox
                                 checked={this.state.class.allow_member_change}
-                                onChange={(e) =>
+                                onChange={(e) => {
                                     this.setState({
                                         class: {
                                             ...this.state.class,
-                                            allow_member_change: e.target.checked,
+                                            allow_member_change:e.target.checked,
                                         },
-                                    })
-                                }
+                                    });
+                                }}
                                 fontSize={20}
                             />
 
@@ -315,13 +305,14 @@ class Classes extends React.Component {
                                 fontWeight={500}
                                 lineHeight="50px"
                                 paddingRight={30}
-                                onClick={(e) =>
+                                onClick={(e) => {
                                     this.setState({
                                         class: {
                                             ...this.state.class,
-                                            allow_member_change: e.target.checked,
+                                            allow_member_change: !e.target.parentNode.querySelector('label input').checked,
                                         },
-                                    })
+                                    });
+                                }
                                 }
                             >
                                 Allow your students to add study sets and new members
@@ -337,14 +328,8 @@ class Classes extends React.Component {
                                 background="white"
                                 paddingTop={8}
                                 paddingLeft={40}
-                                onMouseEnter={(e) => {
-                                    this.focus(e)
-                                }}
-                                onMouseLeave={(e) => {
-                                    this.blur(e)
-                                }}
                             >
-                                <Link to={`/classes/${classes.name}`}>
+                                <Link to={`/classes/${classes._id}`}>
                                     <Pane width={(widthItem * 3) / 4} marginBottom={7}>
                                         <Text
                                             fontWeight={400}
@@ -371,7 +356,6 @@ class Classes extends React.Component {
                                         display="flex"
                                         justifyContent={"space-around"}
                                         width="12%"
-                                        paddingTop={25}
                                         paddingRight={20}
                                     >
                                         {/* EDIT FOLDER */}
@@ -384,15 +368,15 @@ class Classes extends React.Component {
                                             </Tooltip>
 
                                             <Dialog
-                                                isShown={this.state.isShown}
+                                                isShown={this.state.editClass === classes._id}
                                                 intent="success"
-                                                title={'Create a new class'}
+                                                title={'Edit this class'}
                                                 hasCancel={false}
                                                 onCloseComplete={() => {
-                                                    this.setState({ isShown: false })
+                                                    this.setState({ editClass: -1})
                                                 }}
                                                 onConfirm={() => {
-                                                    this.createClass()
+                                                    this.editClass(classes._id)
                                                 }}
                                             >
                                                 {/* Input field */}
@@ -402,6 +386,7 @@ class Classes extends React.Component {
                                                         width="100%"
                                                         height={50}
                                                         marginBottom={7}
+                                                        value={this.state.class.name}
                                                         placeholder={
                                                             'Enter a class name (subject, teacher, year, section, etc.)'
                                                         }
@@ -444,6 +429,7 @@ class Classes extends React.Component {
                                                         width="100%"
                                                         height={50}
                                                         marginBottom={7}
+                                                        value={this.state.class.description}
                                                         placeholder={'Enter a description (optional)'}
                                                         onChange={(e) => {
                                                             this.setState({
@@ -485,6 +471,7 @@ class Classes extends React.Component {
                                                         width="100%"
                                                         height={50}
                                                         marginBottom={7}
+                                                        value={this.state.class.address}
                                                         placeholder={'Enter the address'}
                                                         onChange={(e) => {
                                                             this.setState({
@@ -548,7 +535,9 @@ class Classes extends React.Component {
                                                             this.setState({
                                                                 class: {
                                                                     ...this.state.class,
-                                                                    allow_member_change: e.target.checked,
+                                                                    allow_member_change: 
+                                                                        !e.target.parentNode.
+                                                                        querySelector('label input').checked,
                                                                 },
                                                             })
                                                         }
@@ -567,6 +556,7 @@ class Classes extends React.Component {
                                             </Tooltip>
                                             <Dialog
                                                 isShown={this.state.removeClass === classes._id}
+                                                onCloseComplete={()=>{this.setState({removeClass:-1})}}
                                                 onConfirm={()=>{this.removeClass(classes._id)}}
                                                 title={"DELETE CLASS"}
                                             >
@@ -590,4 +580,8 @@ class Classes extends React.Component {
         )
     }
 }
-export default Classes
+const mapStateToProps = ({ info }) => {
+    return { data: { ...info }.data }
+}
+
+export default connect(mapStateToProps, { fetchClasses })(Classes)

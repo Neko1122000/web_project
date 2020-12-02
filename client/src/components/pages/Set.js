@@ -8,18 +8,20 @@ import {
   SidebarTab,
   Menu,
   Avatar,
-  Popover,
+  Tooltip,
   Button,
-  Position,
   Table,
+  Dialog,
+  Text
 } from 'evergreen-ui'
 import {
   CreditCardIcon,
   ApplicationIcon,
   AutomaticUpdatesIcon,
-  AnnotationIcon,
-  VolumeUpIcon,
   Icon,
+  AddIcon,
+  EditIcon,
+  TrashIcon,
   ArrowRightIcon,
   ArrowLeftIcon,
   PredictiveAnalysisIcon
@@ -33,6 +35,9 @@ class Set extends React.Component {
   state = {
     slideIndex: 1,
     status: false,
+    add:false,
+    edit:false,
+    remove:false,
     title:""
   }
   backward() {
@@ -183,21 +188,78 @@ class Set extends React.Component {
                   </Heading>
                 </Pane>
               </Pane>
-              <Popover
-                position={Position.BOTTOM_LEFT}
-                content={
-                  <Menu>
-                    <Menu.Group>
-                      <Menu.Item icon={VolumeUpIcon}>Tùy chỉnh</Menu.Item>
-                      <Menu.Item icon={CreditCardIcon}>Điểm</Menu.Item>
-                      <Menu.Item icon={AnnotationIcon}>In</Menu.Item>
-                    </Menu.Group>
-                    <Menu.Divider />
-                  </Menu>
-                }
-              >
-                <Button marginRight={16}>With Icons</Button>
-              </Popover>
+              <Pane marginTop="4%" marginRight="5%">
+                <Tooltip content="Add set">
+                    <AddIcon
+                        onClick={() => {
+                            this.setState({add:true})
+                        }}
+                        size={25}
+                        color="green"
+                    />
+                </Tooltip>
+                  <Dialog
+                      isShown={this.state.add}
+                      title={'Add a set'}
+                      onCloseComplete={this.showReset}
+                      hasFooter={false}
+                      minHeightContent={500}
+                  >
+                      <Link to={'/create-set'}>
+                          <Pane
+                              background="#47B881"
+                              height={100}
+                              textAlign={'center'}
+                              elevation={2}
+                              marginBottom={20}
+                          >
+                              <Text
+                                  width="100%"
+                                  height={100}
+                                  lineHeight="90px"
+                                  fontSize={30}
+                                  color={'white'}
+                                  textAlign={'center'}
+                              >
+                                  + Create a new set
+                              </Text>
+                          </Pane>
+                      </Link>
+                  </Dialog>
+                <Tooltip content={'Edit'}>
+                    <EditIcon
+                        onClick={() => {
+                            this.setState({edit:true})
+                        }}
+                        size={25}
+                        color="dodgerblue"
+                        marginLeft={20}
+                    />
+                </Tooltip>
+                <Dialog
+                    isShown={this.state.edit}
+                    onConfirm={()=>{window.location.href = `/edit-set/`}}
+                    onCloseComplete={()=>{this.setState({edit:false})}}
+                    title={"Edit"}
+                >
+                    <Pane>
+                        <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                          Edit this set
+                        </Text>
+                    </Pane>
+                </Dialog>
+
+                <Tooltip content={'Remove'}>
+                    <TrashIcon
+                        onClick={() => {
+                            this.setState({ showing: 'remove', isShown: true })
+                        }}
+                        size={25}
+                        color="tomato"
+                        marginLeft={20}
+                    />
+                </Tooltip>
+            </Pane>
             </Pane>
           </Pane>
         </Pane>

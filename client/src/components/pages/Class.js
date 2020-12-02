@@ -18,17 +18,41 @@ import {
     FolderOpenIcon,
     FolderCloseIcon,
     LearningIcon,
+    NewPersonIcon,
     Tablist,
     Tab,
-    Avatar
+    Avatar,
+    Checkbox,
+    FolderNewIcon
 } from 'evergreen-ui'
 import { Link } from 'react-router-dom'
+import {fetchSetsUser, fetchFoldersUser, fetchClass, createClass, editClass, deleteClass} from '../../actions'
 
 const heightItem = 75
 
 class Class extends React.Component {
+    async componentDidMount() {
+        await this.props.fetchSetsUser()
+        await this.props.fetchFoldersUser()
+        if (this.props.folders)
+            this.setState({
+                classSets:{
+                    ...this.state.classSets,
+                    sets:this.props.sets.map(item=>item._id)
+                }
+            })
+    }
     state = {
-        isShown: '',
+        addSet:false,
+        addFolder:false,
+        editClass:false,
+        deleteClass:false,
+        removeSet:-1,
+        removeMember:-1,
+        removeFolder:-1,
+        removeRequest:-1,
+        acceptRequest:-1,
+        clearRequest:false,
         sort: 'Lastest',
         search: '',
         class:{
@@ -39,6 +63,11 @@ class Class extends React.Component {
             address: 'THPT Ky Anh',
             allow_member_change: true,
         },
+        classSets:{
+            sets:[]
+        },
+        srcSet:['Your sets', 'Class sets', 'Studied sets'],
+        srcIndex:0,
         options:[
             "Sets", "Members", "Requests"
         ],
@@ -95,6 +124,18 @@ class Class extends React.Component {
                 _id:6,
                 username:"yah yah yah"
             }
+        ],
+        listFolders:[
+            {
+                _id: "5fc5755368cae4f0f3774aef",
+                description: "yah yah",
+                name: "yah"
+            },
+            {
+                _id: "5fc5d53b22beeb33c05748e5",
+                description: "huhu huhu huhuhhuuuhuhuhuuh",
+                name: "huhuhu"
+            }
         ]
     }
 
@@ -135,196 +176,116 @@ class Class extends React.Component {
         })
     }
 
-    render() {
-        let diablog = null
-        switch (this.state.isShown) {
-            case 'add':
-                diablog = (
-                    <Dialog
-                        isShown={this.isShowed()}
-                        title={'Add a set'}
-                        onCloseComplete={this.showReset}
-                        hasFooter={false}
-                    >
-                        <Pane background="tint1" height={100} textAlign={'center'}>
-                            <Link to={'/create-set'}>
-                                <Text
-                                    width="100%"
-                                    height={100}
-                                    lineHeight="90px"
-                                    fontSize={30}
-                                    color={'green'}
-                                    textAlign={'center'}
-                                >
-                                    + Create a new set
-                                </Text>
-                            </Link>
-                        </Pane>
-                        <SelectMenu
-                            hasTitle={false}
-                            hasFilter={false}
-                            options={[
-                                'yourSets',
-                                'classSets',
-                                'Banana',
-                                'Cherry',
-                                'Cucumber',
-                            ].map((label) => ({ label, value: label }))}
-                            selected={this.state.srcSet}
-                            onSelect={(item) => this.setState({ srcSet: item.value })}
-                        >
-                            <Button>{this.state.srcSet}</Button>
-                        </SelectMenu>
-                    </Dialog>
-                )
-                break
-            case 'study':
-                diablog = (
-                    <Dialog
-                        isShown={this.isShowed()}
-                        title={'Study this folder'}
-                        onCloseComplete={this.showReset}
-                        hasFooter={false}
-                    >
-                        <Pane
-                            paddingLeft=""
-                            display={'flex'}
-                            flexFlow={'wrap'}
-                            justifyContent={'space-around'}
-                        >
-                            <Pane
-                                height={150}
-                                width="33%"
-                                background={'greenTint'}
-                                elevation={2}
-                                marginBottom={10}
-                            >
-                                <LearningIcon size={45} />
-                            </Pane>
-                            <Pane
-                                height={150}
-                                width="33%"
-                                background={'greenTint'}
-                                elevation={2}
-                                marginBottom={10}
-                            >
-                                <LearningIcon size={45} />
-                            </Pane>
-                            <Pane
-                                height={150}
-                                width="33%"
-                                background={'greenTint'}
-                                elevation={2}
-                                marginBottom={10}
-                            >
-                                <LearningIcon size={45} />
-                            </Pane>
-                            <Pane
-                                height={150}
-                                width="33%"
-                                background={'greenTint'}
-                                elevation={2}
-                                marginBottom={10}
-                            >
-                                <LearningIcon size={45} />
-                            </Pane>
-                            <Pane
-                                height={150}
-                                width="33%"
-                                background={'greenTint'}
-                                elevation={2}
-                                marginBottom={10}
-                            >
-                                <LearningIcon size={45} />
-                            </Pane>
-                            <Pane
-                                height={150}
-                                width="33%"
-                                background={'greenTint'}
-                                elevation={2}
-                                marginBottom={10}
-                            >
-                                <LearningIcon size={45} />
-                            </Pane>
-                        </Pane>
-                    </Dialog>
-                )
-                break
-            case 'edit':
-                diablog = (
-                    <Dialog
-                        isShown={this.isShowed}
-                        title={'Edit folder'}
-                        onCloseComplete={this.showReset}
-                        hasCancel={false}
-                        confirmLabel={'Save'}
-                        onConfirm={this.setName}
-                    >
-                        <Pane paddingLeft={'3%'} paddingRight={'3%'}>
-                            <Pane display={'block'}>
-                                <TextInput
-                                    ref="name"
-                                    display="block"
-                                    marginTop={20}
-                                    height={50}
-                                    width="100%"
-                                    placeholder={this.state.name}
-                                    value={this.state.name}
-                                    onChange={(e) => {
-                                        this.setState({ name: e.target.value })
-                                    }}
-                                    border="none"
-                                    outline="none"
-                                />
-                                <Text paddingLeft={'1%'}>Title</Text>
-                            </Pane>
-                            <Pane>
-                                <TextInput
-                                    marginTop={20}
-                                    height={50}
-                                    width="100%"
-                                    value={this.state.description}
-                                    onChange={(e) => {
-                                        this.setState({ description: e.target.value })
-                                    }}
-                                    placeholder="Add a description"
-                                />
-                                <Text paddingLeft={'1%'}>Description</Text>
-                            </Pane>
-                        </Pane>
-                    </Dialog>
-                )
-                break
-            case 'remove':
-                diablog = (
-                    <Dialog
-                        intent={'warning'}
-                        isShown={this.isShowed()}
-                        title={'Remove folder'}
-                        onCloseComplete={this.showReset}
-                        confirmLabel={'Remove'}
-                        onConfirm={() => {
-                            this.removeFolder()
-                        }}
-                    >
-                        <Pane>
-                            <Text fontSize={18} fontWeight={200} lineHeight={'25px'}>
-                                <Text fontSize={25} fontWeight={600} lineHeight={'30px'}>
-                                    {this.state.name}
-                                </Text>{' '}
-                                <br />
-                                Deleting a folder is a PERMANENT action. This cannot be undone.
-                                Are you sure you want to delete this folder? The sets in this
-                                folder will not be deleted.
-                            </Text>
-                        </Pane>
-                    </Dialog>
-                )
-                break
-            default:
-                break
+    removeSet=async(id)=>{
+        var sets = this.state.listSets
+        var newSets = sets.filter((item) => item._id !== id)
+        this.setState({
+            listSets: newSets,
+            removeSet:-1
+        })
+        console.log(id)
+    }
+    removeFolder=async(id)=>{
+        var folders = this.state.listFolders
+        var newFolders = folders.filter((item) => item._id !== id)
+        this.setState({
+            listFodlers: newFolders,
+            removeFolder:-1
+        })
+        console.log(newFolders)
+        console.log(id)
+    }
+    removeMember=async(id)=>{
+        var members = this.state.listMembers
+        // var authority = -1;
+        // members.map((item, index)=>{
+        //     if(item._id===id) authority = item.authority
+        // })
+        // if(authority==="member"){}
+        var newMembers = members.filter((item) => item._id !== id)
+        this.setState({
+            listMembers:newMembers,
+            removeSet:-1
+        })
+    }
+    removeRequest=async(id)=>{
+        var requests = this.state.listRequests
+        var newRequests = requests.filter((item) => item._id !== id)
+        this.setState({
+            listRequests: newRequests,
+            removeRequest:-1
+        })
+        console.log(id)
+    }
+    clearRequest=async()=>{
+        await this.setState({
+            listRequests: [],
+            clearRequest:false
+        })
+        console.log(this.state.clearRequest)
+    }
+    acceptRequest=async(id)=>{
+        // id request
+        var newMembers = {
+            _id:id,
+            username:"test add member from request",
+            authority:"member"
         }
+        this.setState({
+            listMembers:[
+                ...this.state.listMembers,
+                newMembers
+            ],
+            acceptRequest:-1
+        })
+        this.removeRequest(id)
+    }
 
+    // change list set of this class
+    change = (id) =>{
+        var newSets = this.state.classSets.sets.filter(item=>item!== id)
+        //have change ?
+        if(this.state.classSets.sets.join('_').includes(id)){
+            this.setState({
+                classSets:{
+                    ...this.state.classSets,
+                    sets:newSets,
+                }
+            })
+        }
+        else
+        {
+            this.setState({
+                classSets:{
+                    ...this.state.classSets,
+                    sets:[...this.state.classSets.sets, id],
+                },
+            })
+        }
+    }
+    editClass=async()=>{
+        //await editClass(id, this.state.class)
+        //await this.props.fetchClasses()
+        //if (this.props.data)
+        //    this.setState({
+        //        listClasses: this.props.data,
+        //        editClass: -1
+        //    })
+        //toaster.success('Edit successful')
+        console.log(this.state.class)
+        this.setState({
+            editClass:false
+        })
+    }
+    removeClass=()=>{
+        console.log(this.props.match.params._id)
+        this.setState({
+            deleteClass:false
+        })
+    }
+
+
+    render() {
         return (
             <Pane background="tint2" width="100%">
                 {/* Header */}
@@ -375,46 +336,405 @@ class Class extends React.Component {
                         <Tooltip content="Add set">
                             <AddIcon
                                 onClick={() => {
-                                    this.setState({ isShown: 'add' })
+                                    this.setState({ addSet: true })
                                 }}
                                 size={25}
                                 color="lawngreen"
                             />
                         </Tooltip>
-                        <Tooltip content={'Study'}>
-                            <LearningIcon
+                        <Dialog
+                            isShown={this.state.addSet}
+                            title={'Add a set'}
+                            onCloseComplete={()=>{this.setState({addSet:false})}}
+                            hasFooter={false}
+                            minHeightContent={500}
+                        >
+                            <Link to={'/create-set'}>
+                                <Pane
+                                    background="#47B881"
+                                    height={100}
+                                    textAlign={'center'}
+                                    elevation={2}
+                                    marginBottom={20}
+                                >
+                                    <Text
+                                        width="100%"
+                                        height={100}
+                                        lineHeight="90px"
+                                        fontSize={30}
+                                        color={'white'}
+                                        textAlign={'center'}
+                                    >
+                                        + Create a new set
+                                    </Text>
+                                </Pane>
+                            </Link>
+                            <Pane height={120} >
+                                <Tablist marginBottom={16} display="flex" >
+                                    {this.state.srcSet.map((tab, index) => (
+                                        <Tab
+                                            key={tab}
+                                            id={tab}
+                                            onSelect={() => this.setState({ srcIndex: index })}
+                                            isSelected={index === this.state.srcIndex}
+                                            aria-controls={`panel-${tab}`}
+                                            flex="100%"
+                                        >
+                                            {tab}
+                                        </Tab>
+                                    ))}
+                                </Tablist>
+                                <Pane background="tint1" flex="1">
+                                    {this.state.srcSet.map((tab, index) => (
+                                        <Pane
+                                            key={tab}
+                                            id={`panel-${tab}`}
+                                            role="tabpanel"
+                                            aria-labelledby={tab}
+                                            aria-hidden={index !== this.state.srcIndex}
+                                            display={index === this.state.srcIndex ? 'block' : 'none'}
+                                            backgroundColor="white"
+                                            border
+                                        >
+                                            {tab!=="Your sets"?<Pane>Nothing</Pane>:(
+                                                <Pane>
+
+                                                    {/* list user's sets */}
+                                                    {this.props.sets?(this.props.sets.map((item, index)=>(
+                                                        <Pane
+                                                            key={item._id}
+                                                            width="100%"
+                                                            height={70}
+                                                            elevation={2}
+                                                            display="flex"
+                                                            justifyContent="space-between"
+                                                            paddingRight={10}
+                                                        >
+                                                            <Text paddingLeft={30} alignSelf="center">
+                                                                {item.name}
+                                                            </Text>
+
+                                                            <Pane
+                                                                className="modify"
+                                                                width={50}
+                                                                height={50}
+                                                                border
+                                                                textAlign="center"
+                                                                lineHeight="50px"
+                                                                alignSelf="center"
+                                                                cursor="pointer"
+                                                                backgroundColor="#47B881"
+                                                                onClick={()=>{this.change(item._id)}}
+                                                            >
+                                                                <Text color="white"  fontSize={20}>
+                                                                    {this.state.classSets.sets.join('_').includes(item._id)?"-":"+"}
+                                                                </Text>
+                                                            </Pane>
+
+                                                        </Pane>
+                                                    ))):('')}
+                                                </Pane>
+                                            )}
+
+                                        </Pane>
+                                    ))}
+                                </Pane>
+                            </Pane>
+                        </Dialog>
+
+                        <Tooltip content={'Add folder'}>
+                            <FolderNewIcon
                                 onClick={() => {
-                                    this.setState({ isShown: 'study' })
+                                    this.setState({addFolder:true})
                                 }}
                                 size={25}
                                 color={'#735DD0'}
                                 marginLeft={10}
                             />
                         </Tooltip>
+                        <Dialog
+                            isShown={this.state.addFolder}
+                            title={'Add a set'}
+                            onCloseComplete={()=>{this.setState({addFolder:false})}}
+                            hasFooter={false}
+                            minHeightContent={500}
+                        >
+                            <Link to={'/folders'}>
+                                <Pane
+                                    background="#47B881"
+                                    height={100}
+                                    textAlign={'center'}
+                                    elevation={2}
+                                    marginBottom={20}
+                                >
+                                    <Text
+                                        width="100%"
+                                        height={100}
+                                        lineHeight="90px"
+                                        fontSize={30}
+                                        color={'white'}
+                                        textAlign={'center'}
+                                    >
+                                        + Create a new folder
+                                    </Text>
+                                </Pane>
+                            </Link>
+                            <Pane height={120} >
+                                <Pane>
+                                    {/* list user's sets */}
+                                    {this.props.sets?(this.props.sets.map((item, index)=>(
+                                        <Pane
+                                            key={item._id}
+                                            width="100%"
+                                            height={70}
+                                            elevation={2}
+                                            display="flex"
+                                            justifyContent="space-between"
+                                            paddingRight={10}
+                                        >
+                                            <Text paddingLeft={30} alignSelf="center">
+                                                {item.name}
+                                            </Text>
+
+                                            <Pane
+                                                className="modify"
+                                                width={50}
+                                                height={50}
+                                                border
+                                                textAlign="center"
+                                                lineHeight="50px"
+                                                alignSelf="center"
+                                                cursor="pointer"
+                                                backgroundColor="#47B881"
+                                                onClick={()=>{this.change(item._id)}}
+                                            >
+                                                <Text color="white"  fontSize={20}>
+                                                    {this.state.classSets.sets.join('_').includes(item._id)?"-":"+"}
+                                                </Text>
+                                            </Pane>
+
+                                        </Pane>
+                                            ))):('')}
+                                </Pane>
+                            </Pane>
+                        </Dialog>    
+                        
                         <Tooltip content={'Edit'}>
                             <EditIcon
                                 onClick={() => {
-                                    this.setState({ isShown: 'edit' })
+                                    this.setState({ editClass:true })
                                 }}
                                 size={25}
                                 color="dodgerblue"
                                 marginLeft={10}
                             />
                         </Tooltip>
+                        <Dialog
+                            isShown={this.state.editClass}
+                            intent="success"
+                            title={'Edit class'}
+                            hasCancel={false}
+                            onCloseComplete={() => {
+                                this.setState({ editClass: false})
+                            }}
+                            onConfirm={() => {
+                                this.editClass()
+                            }}
+                        >
+                            {/* Input field */}
+                            <Pane height={130}>
+                                <TextInput
+                                    className="input"
+                                    width="100%"
+                                    height={50}
+                                    marginBottom={7}
+                                    value={this.state.class.name}
+                                    placeholder={
+                                        'Enter a class name (subject, teacher, year, section, etc.)'
+                                    }
+                                    onChange={(e) => {
+                                        this.setState({
+                                            class: {
+                                                ...this.state.class,
+                                                name: e.target.value,
+                                            },
+                                        })
+                                    }}
+                                ></TextInput>
+                                <Pane paddingLeft={10}>
+                                    <Text
+                                        fontWeight={550}
+                                        fontSize={18}
+                                        marginBottom={10}
+                                        id={'require'}
+                                        color={'red'}
+                                        display={'none'}
+                                    >
+                                        {' '}
+                                        THIS IS REQUIRED
+                                    </Text>
+                                    <Text
+                                        id={'hint'}
+                                        fontSize={16}
+                                        fontWeight={500}
+                                        color="#A6B1BB"
+                                        display={'block'}
+                                    >
+                                        CLASS NAME
+                                    </Text>
+                                </Pane>
+                            </Pane>
+
+                            <Pane height={130}>
+                                <TextInput
+                                    className="input"
+                                    width="100%"
+                                    height={50}
+                                    marginBottom={7}
+                                    value={this.state.class.description}
+                                    placeholder={'Enter a description (optional)'}
+                                    onChange={(e) => {
+                                        this.setState({
+                                            class: {
+                                                ...this.state.class,
+                                                description: e.target.value,
+                                            },
+                                        })
+                                    }}
+                                ></TextInput>
+                                <Pane paddingLeft={10}>
+                                    <Text
+                                        fontWeight={550}
+                                        fontSize={18}
+                                        marginBottom={10}
+                                        id={'require'}
+                                        color={'red'}
+                                        display={'none'}
+                                    >
+                                        {' '}
+                                        THIS IS REQUIRED
+                                    </Text>
+                                    <Text
+                                        id={'hint'}
+                                        fontSize={16}
+                                        fontWeight={500}
+                                        color="#A6B1BB"
+                                        display={'block'}
+                                    >
+                                        DESCRIPTION
+                                    </Text>
+                                </Pane>
+                            </Pane>
+
+                            {/* Address */}
+                            <Pane height={70}>
+                                <TextInput
+                                    className="input"
+                                    width="100%"
+                                    height={50}
+                                    marginBottom={7}
+                                    value={this.state.class.address}
+                                    placeholder={'Enter the address'}
+                                    onChange={(e) => {
+                                        this.setState({
+                                            class: {
+                                                ...this.state.class,
+                                                address: e.target.value,
+                                            },
+                                        })
+                                    }}
+                                ></TextInput>
+                                <Pane paddingLeft={10}>
+                                    <Text
+                                        fontWeight={550}
+                                        fontSize={18}
+                                        marginBottom={10}
+                                        id={'require'}
+                                        color={'red'}
+                                        display={'none'}
+                                    >
+                                        {' '}
+                                        THIS IS REQUIRED
+                                    </Text>
+                                    <Text
+                                        id={'hint'}
+                                        fontSize={16}
+                                        fontWeight={500}
+                                        color="#A6B1BB"
+                                        display={'block'}
+                                    >
+                                        ADDRESS
+                                    </Text>
+                                </Pane>
+                            </Pane>
+
+                            {/* Allow member change */}
+                            <Pane
+                                width="100%"
+                                display="flex"
+                                justifyContent={'space-around'}
+                                paddingTop={20}
+                            >
+                                <Checkbox
+                                    checked={this.state.class.allow_member_change}
+                                    onChange={(e) =>
+                                        this.setState({
+                                            class: {
+                                                ...this.state.class,
+                                                allow_member_change: e.target.checked,
+                                            },
+                                        })
+                                    }
+                                    fontSize={20}
+                                />
+
+                                <Text
+                                    fontSize={16}
+                                    fontWeight={500}
+                                    lineHeight="50px"
+                                    paddingRight={30}
+                                    onClick={(e) =>
+                                        this.setState({
+                                            class: {
+                                                ...this.state.class,
+                                                allow_member_change: 
+                                                    !e.target.parentNode.
+                                                    querySelector('label input').checked,
+                                            },
+                                        })
+                                    }
+                                >
+                                    Allow your students to add study sets and new members
+                                </Text>
+                            </Pane>
+                        </Dialog>
+
                         <Tooltip content={'Remove'}>
                             <TrashIcon
                                 onClick={() => {
-                                    this.setState({ isShown: 'remove' })
+                                    this.setState({ deleteClass:true})
                                 }}
                                 size={25}
                                 color="tomato"
                                 marginLeft={10}
                             />
                         </Tooltip>
+                        <Dialog
+                            isShown={this.state.deleteClass}
+                            onCloseComplete={()=>{this.setState({deleteClass:false})}}
+                            onConfirm={()=>{this.removeClass()}}
+                            title={"DELETE CLASS"}
+                        >
+                            <Pane>
+                                <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                                    <Text fontSize={25} fontWeight={600} >{this.state.class.name}</Text> <hr/>
+                                    Deleting a class is a PERMANENT action. This cannot be undone.
+                                    Are you sure you want to delete <Text fontWeight={550} color={"red"}>{this.state.class.name}</Text>? The sets and folders in this class will not be
+                                    deleted.
+                                </Text>
+                            </Pane>
+                        </Dialog>
                     </Pane>
-
-                    {/* Diablog */}
-                    {diablog}
                 </Pane>
 
                 <Pane display="flex">
@@ -446,8 +766,10 @@ class Class extends React.Component {
                                     aria-hidden={index !== this.state.opIndex}
                                     display={index === this.state.opIndex ? 'block' : 'none'}
                                 >
+
                                     {tab==="Sets"?
                                         <Pane>
+                                            {/* sort and search */}
                                             <Pane display="flex" justifyContent="space-between">
                                                 <Pane>
                                                     <Heading paddingRight={20}>Sort </Heading>
@@ -475,55 +797,152 @@ class Class extends React.Component {
                                                     }}
                                                 />
                                             </Pane>
+
                                             <Pane width="100%" >
-                                                {this.state.listSets.map((set) => (
-                                                    <Pane key={set._id} >
-                                                        {set.name.includes(this.state.search) ? (
-                                                            <Pane
-                                                                display="flex"
-                                                                justifyContent="space-between"
-                                                                backgroundColor="white"
-                                                                height={heightItem}
-                                                                elevation={1}
-                                                                marginTop = {25}
-                                                            >
-                                                                <Link to={`/set/${set._id}`}>
-                                                                    <Pane height={heightItem}>
-                                                                        <Pane width={700} >
+                                                {this.state.listSets.length<1?
+                                                    <Pane></Pane>:(
+                                                        <Pane>
+                                                            <Pane paddingTop={30}>
+                                                                <hr/>
+                                                                <Text
+                                                                    fontSize={20}
+                                                                    fontWeight={550}
 
-                                                                            <FolderCloseIcon
-                                                                                size={25}
-                                                                                color="#E4E7EB"
-                                                                                bottom={5}
-                                                                                lineHeight="100px"
-                                                                                marginRight={10}
-                                                                                marginLeft={30}
-                                                                            />
-                                                                            <Text
-                                                                                fontSize={20}
-                                                                                lineHeight="80px"
-                                                                                fontWeight={550}
-                                                                            >
-                                                                                {set.name}
-                                                                            </Text>
-                                                                        </Pane>
-                                                                    </Pane>
-                                                                </Link>
-                                                                <Pane
-                                                                    paddingTop={25}
-                                                                    paddingRight={40}
                                                                 >
-                                                                    <Tooltip content="Remove this folder">
-                                                                        <TrashIcon color="#EC4C47" size={20} />
-                                                                    </Tooltip>
-                                                                </Pane>
+                                                                    Sets
+                                                                </Text>
                                                             </Pane>
+                                                            {this.state.listSets.map((set) => (
+                                                                <Pane key={set._id} >
+                                                                    {set.name.includes(this.state.search) ? (
+                                                                        <Pane
+                                                                            display="flex"
+                                                                            justifyContent="space-between"
+                                                                            backgroundColor="white"
+                                                                            height={heightItem}
+                                                                            elevation={1}
+                                                                            marginTop = {25}
+                                                                        >
+                                                                            <Link to={`/set/${set._id}`}>
+                                                                                <Pane height={heightItem}>
+                                                                                    <Pane width={500}  paddingLeft={30}>
+                                                                                        <Text
+                                                                                            fontSize={20}
+                                                                                            lineHeight="80px"
+                                                                                            fontWeight={550}
+                                                                                        >
+                                                                                            {set.name}
+                                                                                        </Text>
+                                                                                    </Pane>
+                                                                                </Pane>
+                                                                            </Link>
+                                                                            <Pane
+                                                                                paddingTop={25}
+                                                                                paddingRight={40}
+                                                                                onClick={()=>{
+                                                                                    this.setState({
+                                                                                        removeSet:set._id
+                                                                                    })
+                                                                                }}
+                                                                            >
+                                                                                <Tooltip content="Remove this folder">
+                                                                                    <TrashIcon color="#EC4C47" size={20} />
+                                                                                </Tooltip>
+                                                                                <Dialog
+                                                                                    isShown={this.state.removeSet === set._id}
+                                                                                    onCloseComplete={()=>{this.setState({removeSet:-1})}}
+                                                                                    onConfirm={()=>{this.removeSet(set._id)}}
+                                                                                    title={"DELETE SET"}
+                                                                                >
+                                                                                    <Pane>
+                                                                                        <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                                                                                            <Text fontSize={25} fontWeight={600} >{set.name}</Text> <hr/>
+                                                                                            Deleting a set is a PERMANENT action. This cannot be undone.
+                                                                                            Are you sure you want to delete <Text fontWeight={550} color={"red"}>{set.name}</Text>?
+                                                                                        </Text>
+                                                                                    </Pane>
+                                                                                </Dialog>
+                                                                            </Pane>
+                                                                        </Pane>
 
-                                                        ) : (
-                                                            <Pane></Pane>
-                                                        )}
+                                                                    ) : (<Pane></Pane>)}
+                                                                </Pane>
+                                                            ))}
+                                                        </Pane>
+                                                    )
+                                                    }
+                                                {this.state.listFolders.length<1?<Pane></Pane>:(
+                                                    <Pane>
+                                                        <Pane paddingTop={30}>
+                                                            <hr/>
+                                                            <Text
+                                                                fontSize={20}
+                                                                fontWeight={550}
+
+                                                            >
+                                                                Folder
+                                                            </Text>
+                                                        </Pane>
+                                                        {this.state.listFolders.map(folder=>(
+                                                        <Pane key={folder._id} >
+                                                            {folder.name.includes(this.state.search) ? (
+                                                                <Pane
+                                                                    display="flex"
+                                                                    justifyContent="space-between"
+                                                                    backgroundColor="white"
+                                                                    height={heightItem}
+                                                                    elevation={1}
+                                                                    marginTop = {25}
+                                                                >
+                                                                    <Link to={`/set/${folder._id}`}>
+                                                                        <Pane height={heightItem}>
+                                                                            <Pane width={500}  paddingLeft={30}>
+                                                                                <Text
+                                                                                    fontSize={20}
+                                                                                    lineHeight="80px"
+                                                                                    fontWeight={550}
+                                                                                >
+                                                                                    {folder.name}
+                                                                                </Text>
+                                                                            </Pane>
+                                                                        </Pane>
+                                                                    </Link>
+                                                                    <Pane
+                                                                        paddingTop={25}
+                                                                        paddingRight={40}
+                                                                        onClick={()=>{
+                                                                            this.setState({
+                                                                                removeFolder:folder._id
+                                                                            })
+                                                                        }}
+                                                                    >
+                                                                        <Tooltip content="Remove this folder">
+                                                                            <TrashIcon color="#EC4C47" size={20} />
+                                                                        </Tooltip>
+                                                                        <Dialog
+                                                                            isShown={this.state.removeFolder === folder._id}
+                                                                            onCloseComplete={()=>{this.setState({removeFolder:-1})}}
+                                                                            onConfirm={()=>{this.removeFolder(folder._id)}}
+                                                                            title={"DELETE SET"}
+                                                                        >
+                                                                            <Pane>
+                                                                                <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                                                                                    <Text fontSize={25} fontWeight={600} >{folder.name}</Text> <hr/>
+                                                                                    Deleting a folder is a PERMANENT action. This cannot be undone.
+                                                                                    Are you sure you want to delete <Text fontWeight={550} color={"red"}>{folder.name}</Text>?
+                                                                                </Text>
+                                                                            </Pane>
+                                                                        </Dialog>
+                                                                    </Pane>
+                                                                </Pane>
+
+                                                            ) : (
+                                                                <Pane></Pane>
+                                                            )}
+                                                        </Pane>
+                                                    ))}
                                                     </Pane>
-                                                ))}
+                                                )}
                                             </Pane>
                                         </Pane>
                                         :(
@@ -555,7 +974,7 @@ class Class extends React.Component {
                                                                             <Pane paddingLeft={65}>
                                                                                 <Text color="#A6B1BB">{member.authority}</Text>
                                                                             </Pane>
-                                                                            <Pane flex="50%" width={700}>
+                                                                            <Pane flex="50%" width={500}>
                                                                                 <FolderCloseIcon
                                                                                     size={25}
                                                                                     color="#E4E7EB"
@@ -569,36 +988,46 @@ class Class extends React.Component {
                                                                                 </Text>
                                                                             </Pane>
                                                                         </Link>
-                                                                        <Pane
-                                                                            display="flex"
-                                                                            justifyContent={"space-around"}
-                                                                            width="12%"
-                                                                            paddingTop={25}
-                                                                            paddingRight={20}
-                                                                        >
-                                                                            <Pane onClick={()=>{alert("remove member")}}>
-                                                                                <Tooltip content="Remove this member">
-                                                                                    <TrashIcon
-                                                                                        color="#EC4C47"
-                                                                                        size={20}
-                                                                                    />
-                                                                                </Tooltip>
-                                                                                <Dialog
-                                                                                    isShown={false}
-                                                                                    onConfirm={()=>{alert("delet member")}}
-                                                                                    title={"DELETE MEMBER"}
+                                                                        {member.authority==="member"?(
+                                                                            <Pane
+                                                                                display="flex"
+                                                                                justifyContent={"space-around"}
+                                                                                width="12%"
+                                                                                paddingTop={25}
+                                                                                paddingRight={20}
+                                                                            >
+                                                                                <Pane onClick={()=>{
+                                                                                    this.setState({
+                                                                                        removeMember:member._id
+                                                                                    })
+                                                                                }}
                                                                                 >
-                                                                                    <Pane>
-                                                                                        <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
-                                                                                            <Text fontSize={25} fontWeight={600} >{member.username}</Text> <hr/>
-                                                                                            Deleting a member is a PERMANENT action. This cannot be undone.
-                                                                                            Are you sure you want to delete <Text fontWeight={550} color={"red"}>{member.username}</Text>?
-                                                                                        </Text>
-                                                                                    </Pane>
-                                                                                </Dialog>
-                                                                            </Pane>
+                                                                                    <Tooltip content="Remove this member">
+                                                                                        <TrashIcon
+                                                                                            color="#EC4C47"
+                                                                                            size={20}
+                                                                                        />
+                                                                                    </Tooltip>
+                                                                                    <Dialog
+                                                                                        isShown={this.state.removeMember === member._id}
+                                                                                        onCloseComplete={()=>{this.setState({removeMember:-1})}}
+                                                                                        onConfirm={()=>{this.removeMember(member._id)}}
+                                                                                        title={"DELETE MEMBER"}
+                                                                                    >
+                                                                                        <Pane>
+                                                                                            <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                                                                                                <Text fontSize={25} fontWeight={600} >{member.username}</Text> <hr/>
+                                                                                                Deleting a member is a PERMANENT action. This cannot be undone.
+                                                                                                Are you sure you want to delete <Text fontWeight={550} color={"red"}>{member.username}</Text>?
+                                                                                            </Text>
+                                                                                        </Pane>
+                                                                                    </Dialog>
+                                                                                </Pane>
 
-                                                                        </Pane>
+                                                                            </Pane>
+                                                                        ):(<Pane></Pane>)
+                                                                        }
+
 
                                                                     </Pane>
                                                                 ):(<Pane></Pane>)}
@@ -607,14 +1036,59 @@ class Class extends React.Component {
                                                     </Pane>
                                                     :
                                                     <Pane>
-                                                        <Pane display="flex" justifyContent="space-between">
-                                                            <SearchInput
-                                                                placeholder="Filter traits..."
-                                                                onChange={(e) => {
-                                                                    this.setState({ search: e.target.value })
-                                                                }}
-                                                            />
-                                                        </Pane>
+
+                                                        {/* request part */}
+
+                                                        {this.state.listRequests.length>0?(
+                                                            <Pane display="flex" justifyContent="space-between">
+                                                                <Pane
+                                                                    alignSelf="center"
+                                                                    height="35px"
+                                                                    paddingTop={5}
+                                                                    paddingLeft={10}
+                                                                    border
+                                                                >
+                                                                    <Tooltip content="Remove all request">
+                                                                        <Heading
+                                                                            paddingRight={20}
+                                                                            cursor="pointer"
+                                                                            onClick={()=>{
+                                                                                this.setState({
+                                                                                    clearRequest:true
+                                                                                })
+                                                                            }}
+                                                                        >
+                                                                            Remove all request
+                                                                        </Heading>
+                                                                    </Tooltip>
+                                                                    <Dialog
+                                                                        isShown={this.state.clearRequest}
+                                                                        onCloseComplete={()=>{
+                                                                            this.setState({clearRequest:false})
+                                                                        }}
+                                                                        onConfirm={()=>{this.clearRequest()}}
+                                                                        title={"CLEAR REQUEST"}
+                                                                    >
+                                                                        <Pane>
+                                                                            <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                                                                                <Text fontSize={25} fontWeight={600} >Clear all of this request</Text> <hr/>
+                                                                                Remove requests is a PERMANENT action. This cannot be undone.
+                                                                                Are you sure you want to <Text fontWeight={550} color={"red"}>Remove all of this request</Text>?
+                                                                            </Text>
+                                                                        </Pane>
+                                                                    </Dialog>
+                                                                </Pane>
+
+
+                                                                <SearchInput
+                                                                    placeholder="Filter traits..."
+                                                                    onChange={(e) => {
+                                                                        this.setState({ search: e.target.value })
+                                                                    }}
+                                                                />
+                                                            </Pane>
+                                                        ):(<Pane></Pane>)
+                                                        }
                                                         {this.state.listRequests.map((request) => (
 
                                                             <Pane key={request._id} >
@@ -629,7 +1103,7 @@ class Class extends React.Component {
                                                                         marginTop ={30}
                                                                     >
                                                                         <Link to={`/folders/${request._id}`}>
-                                                                            <Pane width={700} display="flex">
+                                                                            <Pane width={500} display="flex">
                                                                                 <Pane paddingTop={15} paddingLeft={20}>
                                                                                     <Avatar name={request.username} size={40} marginRight={16} />
 
@@ -646,7 +1120,42 @@ class Class extends React.Component {
                                                                             paddingTop={25}
                                                                             paddingRight={20}
                                                                         >
-                                                                            <Pane onClick={()=>{alert("remove request")}}>
+                                                                            <Pane
+                                                                                marginLeft={20}
+                                                                                onClick={()=>{
+                                                                                    this.setState({
+                                                                                        acceptRequest:request._id
+                                                                                    })
+                                                                                }}
+                                                                            >
+                                                                                <Tooltip content="Accept this request">
+                                                                                    <NewPersonIcon
+                                                                                        color="#47B881"
+                                                                                        size={20}
+                                                                                    />
+                                                                                </Tooltip>
+                                                                                <Dialog
+                                                                                    isShown={this.state.acceptRequest === request._id}
+                                                                                    onCloseComplete={()=>{
+                                                                                        this.setState({acceptRequest:-1})
+                                                                                    }}
+                                                                                    onConfirm={()=>{this.acceptRequest(request._id)}}
+                                                                                    title={"ACCEPT REQUEST"}
+                                                                                >
+                                                                                    <Pane>
+                                                                                        <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
+                                                                                            <Text fontSize={25} fontWeight={600} >{request.username}</Text> <hr/>
+                                                                                            Accepting a request is a PERMANENT action. This cannot be undone.
+                                                                                            Are you sure you want to delete <Text fontWeight={550} color={"red"}>{request.username}</Text>?
+                                                                                        </Text>
+                                                                                    </Pane>
+                                                                                </Dialog>
+                                                                            </Pane>
+                                                                            <Pane onClick={()=>{
+                                                                                this.setState({
+                                                                                    removeRequest:request._id
+                                                                                })
+                                                                            }}>
                                                                                 <Tooltip content="Remove this request">
                                                                                     <TrashIcon
                                                                                         color="#EC4C47"
@@ -654,9 +1163,12 @@ class Class extends React.Component {
                                                                                     />
                                                                                 </Tooltip>
                                                                                 <Dialog
-                                                                                    isShown={false}
-                                                                                    onConfirm={()=>{alert("delet request")}}
-                                                                                    title={"DELETE MEMBER"}
+                                                                                    isShown={this.state.removeRequest === request._id}
+                                                                                    onCloseComplete={()=>{
+                                                                                        this.setState({removeRequest:-1})
+                                                                                    }}
+                                                                                    onConfirm={()=>{this.removeRequest(request._id)}}
+                                                                                    title={"DELETE REQUEST"}
                                                                                 >
                                                                                     <Pane>
                                                                                         <Text fontSize={18} fontWeight={200} lineHeight={"25px"}>
@@ -667,9 +1179,7 @@ class Class extends React.Component {
                                                                                     </Pane>
                                                                                 </Dialog>
                                                                             </Pane>
-
                                                                         </Pane>
-
                                                                     </Pane>
                                                                 ):(<Pane></Pane>)}
                                                             </Pane>
@@ -708,7 +1218,11 @@ class Class extends React.Component {
         )
     }
 }
-const mapStateToProps = ({ auth }) => {
-    return { user: { ...{ ...auth }.data } }
+const mapStateToProps = ({ auth, info }) => {
+    return {
+        user: { ...{ ...auth }.data },
+        sets: { ...{ ...info } }.data,
+        folders:{ ...{ ...info} }.data,
+    }
 }
-export default connect(mapStateToProps)(Class)
+export default connect(mapStateToProps, { fetchSetsUser, fetchFoldersUser })(Class)
