@@ -43,7 +43,7 @@ const _allow_update = async (classId, userId) => {
     const {allow_member_change} = _class
     if (!allow_member_change) {
         const {creator} = _class
-        if (creator !== userId) throw new Error ('You not allow to change this resource.')
+        if ((creator + '')  !== userId) throw new Error ('You not allow to change this resource.')
     } else {
         const {members} = _class
         if (!members.includes(userId)) throw new Error ('You not allow to change this resource.')
