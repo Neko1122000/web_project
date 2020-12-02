@@ -148,7 +148,6 @@ class CreateSet extends React.Component {
         break
       default:
         break
->>>>>>> 3e295ad524124a069abc34ef260cd1ab6398a828
     }
     switch (this.state.set.updated_by) {
       case update[0]:
