@@ -120,9 +120,9 @@ exports.search = async (args, userId) => {
         const {sets, members, folders, ...data} = _class
         return {
             ...data,
-            numberOfSet: sets.length,
-            numberOfMember: members.length,
-            numberOfFolder: folders.length
+            numberOfSet: sets? sets.length: 0,
+            numberOfMember: members? members.length: 0,
+            numberOfFolder: folders? folders.length: 0
         }
     })
 }
