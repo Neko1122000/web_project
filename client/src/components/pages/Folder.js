@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Pane, Text, Tooltip, Dialog, TextInput, toaster, Spinner } from 'evergreen-ui'
+import { Pane, Text, Tooltip, Dialog, TextInput, toaster, Spinner, Button } from 'evergreen-ui'
 import { AddIcon, TrashIcon, EditIcon, FolderOpenIcon, Tab, Tablist } from 'evergreen-ui'
 import { Link } from 'react-router-dom'
 
@@ -22,15 +22,13 @@ class Folder extends React.Component {
                 folderSet:{
                     ...this.state.folderSet,
                     sets:this.props.folder.sets.map(item=>item._id)
+                },
+                folder:{
+                  ...this.state.folder,
+                  name:this.props.folder.name,
+                  description:this.props.folder.description
                 }
             })
-        this.setState({
-            folder:{
-                ...this.state.folder,
-                name:this.props.folder.name,
-                description:this.props.folder.description
-            }
-        })
     }
 
     state = {
@@ -55,15 +53,13 @@ class Folder extends React.Component {
         return this.state.isShown
     }
 
-    /* close diablog */
+    /* close diablog and save change*/
     showReset = () => {
         var isChange = false;
         this.setState({
             isShown: false ,
             removeSet:-1,
         })
-        console.log(this.state.folderSet.sets.length)
-        console.log(this.props.folder.sets.length)
         if(this.state.folderSet.sets.length !== this.props.folder.sets.length){
             isChange=true
         }
@@ -81,10 +77,16 @@ class Folder extends React.Component {
     }
     submitChange=async ()=>{
         console.log(this.state.folderSet)
-        editFolderSets(this.props.match.params.id , this.state.folderSet).then(()=>{
-                window.location.reload()
-            }
-        )
+        await editFolderSets(this.props.match.params.id , this.state.folderSet)
+        await this.props.fetchFolder(this.props.folder._id)
+        await this.props.fetchSetsUser()
+        if (this.props.folder)
+            this.setState({
+                folderSet:{
+                  ...this.state.folder,
+                  sets:this.props.folder.sets.map(item=>item._id)
+                }
+          })
     }
 
     /* remove folder */
@@ -108,19 +110,28 @@ class Folder extends React.Component {
             ? 'loading'
             : this.props.sets.map((set) => [...idList, set])
     }
-    editFolder=()=>{
-        editFolderInfo(this.props.folder._id, this.state.folder).then(()=>{
-                window.location.reload()
-            }
-        )
+    editFolder=async()=>{
+        await editFolderInfo(this.props.folder._id, this.state.folder).then(()=>{
+          this.setState({isShown:false})
+        })
+        await this.props.fetchFolder(this.props.folder._id)
+        await this.props.fetchSetsUser()
+        if (this.props.folder)
+            this.setState({
+                folderSet:{
+                  ...this.state.folder,
+                  sets:this.props.folder.sets.map(item=>item._id)
+                }
+          })
         toaster.success(
             "Edit successful"
         )
-        this.setState({isShown:''})
     }
 
+    // change list set of this folder
     change = (id) =>{
         var newSets = this.state.folderSet.sets.filter(item=>item!== id)
+        //have change ?
         if(this.state.folderSet.sets.join('_').includes(id)){
             this.setState({
                 folderSet:{
@@ -128,7 +139,9 @@ class Folder extends React.Component {
                     sets:newSets,
                 }
             })
-        }else{
+        }
+        else
+        {
             this.setState({
                 folderSet:{
                     ...this.state.folderSet,
@@ -260,7 +273,7 @@ class Folder extends React.Component {
                     <Dialog
                         isShown={this.isShowed()}
                         title={'Edit folder'}
-                        onCloseComplete={this.showReset}
+                        onCloseComplete={()=>{this.setState({isShown:false})}}
                         hasCancel={false}
                         confirmLabel={'Save'}
                         onConfirm={()=>{this.editFolder()}}
@@ -348,7 +361,6 @@ class Folder extends React.Component {
         }
         return (
             <Pane background="tint2" width="100%">
-
                 <Pane
                     borderBottom
                     display="flex"
@@ -362,7 +374,7 @@ class Folder extends React.Component {
                     <Pane marginTop="2%" marginLeft="7%" height={45}>
                         <Pane marginBottom={20}>
                             <Text display="inline-block" marginRight={20}>
-                                {!this.props.folder ? (<Pane><Spinner/></Pane>) : this.props.folder.sets.length}{' '}
+                                {!this.props.folder ? (<Pane>loading</Pane>) : this.props.folder.sets.length}{' '}
                                 sets |
                             </Text>
                             <Text display="inline-block" color={'#E4E7EB'}>

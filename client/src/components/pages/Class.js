@@ -446,7 +446,7 @@ class Class extends React.Component {
                                     aria-hidden={index !== this.state.opIndex}
                                     display={index === this.state.opIndex ? 'block' : 'none'}
                                 >
-                                    {tab=="Sets"?
+                                    {tab==="Sets"?
                                         <Pane>
                                             <Pane display="flex" justifyContent="space-between">
                                                 <Pane>

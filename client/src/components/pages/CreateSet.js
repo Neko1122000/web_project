@@ -80,26 +80,29 @@ class CreateSet extends React.Component {
   redirect() {
     window.location.href = '/sets'
   }
-  submit = () => {
+  submit = async () => {
     var inputs = document.querySelectorAll('input')
     var check = true
 
     inputs.forEach((item) => {
-      if (item.value === '') {
-        item.parentNode.querySelector('#require').style.display = 'block'
-        item.parentNode.querySelector('#hint').style.display = 'none'
-        check = false
-      } else {
-        item.parentNode.querySelector('#require').style.display = 'none'
-        item.parentNode.querySelector('#hint').style.display = 'block'
-      }
+        if (item.value === '') {
+            item.parentNode.querySelector('#require').style.display = 'block'
+            item.parentNode.querySelector('#hint').style.display = 'none'
+            check = false
+        } else {
+            item.parentNode.querySelector('#require').style.display = 'none'
+            item.parentNode.querySelector('#hint').style.display = 'block'
+        }
     })
-    if (check) {
-      createSet(this.state.set)
-      toaster.success('Create successful')
-      window.setTimeout(() => {
-        this.redirect()
-      }, 500)
+    if (check){
+        await createSet(this.state.set).then(()=>{
+            window.setTimeout(() => {
+                this.redirect()
+            }, 500)
+        })
+        toaster.success(
+            'Create successful'
+        )
     }
   }
   addCard = () => {
@@ -145,6 +148,7 @@ class CreateSet extends React.Component {
         break
       default:
         break
+>>>>>>> 3e295ad524124a069abc34ef260cd1ab6398a828
     }
     switch (this.state.set.updated_by) {
       case update[0]:
