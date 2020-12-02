@@ -40,7 +40,7 @@ exports.delete = (req, res) => {
 
 exports.search = (req, res) => {
     const {userID} = req
-    const {args} = Object.assign({}, req.query)
+    const args = Object.assign({}, req.query)
 
     ClassAction.search(args, userID)
         .then(sendSuccess(req, res))
