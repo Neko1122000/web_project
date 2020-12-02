@@ -9,6 +9,7 @@ exports.authenticate = async (req, res, next) => {
     const fromHeader = fromXHeader || headerAuthor
     if (fromHeader) {
         token = fromHeader.replace('Bearer ', '').trim()
+        console.log(token)
     }
     if (!token) token = (req.body.token || req.query.token || '') + ''
 

@@ -26,20 +26,22 @@ import {
     FolderNewIcon
 } from 'evergreen-ui'
 import { Link } from 'react-router-dom'
-import {fetchSetsUser, fetchFoldersUser, fetchClass, createClass, editClass, deleteClass} from '../../actions'
+import {fetchSetsUser, fetchFoldersUser, fetchClass, createClass, editClass, deleteClass, getPending} from '../../actions'
 
 const heightItem = 75
 
 class Class extends React.Component {
     async componentDidMount() {
         await this.props.fetchSetsUser()
+        await this.props.getPending(this.props.match.params.id)
         await this.props.fetchFoldersUser()
         if (this.props.folders)
             this.setState({
                 classSets:{
                     ...this.state.classSets,
                     sets:this.props.sets.map(item=>item._id)
-                }
+                },
+                listRequests: this.props.pending
             })
     }
     state = {
@@ -116,14 +118,7 @@ class Class extends React.Component {
             }
         ],
         listRequests:[
-            {
-                _id:5,
-                username:"yah yah"
-            },
-            {
-                _id:6,
-                username:"yah yah yah"
-            }
+
         ],
         listFolders:[
             {
@@ -1039,7 +1034,7 @@ class Class extends React.Component {
 
                                                         {/* request part */}
 
-                                                        {this.state.listRequests.length>0?(
+                                                        {!this.props.pending? 'loading' : this.state.listRequests.length>0?(
                                                             <Pane display="flex" justifyContent="space-between">
                                                                 <Pane
                                                                     alignSelf="center"
@@ -1089,7 +1084,7 @@ class Class extends React.Component {
                                                             </Pane>
                                                         ):(<Pane></Pane>)
                                                         }
-                                                        {this.state.listRequests.map((request) => (
+                                                        {!this.props.pending ? 'loading' : this.state.listRequests.map((request) => (
 
                                                             <Pane key={request._id} >
                                                                 {request.username.includes(this.state.search) ? (
@@ -1218,11 +1213,12 @@ class Class extends React.Component {
         )
     }
 }
-const mapStateToProps = ({ auth, info }) => {
+const mapStateToProps = ({ auth, info, pending }) => {
     return {
         user: { ...{ ...auth }.data },
         sets: { ...{ ...info } }.data,
         folders:{ ...{ ...info} }.data,
+        pending:{ ...{ ...pending} }.data,
     }
 }
-export default connect(mapStateToProps, { fetchSetsUser, fetchFoldersUser })(Class)
+export default connect(mapStateToProps, { fetchSetsUser, fetchFoldersUser, getPending })(Class)

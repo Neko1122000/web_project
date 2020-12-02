@@ -5,6 +5,7 @@ import {
     Dialog,
     TextInput,
     Checkbox,
+    Button,
     toaster,
     Tooltip,
     TrashIcon,
@@ -13,7 +14,7 @@ import {
 import UserHeader from '../UserHeader'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import {fetchClasses, createClass, editClass, deleteClass} from '../../actions'
+import {fetchClasses, createClass, editClass, joinClass} from '../../actions'
 
 const heightItem = 75
 const widthItem = 800
@@ -112,10 +113,18 @@ class Classes extends React.Component {
     }
 
     render() {
+        console.log(this.props)
         return (
             <Pane background="tint2">
                 <UserHeader path="/classes" />
-
+                <TextInput onChange={(e) => this.setState({class:{
+                    ...this.state.class, name : e.target.value
+            }})}></TextInput>
+            <Button onClick= {async() => {await this.props.fetchClasses(this.state.class.name);
+            if (this.props.data)  this.setState({
+                listClasses: this.props.data,
+            }); console.log(this.props.data)
+            }}></Button>
                 <Pane paddingLeft="7%" marginTop={30} width={widthItem}>
                     {/* Add button */}
                     <Pane marginBottom={20}>
@@ -358,8 +367,10 @@ class Classes extends React.Component {
                                         width="12%"
                                         paddingRight={20}
                                     >
+                                            <Button onClick={() => joinClass(classes._id)}>Join</Button>
                                         {/* EDIT FOLDER */}
                                         <Pane onClick={()=>{this.isEditClass(classes._id)}}>
+
                                             <Tooltip content="Edit this folder" >
                                                 <EditIcon
                                                     color="#1070CA"

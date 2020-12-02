@@ -14,7 +14,7 @@ exports.create = (req, res) => {
     const {id: classId} = req.params
     const {userID} = req
 
-    RequestAction.createJoinClass(classId, userID)
+    RequestAction.createJoinClassRequest(classId, userID)
         .then(sendSuccess(req, res))
         .catch(sendError(req, res))
 }

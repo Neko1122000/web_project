@@ -44,6 +44,17 @@ export const fetchUser = () => async (dispatch) => {
   } else dispatch({ type: types.FETCH_USER, payload: false })
 }
 
+export const joinClass =  async (id) => {
+  if (getToken().accessToken) {
+    const res = await axios
+        .post(`/api/class/${id}/join`, {}, options)
+        .catch(async (error) => {
+          await console.log(error)
+        })
+    console.log(res)
+  }
+}
+
 // Set -
 
 export const fetchSet = (id) => async (dispatch) => {
@@ -192,6 +203,19 @@ export const deleteClass = async (id) => {
     console.log(res)
   }
 }
+export const getPending = (id) => async (dispatch) => {
+  if (getToken().accessToken) {
+    const res = await axios
+        .get(`/api/class/${id}/pending-member`, options)
+        .catch(async (error) => {
+          await console.log(error)
+        })
+    if (res) {
+      console.log(res)
+      dispatch({ type: types.GET_PENDING, payload: res.data })
+    }
+  } else dispatch({ type: types.GET_PENDING, payload: false })
+}
 
 // User -
 
@@ -213,10 +237,10 @@ export const fetchFoldersUser = () => async (dispatch) => {
     if (res) dispatch({ type: types.FETCH_FOLDERS_USER, payload: res.data })
   } else dispatch({ type: types.FETCH_FOLDERS_USER, payload: false })
 }
-export const fetchClasses = () => async (dispatch) => {
+export const fetchClasses = (name) => async (dispatch) => {
   if (getToken().accessToken) {
     const res = await axios
-      .get('/api/classes', {...options, params: {name:'123'}})
+      .get('/api/classes', {...options, params: {name}})
       .catch(async (error) => {
         await refreshToken(fetchClasses)
       })

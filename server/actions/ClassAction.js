@@ -113,6 +113,8 @@ exports.search = async (args, userId) => {
         query['code'] = code
     }
 
+    console.log(query)
+
     const Class = getModel('Class')
 
     const classes = await Class.find(query, {score: {$meta: 'textScore'}}).select('code name description address creator folders sets members').sort(sort).lean()
