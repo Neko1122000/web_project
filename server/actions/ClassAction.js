@@ -104,10 +104,10 @@ exports.search = async (args, userId) => {
 
     if (name)  {
         delete query.creator
-        query['name'] = {$text: {$search: name}}
+        query['$text'] = {$search: name}
 
         delete sort.created
-        sort['score'] = {$meta: "textScore"}
+        sort.score = {$meta: "textScore"}
     }
     if (code) {
         query['code'] = code
@@ -115,7 +115,7 @@ exports.search = async (args, userId) => {
 
     const Class = getModel('Class')
 
-    const classes = await Class.find(query).select('code name description address creator folders sets members').sort(sort).lean()
+    const classes = await Class.find(query, {score: {$meta: 'textScore'}}).select('code name description address creator folders sets members').sort(sort).lean()
     return classes.map(_class => {
         const {sets, members, folders, ...data} = _class
         return {

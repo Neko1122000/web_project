@@ -1,13 +1,12 @@
 const {Schema} = require('mongoose')
 
-module.exports = new Schema({
+const Class = new Schema({
     code: {
         type: String,
         unique: true
     },
     name: {
         type: String,
-        index: true
     },
     description: {
         type: String
@@ -60,3 +59,6 @@ module.exports = new Schema({
         index: true
     }
 })
+
+Class.index({name: 'text'})
+module.exports = Class

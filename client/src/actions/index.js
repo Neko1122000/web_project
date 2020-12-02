@@ -216,7 +216,7 @@ export const fetchFoldersUser = () => async (dispatch) => {
 export const fetchClasses = () => async (dispatch) => {
   if (getToken().accessToken) {
     const res = await axios
-      .get('/api/classes', { name: '123' }, options)
+      .get('/api/classes', {...options, params: {name: 123}})
       .catch(async (error) => {
         await refreshToken(fetchClasses)
       })
