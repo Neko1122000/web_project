@@ -83,10 +83,10 @@ class Exam extends React.Component {
                     <Pane key={index}>
                       <Pane marginTop={30} marginBottom={30}>
                         <Pane display="flex" marginBottom={20}>
-                          <Heading size={500} fontWeight={500} marginRight={10}>
+                          <Heading size={400} fontWeight={400} marginRight={10}>
                             Câu số {index}:
                           </Heading>
-                          <Heading size={500} fontWeight={400}>
+                          <Heading size={400} fontWeight={400}>
                             {item.title}
                           </Heading>
                         </Pane>
