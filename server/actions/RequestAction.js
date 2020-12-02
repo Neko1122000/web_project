@@ -23,7 +23,9 @@ exports.getPendingMembers = async (classId, userId) => {
 
     const Class = getModel('Class')
     const _class = await Class.findById(classId).lean()
-    if (!_class.members.includes(userId)) throw new Error ('You are not allowed to see this resource.')
+
+    const members = _class.members.map(str => str + "")
+    if (!members.includes(userId + "")) throw new Error ('You are not allowed to see this resource.')
 
     return Request.find({type: 'join_class', 'meta.class': classId, status: 'pending'}).lean()
 }
