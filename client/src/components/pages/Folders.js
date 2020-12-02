@@ -156,6 +156,7 @@ class Folders extends React.Component {
     }
 
     render() {
+
         return (
             <Pane>
                 <UserHeader path="/latest" />

@@ -81,7 +81,7 @@ class CreateSet extends React.Component {
     redirect(){
         window.location.href="/sets"
     }
-    submit = () => {
+    submit = async () => {
         var inputs = document.querySelectorAll('input')
         var check = true
 
@@ -96,14 +96,14 @@ class CreateSet extends React.Component {
             }
         })
         if (check){
-            createSet(this.state.set)
+            await createSet(this.state.set).then(()=>{
+                window.setTimeout(() => {
+                this.redirect()
+            }, 500)
+            })
             toaster.success(
                 'Create successful'
             )
-            window.setTimeout(() => {
-                this.redirect()
-            }, 500)
-
         }
     }
     addCard = () => {
