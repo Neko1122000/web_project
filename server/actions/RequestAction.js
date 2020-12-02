@@ -27,7 +27,15 @@ exports.getPendingMembers = async (classId, userId) => {
     const members = _class.members.map(str => str + "")
     if (!members.includes(userId + "")) throw new Error ('You are not allowed to see this resource.')
 
-    return Request.find({type: 'join_class', 'meta.class': classId, status: 'pending'}).lean()
+    const request = await Request.find({type: 'join_class', 'meta.class': classId, status: 'pending'}).populate({
+        path: 'creator',
+        select: 'username'
+    }).lean()
+    return request.map(data => {
+        data.username = data.creator.username || data.creator._id
+        return data
+    })
+
 }
 
 exports.rejectMembers = async (classId, membersReject, userId) => {
